@@ -1,7 +1,16 @@
-import '../styles/globals.css'
+import "../styles/globals.css";
+import Head from "next/head";
+import AppState from "../context/AppContext";
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
-}
+const MyApp = ({ Component, pageProps }) => {
+  return (
+    <AppState>
+      <Head>
+        <title>App&apos;s Title</title>
+      </Head>
+      <Component {...pageProps} />
+    </AppState>
+  );
+};
 
-export default MyApp
+export default MyApp;
