@@ -1,9 +1,13 @@
 import React from "react";
+// Custom Components
+import Header from "../components/Header";
+import About from "../components/About";
 
 const Home = () => {
   return (
-    <div className="w-full h-screen flex items-center justify-center text-3xl text-[#ef233c] font-semibold">
-      Start Development
+    <div className="">
+      <Header />
+      <About />
     </div>
   );
 };

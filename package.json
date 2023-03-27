@@ -1,5 +1,5 @@
 {
-  "name": "blank-template",
+  "name": "gamejunction",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.4",
+    "framer-motion": "^8.5.0",
     "next": "13.0.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
