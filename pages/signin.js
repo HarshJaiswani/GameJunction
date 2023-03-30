@@ -10,9 +10,9 @@ import { AiOutlineEye } from "react-icons/ai";
 const Signin = () => {
   const [showPass, setShowPass] = useState(false);
   return (
-    <div className="flex items-center justify-center flex-col w-full min-h-screen">
-      <Logo size="6xl" />
-      <form className="border mt-8 p-8 w-1/3 rounded-2xl">
+    <div className="bg-gray-50 flex items-center justify-center flex-col w-full min-h-screen">
+      <Logo />
+      <form className="bg-white shadow mt-8 p-8 w-1/3 rounded-2xl">
         <h2 className="mb-8 text-2xl text-green-400">Welcome back !</h2>
         <input
           type="email"

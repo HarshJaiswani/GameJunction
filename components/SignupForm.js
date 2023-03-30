@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+// Next Components
+import Link from "next/link";
 // Headless Ui
 import { RadioGroup } from "@headlessui/react";
 // Icons
@@ -60,6 +62,10 @@ const SignupForm = () => {
           max={10000000000}
           className="px-4 outline-none w-full"
         />
+      </div>
+      <div className={`${inputStyle} flex items-center justify-between`}>
+        <h2 className="text-gray-400">Enter your date of birth</h2>
+        <input type="date" className="outline-none text-cyan-500" />
       </div>
       <div className={`mt-4 flex items-center ${inputStyle}`}>
         <span className="mb-4 w-1/3 inline-block text-gray-400">
@@ -152,9 +158,25 @@ const SignupForm = () => {
               )}
             </div>
           ))}
+          <Link
+            href="/suggest-game"
+            className={`flex my-2 w-full relative cursor-pointer rounded-lg p-2 focus:outline-none items-center justify-between`}
+          >
+            <div className="flex items-center">
+              <div className="text-sm flex items-center">
+                <div
+                  className={`font-sans font-semibold tracking-wider
+                      text-cyan-600
+                    `}
+                >
+                  Do you play a unique game ? (You can suggest one!)
+                </div>
+              </div>
+            </div>
+          </Link>
         </div>
       </div>
-      <button className="my-4 px-4 py-2 w-1/2 block ml-auto hover:bg-yellow-200 rounded-2xl bg-white shadow-md text-gray-500 font-sans font-semibold">
+      <button className="my-4 px-4 py-2 w-[300px] block ml-auto hover:bg-yellow-200 rounded-2xl bg-white shadow-md text-gray-500 font-sans font-semibold">
         Sign Up
       </button>
     </form>

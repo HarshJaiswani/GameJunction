@@ -32,7 +32,7 @@ const menuItems = [
   {
     name: "My Participations",
     icon: <BsCalendarEvent className={`text-base ${iconStyle}`} />,
-    link: "/",
+    link: "/profile#pastevents",
     stake: "participant",
   },
   {
@@ -44,7 +44,7 @@ const menuItems = [
   {
     name: "Wishlist",
     icon: <HiStar className={iconStyle} />,
-    link: "/",
+    link: "/profile#wishevents",
     stake: "participant",
   },
   {
@@ -64,7 +64,7 @@ const menuItems = [
 const NavDropdown = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   return (
-    <div className="mx-8">
+    <div className="ml-8">
       <Menu as="div" className="relative inline-block text-left">
         <div>
           <Menu.Button className="rounded-full p-2 cursor-pointer bg-gray-600 shadow-md">
@@ -80,7 +80,7 @@ const NavDropdown = () => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute px-4 py-1 right-0 mt-2 w-56 origin-top-right divide-y divide-gray-400 rounded-md text-white bg-gray-600 shadow">
+          <Menu.Items className="absolute z-[10] px-4 py-1 right-0 mt-2 w-56 origin-top-right divide-y divide-gray-400 rounded-md text-white bg-gray-600 shadow">
             {menuItems.map(
               (item, index) =>
                 item.stake != "participant" && (
