@@ -3,6 +3,7 @@ import React from "react";
 // Headless Ui
 import { Tab } from "@headlessui/react";
 // Icons
+import { CiImageOn } from "react-icons/ci";
 // Custom Components
 import EventCard from "../components/EventCard";
 
@@ -61,14 +62,62 @@ const List = () => {
                   "rounded-xl p-3 bg-gray-50 w-full min-h-[75vh]"
                 )}
               >
-                <ul className="w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
-                  {data.map(
-                    (post) =>
-                      post.type.toLowerCase() == type.toLowerCase() && (
-                        <EventCard key={post.id} post={post} />
-                      )
-                  )}
-                </ul>
+                <div className="w-4/5 mx-auto">
+                  <div className="flex items-center justify-evenly">
+                    <div className="w-[45%] h-[350px] my-8 cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
+                      <CiImageOn className="text-5xl text-green-400" />
+                      <span className="text-gray-500 my-2">
+                        Event&apos;s Poster
+                      </span>
+                    </div>
+                    <EventCard post={data[0]} />
+                  </div>
+                  <h2 className="mx-8 my-12 flex items-center justify-between">
+                    <span className="text-3xl text-gray-600 font-semibold my-4">
+                      Open
+                    </span>
+                    <div className="w-[90%] h-0.5 bg-gray-200"></div>
+                  </h2>
+                  <ul className="flex items-center justify-evenly flex-wrap">
+                    {data.map(
+                      (post) =>
+                        post.type.toLowerCase() == type.toLowerCase() && (
+                          <EventCard key={post.id} post={post} />
+                        )
+                    )}
+                  </ul>
+                  <button className="rounded-full px-12 ml-auto block py-2 shadow bg-white text-green-400 font-semibold">
+                    Show More
+                  </button>
+                  <h2 className="mx-8 my-12 flex items-center justify-between">
+                    <span className="text-3xl text-gray-600 font-semibold my-4">
+                      Upcoming
+                    </span>
+                    <div className="w-[80%] h-0.5 bg-gray-200"></div>
+                  </h2>
+                  <ul className="flex items-center justify-evenly flex-wrap">
+                    {data.map(
+                      (post) =>
+                        post.type.toLowerCase() == type.toLowerCase() && (
+                          <EventCard key={post.id} post={post} />
+                        )
+                    )}
+                  </ul>
+                  <h2 className="mx-8 my-12 flex items-center justify-between">
+                    <span className="text-3xl text-gray-600 font-semibold my-4">
+                      Past
+                    </span>
+                    <div className="w-[90%] h-0.5 bg-gray-200"></div>
+                  </h2>
+                  <ul className="flex items-center justify-evenly flex-wrap">
+                    {data.map(
+                      (post) =>
+                        post.type.toLowerCase() == type.toLowerCase() && (
+                          <EventCard key={post.id} post={post} />
+                        )
+                    )}
+                  </ul>
+                </div>
               </Tab.Panel>
             ))}
           </Tab.Panels>

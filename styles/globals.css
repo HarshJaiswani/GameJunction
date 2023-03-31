@@ -22,6 +22,10 @@ button {
   box-sizing: border-box;
 }
 
+li {
+  list-style-type: none;
+}
+
 .nunito-font {
   font-family: "Nunito Sans", sans-serif;
 }

@@ -13,6 +13,8 @@ import { TfiInstagram, TfiTwitter } from "react-icons/tfi";
 import { BsTelephone } from "react-icons/bs";
 import { MdInsertLink } from "react-icons/md";
 import { RxDiscordLogo } from "react-icons/rx";
+import { CiImageOn } from "react-icons/ci";
+import { FaTelegramPlane } from "react-icons/fa";
 /**
  * 
  * const data = Array(5).fill({
@@ -58,6 +60,17 @@ const category = [
   },
 ];
 
+const isTeam = [
+  {
+    name: "Team",
+    value: "team",
+  },
+  {
+    name: "Individual",
+    value: "individual",
+  },
+];
+
 const sports = [
   {
     id: 1,
@@ -96,6 +109,7 @@ const CreateEventForm = () => {
   const gameinputref = useRef();
   const [modeSelect, setModeSelect] = useState(modes[0]);
   const [categorySelect, setCategorySelect] = useState(category[0]);
+  const [isTeamSelect, setIsTeamSelect] = useState(isTeam[0]);
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
   const [gameSelect, setGameSelect] = useState(
@@ -121,6 +135,12 @@ const CreateEventForm = () => {
 
   return (
     <form className="w-2/3 mx-auto">
+      <div className="w-[300px] h-[300px] mx-auto my-8 cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
+        <CiImageOn className="text-5xl text-green-400" />
+        <span className="text-gray-500 my-2">
+          Upload Event Poster (300 x 300)
+        </span>
+      </div>
       <input
         type="text"
         placeholder="Give your event a catchy title"
@@ -314,12 +334,12 @@ const CreateEventForm = () => {
             <input
               type="text"
               placeholder="Specify the platform"
-              className={inputStyle}
+              className={`${inputStyle} mt-1`}
             />
             <input
               type="text"
               placeholder="Enter the link to event"
-              className={inputStyle}
+              className={`${inputStyle} mt-1`}
             />
           </>
         )}
@@ -328,11 +348,75 @@ const CreateEventForm = () => {
             <input
               type="text"
               placeholder="Specify the location"
-              className={inputStyle}
+              className={`${inputStyle} mt-1`}
             />
           </>
         )}
       </div>
+      <div className={`${inputStyle} flex items-center justify-between`}>
+        <h2 className="my-4 font-sans text-gray-500">
+          Participation will be of :
+        </h2>
+        <RadioGroup value={isTeamSelect} onChange={setIsTeamSelect}>
+          <div className="flex items-center">
+            {isTeam.map((cat) => (
+              <RadioGroup.Option
+                key={cat.name}
+                value={cat}
+                className={({ active, checked }) =>
+                  `${
+                    active
+                      ? "ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300"
+                      : ""
+                  }
+                  ${
+                    checked ? "bg-sky-900 bg-opacity-75 text-white" : "bg-white"
+                  }
+                    relative flex cursor-pointer rounded-full mx-4 px-12 py-2 shadow-md focus:outline-none`
+                }
+              >
+                {({ active, checked }) => (
+                  <>
+                    <div className="flex w-full items-center justify-between">
+                      <div className="flex items-center">
+                        <div className="text-sm">
+                          <RadioGroup.Label
+                            as="p"
+                            className={`font-medium  ${
+                              checked ? "text-white" : "text-gray-500"
+                            }`}
+                          >
+                            {cat.name}
+                          </RadioGroup.Label>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </RadioGroup.Option>
+            ))}
+          </div>
+        </RadioGroup>
+      </div>
+      {isTeamSelect.value == "team" && (
+        <div className={`${inputStyle} mt-1`}>
+          <div className="flex items-center justify-between">
+            <h2>Size of the team :</h2>
+            <input
+              type="number"
+              min={1}
+              placeholder="Minimum"
+              className={`${inputStyle} w-[300px] mt-0 shadow-none border`}
+            />
+            <input
+              type="number"
+              min={1}
+              placeholder="Maximum"
+              className={`${inputStyle} w-[300px] mt-0 shadow-none border`}
+            />
+          </div>
+        </div>
+      )}
       <div className={`${inputStyle} flex items-center justify-between`}>
         <h2 className="text-gray-500">Select the date of the event: </h2>
         <input type="date" className="outline-none text-cyan-400" />
@@ -363,6 +447,14 @@ const CreateEventForm = () => {
           className="outline-none w-full px-4"
           placeholder="Registration Fee (if any)"
         />
+      </div>
+      <div className={`${inputStyle} flex items-center justify-between`}>
+        <h2 className="text-gray-500">Last date of registration: </h2>
+        <input type="date" className="outline-none text-cyan-400" />
+      </div>
+      <div className={`${inputStyle} flex items-center justify-between`}>
+        <h2 className="text-gray-500">Registration closes at: </h2>
+        <input type="time" className="outline-none text-cyan-400" />
       </div>
       <div
         className={`${inputStyle} flex flex-col items-start justify-between`}
@@ -438,6 +530,16 @@ const CreateEventForm = () => {
             type="text"
             className="outline-none w-full px-4"
             placeholder="Official Discord Channel"
+          />
+        </div>
+        <div className={`flex items-center ${inputStyle}`}>
+          <div className="border-r-2">
+            <FaTelegramPlane className="text-xl text-green-300 mr-4" />
+          </div>
+          <input
+            type="text"
+            className="outline-none w-full px-4"
+            placeholder="Official Telegram Channel"
           />
         </div>
         <div className={`flex items-center ${inputStyle}`}>
