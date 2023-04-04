@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 // Next Components
 import Link from "next/link";
 // Custom Components
@@ -9,10 +9,11 @@ import { AppContext } from "../context/AppContext";
 
 const Navbar = () => {
   const { isLoggedIn } = useContext(AppContext);
-  const [isAtTop, setIsAtTop] = useState(true);
   return (
     <>
-      <div className={`w-full fixed top-0 left-0 bg-white z-[100]`}>
+      <div
+        className={`w-full fixed top-0 left-0 h-[150px] md:h-[100px] bg-white z-[100]`}
+      >
         <div className="py-6 sm:py-6 px-8 sm:px-12 flex items-center justify-between">
           <Logo />
           <div className="flex items-center justify-between">
@@ -40,7 +41,7 @@ const Navbar = () => {
             <NavDropdown />
           </div>
         </div>
-        <div className="md:hidden flex items-center justify-end mr-8">
+        <div className="md:hidden pb-8 flex items-center justify-end mr-8">
           <Link href="/list">
             <button className="tracking-wider text-sm sm:text-base hover:bg-yellow-200 shadow-sm bg-gray-100 mx-2 sm:mx-4 px-4 py-2 rounded-2xl">
               Explore Events
@@ -62,7 +63,7 @@ const Navbar = () => {
           )}
         </div>
       </div>
-      <div className="w-full h-[25vh] sm:h-[15vh]"></div>
+      <div className="w-full h-[150px] md:h-[100px]"></div>
     </>
   );
 };

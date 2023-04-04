@@ -16,8 +16,8 @@ const EventId = () => {
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
   return (
-    <div className="bg-gray-50 py-12">
-      <div className="w-2/3 mx-auto">
+    <div className="bg-gray-50 p-5 sm:py-12">
+      <div className="w-full lg:w-2/3 mx-auto">
         <h2 className="text-3xl font-semibold text-gray-500 mb-4 text-center">
           Title of the Event
         </h2>
@@ -25,7 +25,7 @@ const EventId = () => {
           <CiImageOn className="text-5xl text-green-400" />
           <span className="text-gray-500 my-2">Event&apos;s Poster</span>
         </div>
-        <div className="p-12 border rounded-2xl bg-white shadow mx-auto mb-8">
+        <div className="p-5 md:p-12 border rounded-2xl bg-white shadow mx-auto mb-8">
           <div className="px-4 border-l-2 mb-8 border-blue-400">
             <h2 className="text-gray-400">Organised from</h2>
             <p className="font-semibold text-gray-500">
@@ -34,7 +34,7 @@ const EventId = () => {
           </div>
           <div>
             <p className="text-gray-400">Applications Ends at :</p>
-            <p className="text-gray-500 font-semibold my-2 text-lg">
+            <p className="text-gray-500 font-semibold my-2 sm:text-lg">
               12th September 2023 at 06:40PM
             </p>
           </div>
@@ -50,7 +50,7 @@ const EventId = () => {
           higher on Google Give clear and concise information Get more event
           registration
         </div>
-        <div className="p-12 flex items-center border rounded-2xl bg-white shadow mx-auto mb-8">
+        <div className="p-5 md:p-12 flex flex-wrap items-center border rounded-2xl bg-white shadow mx-auto mb-8">
           <p className="text-gray-400">We will be playing :</p>
           <div className="px-8 py-2 rounded-2xl mx-4 w-fit my-2 bg-gray-100 text-green-400 font-semibold">
             Cricket
@@ -60,21 +60,21 @@ const EventId = () => {
             Raipur, C.G. India
           </div>
         </div>
-        <div className="p-12 flex items-center justify-between border rounded-2xl bg-gray-100 shadow mx-auto mb-8">
-          <div className="w-[45%] shadow bg-white p-4 rounded-md">
+        <div className="p-5 md:p-12 flex flex-wrap items-center justify-between border rounded-2xl bg-gray-100 shadow mx-auto mb-8">
+          <div className="w-full sm:w-[45%] shadow bg-white p-4 rounded-md">
             <p className="text-gray-500 text-lg font-semibold mb-4">
               Team Size:{" "}
             </p>
             <span className="text-gray-400 font-semibold">1-4</span>
           </div>
-          <div className="w-[45%] shadow bg-white p-4 rounded-md">
+          <div className="w-full mt-4 sm:mt-0 sm:w-[45%] shadow bg-white p-4 rounded-md">
             <p className="text-gray-500 text-lg font-semibold mb-4">
               Registration Fee:{" "}
             </p>
             <span className="text-gray-400 font-semibold">Nada.</span>
           </div>
         </div>
-        <div className="bg-gray-100 rounded-2xl shadow p-12">
+        <div className="bg-gray-100 rounded-2xl shadow p-5 md:p-12">
           <h2 className="text-gray-500 font-semibold text-xl mb-2">Rewards:</h2>
           <div className="rounded-2xl bg-white shadow p-4 mb-12">
             Event descriptions are an important element of event planning and

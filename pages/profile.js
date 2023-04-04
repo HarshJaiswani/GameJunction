@@ -45,16 +45,16 @@ const data = Array(5).fill({
 
 const Profile = () => {
   return (
-    <div className="p-12 bg-gray-50">
-      <div className="flex items-center">
+    <div className="p-5 sm:p-12 bg-gray-50">
+      <div className="flex items-center flex-col md:flex-row">
         <div className="w-36 h-36 rounded-full shadow bg-gray-200"></div>
-        <div className="mx-8">
-          <div className="flex items-center">
-            <h2 className="text-2xl font-semibold text-blue-400">
+        <div className="mx-0 md:mx-8 mt-4 md:mt-0">
+          <div className="flex items-center sm:flex-row flex-col">
+            <h2 className="text-2xl font-semibold text-blue-400 mr-4">
               Harsh Jaiswani
             </h2>
-            <div className="flex items-center justify-start">
-              <div className="px-4 py-1 text-sm rounded-lg bg-yellow-200 mx-4">
+            <div className="flex items-center justify-start my-4 sm:my-0">
+              <div className="px-4 py-1 text-sm rounded-lg bg-yellow-200 mr-4">
                 Oragniser
               </div>
               <div className="px-4 py-1 text-sm rounded-lg bg-yellow-200">
@@ -63,57 +63,59 @@ const Profile = () => {
             </div>
           </div>
           {/* to show email only when user is viewing his or her profile not in general profile */}
-          <p className="text-gray-400">dummyemail@emial.com</p>
-          <div className="my-4 flex items-center justify-start">
-            <div className="px-6 py-2 rounded-full bg-gray-100 font-semibold font-sans text-green-400 mr-4">
+          <p className="text-gray-400 w-fit mx-auto sm:mx-0">
+            dummyemail@emial.com
+          </p>
+          <div className="my-4 flex items-center justify-start flex-wrap">
+            <div className="px-6 py-2 rounded-full bg-gray-100 font-semibold font-sans text-green-400 mr-4 mb-4">
               Cricket
             </div>
-            <div className="px-6 py-2 rounded-full bg-gray-100 font-semibold font-sans text-green-400 mr-4">
+            <div className="px-6 py-2 rounded-full bg-gray-100 font-semibold font-sans text-green-400 mr-4 mb-4">
               PubG
             </div>
           </div>
         </div>
       </div>
-      <div className="my-8">
+      <div className="mb-4 sm:my-8">
         <h2 className="flex items-center justify-between">
-          <span className="text-3xl text-gray-600 font-semibold my-4">
+          <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl inline-block whitespace-nowrap mr-4 text-gray-600 font-semibold my-4">
             Overall Rank
           </span>
-          <div className="w-[85%] h-0.5 bg-gray-200"></div>
+          <div className="w-[80%] h-0.5 bg-gray-200"></div>
         </h2>
         <RankCard type="oragniser" user={dataUser[0]} theme="light" />
       </div>
       {/* <RankCard type="participant" user={dataUser[0]} theme="light" /> */}
       <h2 className="flex items-center justify-between">
-        <span className="text-3xl text-gray-600 font-semibold my-4">
+        <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl inline-block whitespace-nowrap mr-4 text-gray-600 font-semibold my-4">
           Current Participations
         </span>
         <div className="w-[70%] h-0.5 bg-gray-200"></div>
       </h2>
-      <ul className="w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
+      <ul className="w-full sm:w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
         {data.map((post) => (
           <EventCard key={post.id} post={post} />
         ))}
       </ul>
       <h2 className="flex items-center justify-between" id="pastevents">
-        <span className="text-3xl text-gray-600 font-semibold my-4">
+        <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl inline-block whitespace-nowrap mr-4 text-gray-600 font-semibold my-4">
           Past Participations
         </span>
         <div className="w-[70%] h-0.5 bg-gray-200"></div>
       </h2>
-      <ul className="w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
+      <ul className="w-full sm:w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
         {data.map((post) => (
           <EventCard key={post.id} post={post} />
         ))}
       </ul>
       <h2 className="flex items-center justify-between" id="wishevents">
-        <span className="text-3xl text-gray-600 font-semibold my-4">
+        <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl inline-block whitespace-nowrap text-gray-600 font-semibold my-4">
           <AiFillHeart className="inline text-[red] mb-2 mr-2" />
           WishList
         </span>
         <div className="w-[80%] h-0.5 bg-gray-200"></div>
       </h2>
-      <ul className="w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
+      <ul className="w-full sm:w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
         {data.map((post) => (
           <EventCard key={post.id} post={post} />
         ))}

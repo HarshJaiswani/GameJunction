@@ -48,7 +48,7 @@ const SignupForm = () => {
   };
 
   return (
-    <form className="w-1/2">
+    <form className="w-full lg:w-1/2">
       <input type="text" placeholder="Name" className={inputStyle} />
       <input type="email" placeholder="Email" className={inputStyle} />
       <div className={`${inputStyle} flex items-center`}>
@@ -63,15 +63,17 @@ const SignupForm = () => {
           className="px-4 outline-none w-full"
         />
       </div>
-      <div className={`${inputStyle} flex items-center justify-between`}>
+      <div
+        className={`${inputStyle} flex items-center justify-between flex-wrap`}
+      >
         <h2 className="text-gray-400">Enter your date of birth</h2>
-        <input type="date" className="outline-none text-cyan-500" />
+        <input type="date" className="outline-none text-cyan-500 my-2" />
       </div>
-      <div className={`mt-4 flex items-center ${inputStyle}`}>
-        <span className="mb-4 w-1/3 inline-block text-gray-400">
+      <div className={`mt-4 sm:flex items-center ${inputStyle}`}>
+        <span className="mb-4 w-full sm:w-1/3 inline-block text-gray-400">
           Want to be a :{" "}
         </span>
-        <div className="w-2/3 mx-8">
+        <div className="w-2/3 sm:mx-8">
           <RadioGroup value={selected} onChange={setSelected}>
             <div className="space-y-2">
               {stakeholder.map((stake) => (
@@ -176,7 +178,7 @@ const SignupForm = () => {
           </Link>
         </div>
       </div>
-      <button className="my-4 px-4 py-2 w-[300px] block ml-auto hover:bg-yellow-200 rounded-2xl bg-white shadow-md text-gray-500 font-sans font-semibold">
+      <button className="my-4 px-4 py-2 w-1/2 md:w-1/3 block ml-auto hover:bg-yellow-200 rounded-2xl bg-white shadow-md text-gray-500 font-sans font-semibold">
         Sign Up
       </button>
     </form>

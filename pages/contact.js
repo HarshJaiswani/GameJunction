@@ -22,12 +22,11 @@ const FAQs = [
 const Contact = () => {
   return (
     <div className="bg-gray-50 w-full min-h-screen">
-      <div className="w-4/5 mx-auto">
+      <div className="w-[90%] sm:w-4/5 mx-auto">
         <h2 className="flex items-center justify-between">
-          <span className="text-3xl text-gray-600 font-semibold my-4">
+          <span className="w-full sm:text-left text-center text-2xl md:text-3xl mr-4 text-gray-600 font-semibold my-4">
             Contact Us
           </span>
-          <div className="w-[80%] h-0.5 bg-gray-200"></div>
         </h2>
         <div className="my-4 text-lg space-y-2 text-gray-500 mx-2">
           <p>
@@ -58,7 +57,7 @@ const Contact = () => {
           </span>
           <div className="w-[88%] h-0.5 bg-gray-200"></div>
         </h2>
-        <div className="my-4 w-full min-h-[50vh]">
+        <div className="py-4 w-full min-h-[50vh]">
           {FAQs.map((faq, index) => (
             <Disclosure key={index}>
               {({ open }) => (
@@ -71,7 +70,7 @@ const Contact = () => {
                       } h-5 w-5 text-green-400`}
                     />
                   </Disclosure.Button>
-                  <Disclosure.Panel className="px-4 pt-4 pb-2 text-sm text-gray-500">
+                  <Disclosure.Panel className="px-4 pb-4 text-sm text-gray-500">
                     {faq.data}
                   </Disclosure.Panel>
                 </>

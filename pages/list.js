@@ -32,12 +32,16 @@ const List = () => {
     registrationFee: null,
     isActive: true,
     eligibility: "if any eligibility will be show here",
+    isClosed: "",
+    isDeleted: "",
+    winner: "",
+    isFeatured: "",
   });
   return (
     <div>
       <div className="w-full mx-auto">
         <Tab.Group>
-          <Tab.List className="flex w-1/3 mx-auto space-x-1 rounded-xl px-2 bg-[#3770ff]/10 p-1">
+          <Tab.List className="flex w-[80%] sm:w-[60%] md:w-1/2 lg:w-1/3 mx-auto space-x-1 rounded-xl px-2 bg-[#3770ff]/10 p-1">
             {types.map((type, index) => (
               <Tab
                 key={index}
@@ -59,12 +63,12 @@ const List = () => {
               <Tab.Panel
                 key={idx}
                 className={classNames(
-                  "rounded-xl p-3 bg-gray-50 w-full min-h-[75vh]"
+                  "rounded-xl p-5 bg-gray-50 w-full min-h-[75vh]"
                 )}
               >
-                <div className="w-4/5 mx-auto">
-                  <div className="flex items-center justify-evenly">
-                    <div className="w-[45%] h-[350px] my-8 cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
+                <div className="w-full lg:w-4/5 mx-auto">
+                  <div className="md:flex items-center justify-evenly">
+                    <div className="w-full md:w-[45%] h-[350px] my-8 cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
                       <CiImageOn className="text-5xl text-green-400" />
                       <span className="text-gray-500 my-2">
                         Event&apos;s Poster
@@ -72,9 +76,43 @@ const List = () => {
                     </div>
                     <EventCard post={data[0]} />
                   </div>
-                  <h2 className="mx-8 my-12 flex items-center justify-between">
-                    <span className="text-3xl text-gray-600 font-semibold my-4">
+                  <h2 className="md:mx-8 mt-8 md:my-12 flex items-center justify-between">
+                    <span className="text-3xl mr-4 text-gray-600 font-semibold my-4">
                       Open
+                    </span>
+                    <div className="w-[85%] md:w-[90%] h-0.5 bg-gray-200"></div>
+                  </h2>
+                  <ul className="flex items-center justify-evenly flex-wrap">
+                    {data.map(
+                      (post) =>
+                        post.type.toLowerCase() == type.toLowerCase() && (
+                          <EventCard key={post.id} post={post} />
+                        )
+                    )}
+                  </ul>
+                  <button className="rounded-full px-12 ml-auto block py-2 shadow bg-white text-green-400 font-semibold">
+                    Show More
+                  </button>
+                  <h2 className="md:mx-8 mt-8 md:my-12 flex items-center justify-between">
+                    <span className="mr-4 text-3xl text-gray-600 font-semibold my-4">
+                      Upcoming
+                    </span>
+                    <div className="w-[80%] h-0.5 bg-gray-200"></div>
+                  </h2>
+                  <ul className="flex items-center justify-evenly flex-wrap">
+                    {data.map(
+                      (post) =>
+                        post.type.toLowerCase() == type.toLowerCase() && (
+                          <EventCard key={post.id} post={post} />
+                        )
+                    )}
+                  </ul>
+                  <button className="rounded-full px-12 ml-auto block py-2 shadow bg-white text-green-400 font-semibold">
+                    Show More
+                  </button>
+                  <h2 className="md:mx-8 mt-8 md:my-12 flex items-center justify-between">
+                    <span className="mr-4 text-3xl text-gray-600 font-semibold my-4">
+                      Past
                     </span>
                     <div className="w-[90%] h-0.5 bg-gray-200"></div>
                   </h2>
@@ -89,34 +127,6 @@ const List = () => {
                   <button className="rounded-full px-12 ml-auto block py-2 shadow bg-white text-green-400 font-semibold">
                     Show More
                   </button>
-                  <h2 className="mx-8 my-12 flex items-center justify-between">
-                    <span className="text-3xl text-gray-600 font-semibold my-4">
-                      Upcoming
-                    </span>
-                    <div className="w-[80%] h-0.5 bg-gray-200"></div>
-                  </h2>
-                  <ul className="flex items-center justify-evenly flex-wrap">
-                    {data.map(
-                      (post) =>
-                        post.type.toLowerCase() == type.toLowerCase() && (
-                          <EventCard key={post.id} post={post} />
-                        )
-                    )}
-                  </ul>
-                  <h2 className="mx-8 my-12 flex items-center justify-between">
-                    <span className="text-3xl text-gray-600 font-semibold my-4">
-                      Past
-                    </span>
-                    <div className="w-[90%] h-0.5 bg-gray-200"></div>
-                  </h2>
-                  <ul className="flex items-center justify-evenly flex-wrap">
-                    {data.map(
-                      (post) =>
-                        post.type.toLowerCase() == type.toLowerCase() && (
-                          <EventCard key={post.id} post={post} />
-                        )
-                    )}
-                  </ul>
                 </div>
               </Tab.Panel>
             ))}

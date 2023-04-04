@@ -32,7 +32,7 @@ const Leaderboard = () => {
     <div>
       <div className="w-full mx-auto">
         <Tab.Group>
-          <Tab.List className="flex w-1/3 mx-auto space-x-1 rounded-xl px-2 bg-[#3770ff]/10 p-1">
+          <Tab.List className="flex w-[80%] sm:w-[60%] md:w-1/2 lg:w-1/3 mx-auto space-x-1 rounded-xl px-2 bg-[#3770ff]/10 p-1">
             {types.map((type, index) => (
               <Tab
                 key={index}
@@ -60,18 +60,18 @@ const Leaderboard = () => {
                 <div>
                   {type.toLowerCase() == "participant" &&
                     data[0].participant_rank && (
-                      <div className="w-[80%] mx-auto">
+                      <div className="w-full sm:w-[80%] mx-auto">
                         <RankCard type={type} user={data[0]} theme="dark" />
                       </div>
                     )}
                   {type.toLowerCase() == "organiser" &&
                     data[0].organiser_rank && (
-                      <div className="w-[80%] mx-auto">
+                      <div className="w-full sm:w-[80%] mx-auto">
                         <RankCard type={type} user={data[0]} theme="dark" />
                       </div>
                     )}
                 </div>
-                <ul className="w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
+                <ul className="w-full sm:w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
                   {data.map(
                     (user) =>
                       user.stake.includes(type.toLowerCase()) && (

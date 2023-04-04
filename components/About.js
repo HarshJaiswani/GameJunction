@@ -44,23 +44,23 @@ const About = () => {
     },
   ];
   return (
-    <div className="w-full p-12">
-      <h2 className="text-3xl text-gray-600 my-4 font-semibold text-center flex items-center justify-center">
+    <div className="w-full p-5 sm:p-12">
+      <h2 className="text-xl sm:text-2xl md:text-3xl text-gray-600 my-4 font-semibold text-center flex flex-wrap items-center justify-center">
         Humari Kahani{" "}
         <div className="relative w-fit mx-8">
-          <div className="w-[200px] h-[15px] bg-[yellow] absolute z-[-1] bottom-0 left-[-25px] rounded"></div>
+          <div className="w-[130px] sm:w-[150px] md:w-[200px] h-[10px] md:h-[15px] bg-[yellow] absolute z-[-1] bottom-0 md:left-[-25px] left-[-15px] rounded"></div>
           (Our Story)
         </div>
       </h2>
       <div className="my-8">
-        <h3 className="text-2xl font-sans font-semibold mb-8">
+        <h3 className="text-xl sm:text-2xl text-center sm:text-left font-sans font-semibold mb-8">
           Note from <span className="text-teal-400">Creators</span>!
         </h3>
-        <div className="flex items-center my-4 w-full justify-evenly">
+        <div className="flex items-center flex-wrap my-4 w-full justify-evenly">
           {data.map((item, index) => (
             <div
               key={index}
-              className="p-4 flex items-start justify-between flex-col w-[250px] rounded-xl bg-gray-50 shadow -rotate-2 hover:rotate-0 min-h-[300px]"
+              className="p-4 m-4 flex items-start justify-between flex-col w-[250px] rounded-xl bg-gray-50 shadow -rotate-2 hover:rotate-0 min-h-[300px]"
             >
               <div className="flex items-center">
                 <div className="w-16 h-16 mr-4 rounded-full shadow bg-gray-200"></div>
@@ -92,8 +92,8 @@ const About = () => {
           ))}
         </div>
       </div>
-      <div className="my-24 flex items-center">
-        <div className="w-1/2 text-gray-500">
+      <div className="my-12 sm:my-24 flex items-center lg:flex-row flex-col-reverse">
+        <div className="w-full lg:w-1/2 sm:pr-8 text-gray-500">
           <h2 className="text-2xl font-semibold text-red-400 my-2">
             Our History
           </h2>
@@ -117,8 +117,8 @@ const About = () => {
             culture in India be it online gamming or the physcial sports
           </p>
         </div>
-        <div className="w-1/2 flex items-center justify-center">
-          <div className="w-[500px] h-[500px] bg-gray-50 shadow rounded-xl"></div>
+        <div className="w-full lg:w-1/2 flex items-center justify-center">
+          <div className="w-full h-[300px] sm:h-[500px] mb-8 lg:mb-auto bg-gray-50 shadow rounded-xl"></div>
         </div>
       </div>
     </div>

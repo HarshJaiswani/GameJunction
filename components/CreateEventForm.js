@@ -134,8 +134,8 @@ const CreateEventForm = () => {
   }, [categorySelect]);
 
   return (
-    <form className="w-2/3 mx-auto">
-      <div className="w-[300px] h-[300px] mx-auto my-8 cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
+    <form className="w-[90%] md:w-[75%] lg:w-2/3 mx-auto">
+      <div className="w-full h-[300px] mx-auto my-8 cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
         <CiImageOn className="text-5xl text-green-400" />
         <span className="text-gray-500 my-2">
           Upload Event Poster (300 x 300)
@@ -146,10 +146,10 @@ const CreateEventForm = () => {
         placeholder="Give your event a catchy title"
         className={inputStyle}
       />
-      <textarea
-        name="shortDescp"
-        id="shortDescp"
-        placeholder="Add a short & crisp description for the event"
+      <input
+        name="theme"
+        id="theme"
+        placeholder="Any Specific theme for the event ?"
         className={`${inputStyle} resize-none`}
       />
       <textarea
@@ -158,12 +158,14 @@ const CreateEventForm = () => {
         placeholder="Describe all the details of the event in detail"
         className={`${inputStyle} resize-none min-h-[200px]`}
       />
-      <div className={`${inputStyle} flex items-center justify-between`}>
+      <div
+        className={`${inputStyle} flex items-center justify-between flex-wrap`}
+      >
         <h2 className="my-4 font-sans text-gray-500">
           Select the category of the event :
         </h2>
         <RadioGroup value={categorySelect} onChange={setCategorySelect}>
-          <div className="flex items-center">
+          <div className="flex items-center justify-center flex-wrap">
             {category.map((cat) => (
               <RadioGroup.Option
                 key={cat.name}
@@ -177,7 +179,7 @@ const CreateEventForm = () => {
                   ${
                     checked ? "bg-sky-900 bg-opacity-75 text-white" : "bg-white"
                   }
-                    relative flex cursor-pointer rounded-full mx-4 px-12 py-2 shadow-md focus:outline-none`
+                    relative flex cursor-pointer rounded-full my-2 mx-4 px-12 py-2 shadow-md focus:outline-none`
                 }
               >
                 {({ active, checked }) => (
@@ -228,7 +230,7 @@ const CreateEventForm = () => {
               leaveTo="opacity-0"
               afterLeave={() => setQuery("")}
             >
-              <Combobox.Options className="absolute min-w-[50%] w-fit z-[5] mt-1 max-h-60 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              <Combobox.Options className="absolute w-[300px] z-[5] mt-1 max-h-60 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                 {filteredGames.length === 0 && query !== "" ? (
                   <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                     Nothing found.
@@ -283,12 +285,14 @@ const CreateEventForm = () => {
           </div>
         </Combobox>
       </div>
-      <div className={`${inputStyle} flex items-center justify-between`}>
+      <div
+        className={`${inputStyle} flex items-center justify-between flex-wrap`}
+      >
         <h2 className="my-4 font-sans text-gray-500">
           Select the mode of the event :
         </h2>
         <RadioGroup value={modeSelect} onChange={setModeSelect}>
-          <div className="flex items-center">
+          <div className="flex items-center justify-center flex-wrap">
             {modes.map((mode) => (
               <RadioGroup.Option
                 key={mode.name}
@@ -302,7 +306,7 @@ const CreateEventForm = () => {
                   ${
                     checked ? "bg-sky-900 bg-opacity-75 text-white" : "bg-white"
                   }
-                    relative flex cursor-pointer rounded-full mx-4 px-12 py-2 shadow-md focus:outline-none`
+                    relative flex cursor-pointer rounded-full mx-4 my-2 px-12 py-2 shadow-md focus:outline-none`
                 }
               >
                 {({ active, checked }) => (
@@ -353,12 +357,14 @@ const CreateEventForm = () => {
           </>
         )}
       </div>
-      <div className={`${inputStyle} flex items-center justify-between`}>
+      <div
+        className={`${inputStyle} flex items-center justify-between flex-wrap`}
+      >
         <h2 className="my-4 font-sans text-gray-500">
           Participation will be of :
         </h2>
         <RadioGroup value={isTeamSelect} onChange={setIsTeamSelect}>
-          <div className="flex items-center">
+          <div className="flex items-center justify-center flex-wrap">
             {isTeam.map((cat) => (
               <RadioGroup.Option
                 key={cat.name}
@@ -372,7 +378,7 @@ const CreateEventForm = () => {
                   ${
                     checked ? "bg-sky-900 bg-opacity-75 text-white" : "bg-white"
                   }
-                    relative flex cursor-pointer rounded-full mx-4 px-12 py-2 shadow-md focus:outline-none`
+                    relative flex cursor-pointer rounded-full mx-4 my-2 px-12 py-2 shadow-md focus:outline-none`
                 }
               >
                 {({ active, checked }) => (
@@ -400,30 +406,36 @@ const CreateEventForm = () => {
       </div>
       {isTeamSelect.value == "team" && (
         <div className={`${inputStyle} mt-1`}>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap">
             <h2>Size of the team :</h2>
-            <input
-              type="number"
-              min={1}
-              placeholder="Minimum"
-              className={`${inputStyle} w-[300px] mt-0 shadow-none border`}
-            />
-            <input
-              type="number"
-              min={1}
-              placeholder="Maximum"
-              className={`${inputStyle} w-[300px] mt-0 shadow-none border`}
-            />
+            <div className="flex items-center flex-wrap justify-center my-2">
+              <input
+                type="number"
+                min={1}
+                placeholder="Minimum"
+                className={`${inputStyle} w-fit mx-2 mt-0 my-2 py-1 border shadow-none`}
+              />
+              <input
+                type="number"
+                min={1}
+                placeholder="Maximum"
+                className={`${inputStyle} w-fit mx-2 mt-0 my-2 py-1 border shadow-none`}
+              />
+            </div>
           </div>
         </div>
       )}
-      <div className={`${inputStyle} flex items-center justify-between`}>
+      <div
+        className={`${inputStyle} flex items-center justify-between flex-wrap`}
+      >
         <h2 className="text-gray-500">Select the date of the event: </h2>
-        <input type="date" className="outline-none text-cyan-400" />
+        <input type="date" className="outline-none text-cyan-400 my-2" />
       </div>
-      <div className={`${inputStyle} flex items-center justify-between`}>
+      <div
+        className={`${inputStyle} flex items-center justify-between flex-wrap`}
+      >
         <h2 className="text-gray-500">Select the timing of the event: </h2>
-        <input type="time" className="outline-none text-cyan-400" />
+        <input type="time" className="outline-none text-cyan-400 my-2" />
       </div>
       <textarea
         name="rewards"
@@ -448,13 +460,17 @@ const CreateEventForm = () => {
           placeholder="Registration Fee (if any)"
         />
       </div>
-      <div className={`${inputStyle} flex items-center justify-between`}>
+      <div
+        className={`${inputStyle} flex items-center justify-between flex-wrap`}
+      >
         <h2 className="text-gray-500">Last date of registration: </h2>
-        <input type="date" className="outline-none text-cyan-400" />
+        <input type="date" className="outline-none text-cyan-400 my-2" />
       </div>
-      <div className={`${inputStyle} flex items-center justify-between`}>
+      <div
+        className={`${inputStyle} flex items-center justify-between flex-wrap`}
+      >
         <h2 className="text-gray-500">Registration closes at: </h2>
-        <input type="time" className="outline-none text-cyan-400" />
+        <input type="time" className="outline-none text-cyan-400 my-2" />
       </div>
       <div
         className={`${inputStyle} flex flex-col items-start justify-between`}
@@ -563,7 +579,7 @@ const CreateEventForm = () => {
           />
         </div>
       </div>
-      <button className="my-4 px-4 py-2 w-[300px] block ml-auto hover:bg-yellow-200 rounded-2xl bg-white shadow-md text-gray-500 font-sans font-semibold">
+      <button className="my-4 px-4 py-2 w-1/2 lg:w-1/3 block ml-auto hover:bg-yellow-200 rounded-2xl bg-white shadow-md text-gray-500 font-sans font-semibold">
         Create Event
       </button>
     </form>
