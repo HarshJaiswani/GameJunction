@@ -34,7 +34,7 @@ const AppAdmin = () => {
   return (
     <>
       <Navbar />
-      <div className="bg-gray-50 w-full min-h-screen p-8 sm:p-12">
+      <div className="bg-gray-50 w-full min-h-screen p-4 sm:p-12">
         {/* <div className="w-1/2">
           <PieChart />
         </div> */}
