@@ -12,35 +12,43 @@ const About = () => {
   const data = [
     {
       name: "Akshat Soni",
-      quote: "Quote from the person will be displayed here",
-      instagram: "",
-      linkedin: "",
-      portfolio: "",
-      github: "",
+      img: "/team/akshat.jpg",
+      quote:
+        "It's not the will to win that matters.It's the will to prepare to win that matters.",
+      instagram: "https://www.instagram.com/akshat_210/",
+      linkedin: "https://www.linkedin.com/in/akshat-soni-b49b27240",
+      portfolio: "mailto:sakshat551@gmail.com",
+      github: "https://github.com/AkshatSoni1",
     },
     {
       name: "Deepak Singh",
-      quote: "Quote from the person will be displayed here",
-      instagram: "",
-      linkedin: "",
-      portfolio: "",
-      github: "",
+      img: "/team/deepak.jpg",
+      quote:
+        "Winning is enjoyable only when people are eagerly anticipating your defeat.",
+      instagram: "https://www.instagram.com/___deepak___0503/",
+      linkedin: "https://www.linkedin.com/in/deepak-singh-9a0211211/",
+      portfolio: "mailto:deepaksingh052003@gmail.com",
+      github: "https://github.com/deepaksingh0503/",
     },
     {
       name: "Harsh Jaiswani",
-      quote: "Quote from the person will be displayed here",
+      img: "/team/harsh.jpg",
+      quote:
+        "We don't stop playing because we grow old, we grow old because we stop playing.",
       instagram: "",
-      linkedin: "",
-      portfolio: "",
-      github: "",
+      linkedin: "https://www.linkedin.com/in/harsh-jaiswani-26108823b/",
+      portfolio: "mailto:harshjaiswani2003@gmail.com",
+      github: "https://github.com/HarshJaiswani",
     },
     {
       name: "B. Lohit Kumar",
-      quote: "Quote from the person will be displayed here",
-      instagram: "",
-      linkedin: "",
-      portfolio: "",
-      github: "",
+      img: "/team/lohit.jpg",
+      quote:
+        "When life gives you a second chance then make complete use of it.",
+      instagram: "https://www.instagram.com/who.lohitt/",
+      linkedin: "https://www.linkedin.com/in/lohit-kumar-1851ba271/",
+      portfolio: "mailto:lohitrock290503@gmail.com",
+      github: "https://github.com/Lohitkumarr",
     },
   ];
   return (
@@ -57,34 +65,36 @@ const About = () => {
           Note from <span className="text-teal-400">Creators</span>!
         </h3>
         <div className="flex items-center flex-wrap my-4 w-full justify-evenly">
-          {data.map((item, index) => (
+          {data.map((member, index) => (
             <div
               key={index}
               className="p-4 m-4 flex items-start justify-between flex-col w-[250px] rounded-xl bg-gray-50 shadow -rotate-2 hover:rotate-0 min-h-[300px]"
             >
               <div className="flex items-center">
-                <div className="w-16 h-16 mr-4 rounded-full shadow bg-gray-200"></div>
+                <div className="w-16 h-16 mr-4 rounded-full shadow bg-gray-200 overflow-hidden flex items-center justify-center">
+                  <img src={member.img} alt="" />
+                </div>
                 <h6 className="font-semibold font-sans text-slate-500 tracking-wider">
-                  {item.name}
+                  {member.name}
                 </h6>
               </div>
-              <div className="my-8">
+              <div className="my-4">
                 <FaQuoteLeft className="text-gray-300" />
-                <p className="my-2 text-teal-500 ml-4 font-mono">
-                  {item.quote}
+                <p className="mt-2 text-teal-500 ml-4 font-mono">
+                  {member.quote}
                 </p>
               </div>
               <div className="w-full text-slate-400 text-xl flex items-center justify-evenly border-t py-4">
-                <Link href={item.linkedin}>
+                <Link href={member.linkedin} target="_blank">
                   <SlSocialLinkedin className="hover:text-yellow-300" />
                 </Link>
-                <Link href={item.instagram}>
+                <Link href={member.instagram} target="_blank">
                   <TfiInstagram className="hover:text-yellow-300" />
                 </Link>
-                <Link href={item.github}>
+                <Link href={member.github} target="_blank">
                   <VscGithubAlt className="hover:text-yellow-300" />
                 </Link>
-                <Link href={item.portfolio}>
+                <Link href={member.portfolio} target="_blank">
                   <IoMdLink className="text-2xl hover:text-yellow-300" />
                 </Link>
               </div>

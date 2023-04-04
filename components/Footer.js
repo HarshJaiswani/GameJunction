@@ -7,8 +7,8 @@ import Logo from "./Logo";
 import { FaTelegramPlane } from "react-icons/fa";
 import { ImTwitter } from "react-icons/im";
 import { TfiLinkedin } from "react-icons/tfi";
-import { IoLogoDiscord } from "react-icons/io5";
-import { SiGithub } from "react-icons/si";
+// import { IoLogoDiscord } from "react-icons/io5";
+import { SiGithub, SiInstagram } from "react-icons/si";
 
 const Footer = () => {
   const iconStyle = "text-gray-400 hover:text-white mx-4 text-2xl sm:text-3xl";
@@ -29,20 +29,32 @@ const Footer = () => {
         </div>
         <div className="w-full md:w-1/2 mt-8 md:mt-0 flex items-center justify-center">
           <div className="flex items-center">
-            <Link href="/">
+            <Link href="https://t.me/GameJunction_official" target="_blank">
               <FaTelegramPlane className={iconStyle} />
             </Link>
-            <Link href="/">
+            <Link href="https://twitter.com/Game_junction_" target="_blank">
               <ImTwitter className={iconStyle} />
             </Link>
-            <Link href="/">
+            <Link
+              href="https://www.linkedin.com/in/game-junction-36006b271/"
+              target="_blank"
+            >
               <TfiLinkedin className={iconStyle} />
             </Link>
-            <Link href="/">
+            {/* <Link href="/" target="_blank">
               <IoLogoDiscord className={iconStyle} />
-            </Link>
-            <Link href="/">
+            </Link> */}
+            <Link
+              href="https://github.com/HarshJaiswani/GameJunction"
+              target="_blank"
+            >
               <SiGithub className={iconStyle} />
+            </Link>
+            <Link
+              href="https://www.instagram.com/gamejunction_official/"
+              target="_blank"
+            >
+              <SiInstagram className={iconStyle} />
             </Link>
           </div>
         </div>
