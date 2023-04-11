@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 // Next Components
 import Link from "next/link";
 // Headless Ui
 import { RadioGroup } from "@headlessui/react";
 // Icons
 import CheckIcon from "./Icons/CheckIcon";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { CiImageOn } from "react-icons/ci";
 
 const stakeholder = [
   {
@@ -15,6 +17,17 @@ const stakeholder = [
   },
   {
     name: "Both",
+  },
+];
+const gender = [
+  {
+    name: "Male",
+  },
+  {
+    name: "Female",
+  },
+  {
+    name: "Other",
   },
 ];
 
@@ -31,6 +44,9 @@ const gameList = [
 
 const SignupForm = () => {
   const [selected, setSelected] = useState(stakeholder[0]);
+  const [genderSelection, setGenderSelection] = useState(gender[0]);
+  const [profileImg, setProfileImg] = useState();
+  const [showPass, setShowPass] = useState(true);
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
   const [games, setGames] = useState(gameList);
@@ -39,6 +55,7 @@ const SignupForm = () => {
     games[id - 1].checked = !games[id - 1].checked;
     setGames(games);
   };
+  const profileRef = useRef();
   const handleSelection = (id) => {
     if (gamesSelected.includes(id)) {
       setGamesSelected((prevState) => prevState.filter((e) => e != id));
@@ -46,11 +63,60 @@ const SignupForm = () => {
       setGamesSelected((prevState) => [...prevState, id]);
     }
   };
+  const addProfile = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      let img = URL.createObjectURL(e.target.files[0]);
+      setProfileImg(img);
+    }
+  };
 
   return (
     <form className="w-full lg:w-1/2">
+      <div
+        onClick={() => profileRef.current.click()}
+        className="w-[300px] h-[300px] mx-auto my-8 cursor-pointer flex flex-col items-center justify-center rounded-full bg-gray-100 shadow"
+      >
+        {!profileImg ? (
+          <>
+            {" "}
+            <CiImageOn className="text-5xl text-green-400" />
+            <span className="text-gray-500 my-2">
+              Upload Your Profile (300 x 300)
+            </span>
+          </>
+        ) : (
+          <img src={profileImg} />
+        )}
+        <input
+          type="file"
+          ref={profileRef}
+          onChange={addProfile}
+          className="hidden"
+        />
+      </div>
       <input type="text" placeholder="Name" className={inputStyle} />
       <input type="email" placeholder="Email" className={inputStyle} />
+      <div className="relative">
+        <input
+          type={showPass ? "text" : "password"}
+          placeholder="Password"
+          className={inputStyle}
+        />
+        <div className="absolute top-8 right-3">
+          {showPass && (
+            <AiOutlineEye
+              className="text-lg text-gray-300 cursor-pointer"
+              onClick={() => setShowPass(!showPass)}
+            />
+          )}
+          {!showPass && (
+            <AiOutlineEyeInvisible
+              className="text-lg text-gray-300 cursor-pointer"
+              onClick={() => setShowPass(!showPass)}
+            />
+          )}
+        </div>
+      </div>
       <div className={`${inputStyle} flex items-center`}>
         <div className="pr-4 border-r-2 w-fit text-gray-400 font-semibold">
           +91
@@ -77,6 +143,53 @@ const SignupForm = () => {
           <RadioGroup value={selected} onChange={setSelected}>
             <div className="space-y-2">
               {stakeholder.map((stake) => (
+                <RadioGroup.Option
+                  key={stake.name}
+                  value={stake}
+                  className={({ active, checked }) =>
+                    `
+                  ${active ? "ring-2 ring-blue-200" : ""}
+                  ${checked ? "bg-gray-500" : "bg-white"}
+                    relative flex cursor-pointer rounded-lg border p-2 focus:outline-none`
+                  }
+                >
+                  {({ active, checked }) => (
+                    <>
+                      <div className="flex w-full items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="text-sm">
+                            <RadioGroup.Label
+                              as="p"
+                              className={`font-sans font-semibold tracking-wider ${
+                                checked ? "text-white" : "text-gray-500"
+                              }`}
+                            >
+                              {stake.name}
+                            </RadioGroup.Label>
+                          </div>
+                        </div>
+                        {checked && (
+                          <div className="shrink-0 text-white">
+                            <CheckIcon className="h-6 w-6" />
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </RadioGroup.Option>
+              ))}
+            </div>
+          </RadioGroup>
+        </div>
+      </div>
+      <div className={`mt-4 sm:flex items-center ${inputStyle}`}>
+        <span className="mb-4 w-full sm:w-1/3 inline-block text-gray-400">
+          Select your gender:
+        </span>
+        <div className="w-2/3 sm:mx-8">
+          <RadioGroup value={genderSelection} onChange={setGenderSelection}>
+            <div className="space-y-2">
+              {gender.map((stake) => (
                 <RadioGroup.Option
                   key={stake.name}
                   value={stake}

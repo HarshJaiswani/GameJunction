@@ -12,9 +12,9 @@ const Navbar = () => {
   return (
     <>
       <div
-        className={`w-full fixed top-0 left-0 h-[150px] md:h-[100px] bg-white z-[100]`}
+        className={`w-full fixed top-0 left-0 sm:h-[100px] h-[80px] bg-white z-[100]`}
       >
-        <div className="py-6 sm:py-6 px-8 sm:px-12 flex items-center justify-between">
+        <div className="py-4 sm:py-6 md:py-6 px-4 sm:px-8 md:px-12 flex items-center justify-between">
           <Logo />
           <div className="flex items-center justify-between">
             <div className="hidden md:flex items-center justify-evenly">
@@ -41,7 +41,7 @@ const Navbar = () => {
             <NavDropdown />
           </div>
         </div>
-        <div className="md:hidden pb-8 flex items-center justify-end mr-8">
+        {/* <div className="md:hidden pb-8 flex items-center justify-end mr-8">
           <Link href="/list">
             <button className="tracking-wider text-sm sm:text-base hover:bg-yellow-200 shadow-sm bg-gray-100 mx-2 sm:mx-4 px-4 py-2 rounded-2xl">
               Explore Events
@@ -61,9 +61,9 @@ const Navbar = () => {
               </button>
             </Link>
           )}
-        </div>
+        </div> */}
       </div>
-      <div className="w-full h-[150px] md:h-[100px]"></div>
+      <div className="w-full h-[80px] sm:h-[100px]"></div>
     </>
   );
 };

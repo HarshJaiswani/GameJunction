@@ -435,7 +435,11 @@ const CreateEventForm = () => {
         className={`${inputStyle} flex items-center justify-between flex-wrap`}
       >
         <h2 className="text-gray-500">Select the timing of the event: </h2>
-        <input type="time" className="outline-none text-cyan-400 my-2" />
+        <input
+          type="time"
+          onChange={(e) => console.log(e.target.value)}
+          className="outline-none text-cyan-400 my-2"
+        />
       </div>
       <textarea
         name="rewards"

@@ -128,7 +128,9 @@ const About = () => {
           </p>
         </div>
         <div className="w-full lg:w-1/2 flex items-center justify-center">
-          <div className="w-full h-[300px] sm:h-[500px] mb-8 lg:mb-auto bg-gray-50 shadow rounded-xl"></div>
+          <div className="w-full h-[200px] sm:h-[300px] mb-8 lg:mb-auto bg-gray-50 shadow rounded-xl overflow-hidden">
+            <img src="/team/team2.jpg" className="w-full h-full" alt="" />
+          </div>
         </div>
       </div>
     </div>

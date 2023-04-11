@@ -1,68 +1,31 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 // Next components
 import Link from "next/link";
 // Headless Ui
 import { Menu, Transition } from "@headlessui/react";
 // Icons
 import { HiOutlineBars3BottomLeft } from "react-icons/hi2";
-import { HiStar, HiLogout } from "react-icons/hi";
+import { HiStar, HiLogout, HiLogin } from "react-icons/hi";
 import { CgProfile } from "react-icons/cg";
 import { BsCalendarEvent } from "react-icons/bs";
 import { IoCreateOutline } from "react-icons/io5";
 import {
   MdOutlineHelpOutline,
   MdOutlineAdminPanelSettings,
+  MdTravelExplore,
+  MdLeaderboard,
 } from "react-icons/md";
+// Context
+import { AppContext } from "../context/AppContext";
 
 const iconStyle = "text-lg mr-2";
 
-const menuItems = [
-  {
-    name: "Profile",
-    icon: <CgProfile className={iconStyle} />,
-    link: "/profile",
-    stake: "",
-  },
-  {
-    name: "Create Event",
-    icon: <IoCreateOutline className={iconStyle} />,
-    link: "/organise-event",
-    stake: "organiser",
-  },
-  {
-    name: "My Participations",
-    icon: <BsCalendarEvent className={`text-base ${iconStyle}`} />,
-    link: "/profile#pastevents",
-    stake: "participant",
-  },
-  {
-    name: "Admin Panel",
-    icon: <MdOutlineAdminPanelSettings className={iconStyle} />,
-    link: "/admin",
-    stake: "organiser",
-  },
-  {
-    name: "Wishlist",
-    icon: <HiStar className={iconStyle} />,
-    link: "/profile#wishevents",
-    stake: "participant",
-  },
-  {
-    name: "Contact team",
-    icon: <MdOutlineHelpOutline className={iconStyle} />,
-    link: "/contact",
-    stake: "",
-  },
-  {
-    name: "Logout",
-    icon: <HiLogout className={iconStyle} />,
-    link: "/",
-    stake: "",
-  },
-];
-
 const NavDropdown = () => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const { isLoggedIn } = useContext(AppContext);
+  const user = {
+    stake: ["orgaiser", "participant"],
+  };
   return (
     <div className="ml-8">
       <Menu as="div" className="relative inline-block text-left">
@@ -81,27 +44,166 @@ const NavDropdown = () => {
           leaveTo="transform opacity-0 scale-95"
         >
           <Menu.Items className="absolute z-[10] px-4 py-1 right-0 mt-2 w-56 origin-top-right divide-y divide-gray-400 rounded-md text-white bg-gray-600 shadow">
-            {menuItems.map(
-              (item, index) =>
-                item.stake != "participant" && (
-                  <div key={index} className="px-1 py-1">
-                    <Menu.Item>
-                      {({ active }) => (
-                        <Link href={item.link}>
-                          <button
-                            className={`${
-                              active ? "bg-gray-500 text-white" : "text-white"
-                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                          >
-                            {item.icon}
-                            {item.name}
-                          </button>
-                        </Link>
-                      )}
-                    </Menu.Item>
-                  </div>
-                )
-            )}
+            <div className="px-1 py-1 md:hidden">
+              <Menu.Item>
+                {({ active }) => (
+                  <Link href="/list">
+                    <button
+                      className={`${
+                        active ? "bg-gray-500 text-white" : "text-white"
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    >
+                      <MdTravelExplore className={iconStyle} />
+                      Explore Events
+                    </button>
+                  </Link>
+                )}
+              </Menu.Item>
+            </div>
+            <div className="px-1 py-1 md:hidden">
+              <Menu.Item>
+                {({ active }) => (
+                  <Link href="/leaderboard">
+                    <button
+                      className={`${
+                        active ? "bg-gray-500 text-white" : "text-white"
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    >
+                      <MdLeaderboard className={iconStyle} />
+                      Leaderboard
+                    </button>
+                  </Link>
+                )}
+              </Menu.Item>
+            </div>
+            <div className="px-1 py-1 md:hidden">
+              <Menu.Item>
+                {({ active }) => (
+                  <Link href="/signin">
+                    <button
+                      className={`${
+                        active ? "bg-gray-500 text-white" : "text-white"
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    >
+                      <HiLogin className={iconStyle} />
+                      SignIn
+                    </button>
+                  </Link>
+                )}
+              </Menu.Item>
+            </div>
+            <div className="px-1 py-1">
+              <Menu.Item>
+                {({ active }) => (
+                  <Link href="/profile">
+                    <button
+                      className={`${
+                        active ? "bg-gray-500 text-white" : "text-white"
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    >
+                      <CgProfile className={iconStyle} />
+                      Profile
+                    </button>
+                  </Link>
+                )}
+              </Menu.Item>
+            </div>
+            <div className="px-1 py-1">
+              <Menu.Item>
+                {({ active }) => (
+                  <Link href="/organise-event">
+                    <button
+                      className={`${
+                        active ? "bg-gray-500 text-white" : "text-white"
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    >
+                      <IoCreateOutline className={iconStyle} />
+                      Create Event
+                    </button>
+                  </Link>
+                )}
+              </Menu.Item>
+            </div>
+            <div className="px-1 py-1">
+              <Menu.Item>
+                {({ active }) => (
+                  <Link href="/profile#pastevents">
+                    <button
+                      className={`${
+                        active ? "bg-gray-500 text-white" : "text-white"
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    >
+                      <BsCalendarEvent className={`text-base ${iconStyle}`} />
+                      My Participations
+                    </button>
+                  </Link>
+                )}
+              </Menu.Item>
+            </div>
+            <div className="px-1 py-1">
+              <Menu.Item>
+                {({ active }) => (
+                  <Link href="/admin">
+                    <button
+                      className={`${
+                        active ? "bg-gray-500 text-white" : "text-white"
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    >
+                      <MdOutlineAdminPanelSettings className={iconStyle} />
+                      Admin Panel
+                    </button>
+                  </Link>
+                )}
+              </Menu.Item>
+            </div>
+            <div className="px-1 py-1">
+              <Menu.Item>
+                {({ active }) => (
+                  <Link href="/profile#wishevents">
+                    <button
+                      className={`${
+                        active ? "bg-gray-500 text-white" : "text-white"
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    >
+                      <HiStar className={iconStyle} />
+                      WishList
+                    </button>
+                  </Link>
+                )}
+              </Menu.Item>
+            </div>
+            <div className="px-1 py-1">
+              <Menu.Item>
+                {({ active }) => (
+                  <Link href="/contact">
+                    <button
+                      className={`${
+                        active ? "bg-gray-500 text-white" : "text-white"
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    >
+                      <MdOutlineHelpOutline className={iconStyle} />
+                      Contact Team
+                    </button>
+                  </Link>
+                )}
+              </Menu.Item>
+            </div>
+            <div className="px-1 py-1">
+              <Menu.Item>
+                {({ active }) => (
+                  <Link href="/">
+                    <button
+                      className={`${
+                        active ? "bg-gray-500 text-white" : "text-white"
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    >
+                      <HiLogout className={iconStyle} />
+                      LogOut
+                    </button>
+                  </Link>
+                )}
+              </Menu.Item>
+            </div>
           </Menu.Items>
         </Transition>
       </Menu>

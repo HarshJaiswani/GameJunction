@@ -10,7 +10,7 @@ const fetchUser = (handler) => (req, res) => {
       .json({ error: "Please authenticate using a valid token" });
   }
   try {
-    const data = jwt.verify(token, process.env.JWT_SECRET);
+    const data = jwt.verify(token, process.env.SECRETKEY);
     req.user = data.user;
     handler(req, res);
   } catch (error) {

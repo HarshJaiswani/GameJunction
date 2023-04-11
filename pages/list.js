@@ -39,18 +39,18 @@ const List = () => {
   });
   return (
     <div>
-      <div className="w-full mx-auto">
+      <div className="w-full mx-auto bg-gray-50 pt-8">
         <Tab.Group>
-          <Tab.List className="flex w-[80%] sm:w-[60%] md:w-1/2 lg:w-1/3 mx-auto space-x-1 rounded-xl px-2 bg-[#3770ff]/10 p-1">
+          <Tab.List className="flex w-[80%] sm:w-[60%] md:w-1/2 lg:w-1/3 mx-auto space-x-1 rounded px-2 bg-[gray]/10 p-1">
             {types.map((type, index) => (
               <Tab
                 key={index}
                 className={({ selected }) =>
                   classNames(
-                    "w-full rounded-xl py-2.5 font-sans font-semibold outline-none leading-5 text-white",
+                    "w-full rounded py-2.5 font-sans font-semibold outline-none leading-5 text-gray-500",
                     selected
-                      ? "bg-[#3770ff] shadow"
-                      : "text-[#3770ff] hover:bg-[#3770ff]/20"
+                      ? "bg-white shadow"
+                      : "text-gray-500 hover:bg-[gray]/20"
                   )
                 }
               >
@@ -62,9 +62,7 @@ const List = () => {
             {types.map((type, idx) => (
               <Tab.Panel
                 key={idx}
-                className={classNames(
-                  "rounded-xl p-5 bg-gray-50 w-full min-h-[75vh]"
-                )}
+                className={classNames("rounded-xl p-5 w-full min-h-[75vh]")}
               >
                 <div className="w-full lg:w-4/5 mx-auto">
                   <div className="md:flex items-center justify-evenly">
