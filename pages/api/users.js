@@ -110,7 +110,7 @@ const handler = async (req, res) => {
                 is_email_verified: true,
               }
             );
-            let token = jwt.sign({ existingUser }, process.env.SECRETKEY);
+            let token = jwt.sign({ user: existingUser }, process.env.SECRETKEY);
             res
               .status(200)
               .json({ success: "User Created!", authToken: token });

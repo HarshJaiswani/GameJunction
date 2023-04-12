@@ -10,7 +10,7 @@ import { ImAndroid } from "react-icons/im";
 const Home = () => {
   let isWebView = false;
   useEffect(() => {
-    isWebView = /android/i.test(navigator.userAgent);
+    isWebView = typeof Android !== undefined;
   }, []);
   return (
     <div className="pt-8">
