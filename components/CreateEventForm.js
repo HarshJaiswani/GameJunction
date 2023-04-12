@@ -13,8 +13,8 @@ import { TfiInstagram, TfiTwitter } from "react-icons/tfi";
 import { BsTelephone } from "react-icons/bs";
 import { MdInsertLink } from "react-icons/md";
 import { RxDiscordLogo } from "react-icons/rx";
-import { CiImageOn } from "react-icons/ci";
 import { FaTelegramPlane } from "react-icons/fa";
+import ImageIcon from "./Icons/ImageIcon";
 /**
  * 
  * const data = Array(5).fill({
@@ -136,7 +136,7 @@ const CreateEventForm = () => {
   return (
     <form className="w-[90%] md:w-[75%] lg:w-2/3 mx-auto">
       <div className="w-full h-[300px] mx-auto my-8 cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
-        <CiImageOn className="text-5xl text-green-400" />
+        <ImageIcon className="text-5xl text-green-400" />
         <span className="text-gray-500 my-2">
           Upload Event Poster (300 x 300)
         </span>

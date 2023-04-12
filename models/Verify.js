@@ -6,7 +6,7 @@ const VerifySchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    otp: String,
+    otp: Number,
     token: String,
     expiry: {
       type: Date,

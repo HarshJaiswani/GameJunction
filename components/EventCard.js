@@ -1,11 +1,23 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 // Next Components
 import Link from "next/link";
+import { useRouter } from "next/router";
+// App Context
+import { AppContext } from "../context/AppContext";
 // Icons
 import { TiArrowForwardOutline } from "react-icons/ti";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
 const EventCard = ({ post }) => {
+  const router = useRouter();
+  const { isLoggedIn } = useContext(AppContext);
+  const handleApplyEvent = (e) => {
+    e.preventDefault();
+    if (isLoggedIn) {
+    } else {
+      router.push("/signin");
+    }
+  };
   return (
     <li className="w-full md:w-[45%] my-4 cursor-pointer rounded-2xl ring-2 ring-gray-100 bg-white hover:ring-teal-200">
       <Link href={`/events/${post.id}`}>
@@ -65,7 +77,10 @@ const EventCard = ({ post }) => {
             </span>
           </div>
           {post.isActive ? (
-            <button className="my-4 sm:my-0 ml-auto hover:bg-blue-400 block w-full sm:w-fit px-4 py-2 sm:py-2.5 rounded-lg bg-blue-500 text-white">
+            <button
+              onClick={handleApplyEvent}
+              className="my-4 sm:my-0 ml-auto hover:bg-blue-400 block w-full sm:w-fit px-4 py-2 sm:py-2.5 rounded-lg bg-blue-500 text-white"
+            >
               Apply Now
             </button>
           ) : (

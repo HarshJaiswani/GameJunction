@@ -3,7 +3,7 @@ import React from "react";
 // Headless Ui
 import { Tab } from "@headlessui/react";
 // Icons
-import { CiImageOn } from "react-icons/ci";
+import ImageIcon from "../components/Icons/ImageIcon";
 // Custom Components
 import EventCard from "../components/EventCard";
 
@@ -39,18 +39,18 @@ const List = () => {
   });
   return (
     <div>
-      <div className="w-full mx-auto bg-gray-50 pt-8">
+      <div className="w-full mx-auto bg-gray-50">
         <Tab.Group>
-          <Tab.List className="flex w-[80%] sm:w-[60%] md:w-1/2 lg:w-1/3 mx-auto space-x-1 rounded px-2 bg-[gray]/10 p-1">
+          <Tab.List className="flex w-full bg-white">
             {types.map((type, index) => (
               <Tab
                 key={index}
                 className={({ selected }) =>
                   classNames(
-                    "w-full rounded py-2.5 font-sans font-semibold outline-none leading-5 text-gray-500",
+                    "w-full  rounded-t-xl py-2.5 font-sans font-semibold outline-none text-gray-500",
                     selected
-                      ? "bg-white shadow"
-                      : "text-gray-500 hover:bg-[gray]/20"
+                      ? "bg-gray-50"
+                      : "text-gray-500 hover:text-green-400"
                   )
                 }
               >
@@ -58,7 +58,7 @@ const List = () => {
               </Tab>
             ))}
           </Tab.List>
-          <Tab.Panels className="mt-2">
+          <Tab.Panels className="">
             {types.map((type, idx) => (
               <Tab.Panel
                 key={idx}
@@ -67,7 +67,7 @@ const List = () => {
                 <div className="w-full lg:w-4/5 mx-auto">
                   <div className="md:flex items-center justify-evenly">
                     <div className="w-full md:w-[45%] h-[350px] my-8 cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
-                      <CiImageOn className="text-5xl text-green-400" />
+                      <ImageIcon className="text-5xl text-green-400" />
                       <span className="text-gray-500 my-2">
                         Event&apos;s Poster
                       </span>

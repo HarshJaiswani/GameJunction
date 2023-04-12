@@ -23,20 +23,11 @@ const Navbar = () => {
                   Explore Events
                 </button>
               </Link>
-              {!isLoggedIn && (
-                <Link href="/signin">
-                  <button className="p-2 rounded-2xl bg-gray-100 hover:bg-yellow-200 shadow-sm px-4 mx-4">
-                    Sign In
-                  </button>
-                </Link>
-              )}
-              {isLoggedIn && (
-                <Link href="/leaderboard">
-                  <button className="p-2 rounded-2xl bg-gray-100 hover:bg-yellow-200 shadow-sm px-4 mx-4">
-                    Leaderboard
-                  </button>
-                </Link>
-              )}
+              <Link href="/leaderboard">
+                <button className="p-2 rounded-2xl bg-gray-100 hover:bg-yellow-200 shadow-sm px-4 mx-4">
+                  Leaderboard
+                </button>
+              </Link>
             </div>
             <NavDropdown />
           </div>

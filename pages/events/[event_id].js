@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 // Next Components
 import { useRouter } from "next/router";
+// App Context
+import { AppContext } from "../../context/AppContext";
 // Icons
-import { CiImageOn } from "react-icons/ci";
 import { MdAlternateEmail } from "react-icons/md";
 import { SlSocialYoutube, SlSocialLinkedin, SlGlobe } from "react-icons/sl";
 import { TfiInstagram, TfiTwitter } from "react-icons/tfi";
@@ -10,11 +11,20 @@ import { BsTelephone } from "react-icons/bs";
 import { MdInsertLink } from "react-icons/md";
 import { RxDiscordLogo } from "react-icons/rx";
 import { FaTelegramPlane } from "react-icons/fa";
+import ImageIcon from "../../components/Icons/ImageIcon";
 
 const EventId = () => {
-  const { query } = useRouter();
+  const router = useRouter();
+  const { isLoggedIn } = useContext(AppContext);
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
+  const handleApplyEvent = (e) => {
+    e.preventDefault();
+    if (isLoggedIn) {
+    } else {
+      router.push("/signin");
+    }
+  };
   return (
     <div className="bg-gray-50 p-5 sm:py-12">
       <div className="w-full lg:w-2/3 mx-auto">
@@ -22,7 +32,7 @@ const EventId = () => {
           Title of the Event
         </h2>
         <div className="h-[350px] my-8 mx-auto cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
-          <CiImageOn className="text-5xl text-green-400" />
+          <ImageIcon className="text-5xl text-green-400" />
           <span className="text-gray-500 my-2">Event&apos;s Poster</span>
         </div>
         <div className="p-5 md:p-12 border rounded-2xl bg-white shadow mx-auto mb-8">
@@ -38,7 +48,10 @@ const EventId = () => {
               12th September 2023 at 06:40PM
             </p>
           </div>
-          <button className="w-full rounded-lg font-semibold bg-[blue] my-4 text-white shadow py-2">
+          <button
+            onClick={handleApplyEvent}
+            className="w-full rounded-lg font-semibold bg-[blue] my-4 text-white shadow py-2"
+          >
             Apply Now
           </button>
         </div>

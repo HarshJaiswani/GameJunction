@@ -32,16 +32,16 @@ const Leaderboard = () => {
     <div>
       <div className="w-full mx-auto">
         <Tab.Group>
-          <Tab.List className="flex w-[80%] sm:w-[60%] md:w-1/2 lg:w-1/3 mx-auto space-x-1 rounded-xl px-2 bg-[#3770ff]/10 p-1">
+          <Tab.List className="flex w-full bg-white">
             {types.map((type, index) => (
               <Tab
                 key={index}
                 className={({ selected }) =>
                   classNames(
-                    "w-full rounded-xl py-2.5 font-sans font-semibold outline-none leading-5 text-white",
+                    "w-full  rounded-t-xl py-2.5 font-sans font-semibold outline-none text-gray-500",
                     selected
-                      ? "bg-[#3770ff] shadow"
-                      : "text-[#3770ff] hover:bg-[#3770ff]/20"
+                      ? "bg-gray-50"
+                      : "text-gray-500 hover:text-green-400"
                   )
                 }
               >
@@ -49,7 +49,7 @@ const Leaderboard = () => {
               </Tab>
             ))}
           </Tab.List>
-          <Tab.Panels className="mt-2">
+          <Tab.Panels className="">
             {types.map((type, idx) => (
               <Tab.Panel
                 key={idx}

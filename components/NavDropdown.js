@@ -23,8 +23,15 @@ const iconStyle = "text-lg mr-2";
 const NavDropdown = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const { isLoggedIn } = useContext(AppContext);
+  // const user = null;
   const user = {
-    stake: ["orgaiser", "participant"],
+    // is_organiser: true,
+    // is_participant: true,
+    is_admin: true,
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("auth-token");
   };
   return (
     <div className="ml-8">
@@ -43,7 +50,25 @@ const NavDropdown = () => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute z-[10] px-4 py-1 right-0 mt-2 w-56 origin-top-right divide-y divide-gray-400 rounded-md text-white bg-gray-600 shadow">
+          <Menu.Items className="absolute z-[10] px-4 py-1 right-0 mt-2 w-56 origin-top-right rounded-md text-white bg-gray-600 shadow">
+            {!isLoggedIn && (
+              <div className="px-1 py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <Link href="/signin">
+                      <button
+                        className={`${
+                          active ? "bg-gray-500 text-white" : "text-white"
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <HiLogin className={iconStyle} />
+                        SignIn
+                      </button>
+                    </Link>
+                  )}
+                </Menu.Item>
+              </div>
+            )}
             <div className="px-1 py-1 md:hidden">
               <Menu.Item>
                 {({ active }) => (
@@ -76,102 +101,96 @@ const NavDropdown = () => {
                 )}
               </Menu.Item>
             </div>
-            <div className="px-1 py-1 md:hidden">
-              <Menu.Item>
-                {({ active }) => (
-                  <Link href="/signin">
-                    <button
-                      className={`${
-                        active ? "bg-gray-500 text-white" : "text-white"
-                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                    >
-                      <HiLogin className={iconStyle} />
-                      SignIn
-                    </button>
-                  </Link>
-                )}
-              </Menu.Item>
-            </div>
-            <div className="px-1 py-1">
-              <Menu.Item>
-                {({ active }) => (
-                  <Link href="/profile">
-                    <button
-                      className={`${
-                        active ? "bg-gray-500 text-white" : "text-white"
-                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                    >
-                      <CgProfile className={iconStyle} />
-                      Profile
-                    </button>
-                  </Link>
-                )}
-              </Menu.Item>
-            </div>
-            <div className="px-1 py-1">
-              <Menu.Item>
-                {({ active }) => (
-                  <Link href="/organise-event">
-                    <button
-                      className={`${
-                        active ? "bg-gray-500 text-white" : "text-white"
-                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                    >
-                      <IoCreateOutline className={iconStyle} />
-                      Create Event
-                    </button>
-                  </Link>
-                )}
-              </Menu.Item>
-            </div>
-            <div className="px-1 py-1">
-              <Menu.Item>
-                {({ active }) => (
-                  <Link href="/profile#pastevents">
-                    <button
-                      className={`${
-                        active ? "bg-gray-500 text-white" : "text-white"
-                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                    >
-                      <BsCalendarEvent className={`text-base ${iconStyle}`} />
-                      My Participations
-                    </button>
-                  </Link>
-                )}
-              </Menu.Item>
-            </div>
-            <div className="px-1 py-1">
-              <Menu.Item>
-                {({ active }) => (
-                  <Link href="/admin">
-                    <button
-                      className={`${
-                        active ? "bg-gray-500 text-white" : "text-white"
-                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                    >
-                      <MdOutlineAdminPanelSettings className={iconStyle} />
-                      Admin Panel
-                    </button>
-                  </Link>
-                )}
-              </Menu.Item>
-            </div>
-            <div className="px-1 py-1">
-              <Menu.Item>
-                {({ active }) => (
-                  <Link href="/profile#wishevents">
-                    <button
-                      className={`${
-                        active ? "bg-gray-500 text-white" : "text-white"
-                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                    >
-                      <HiStar className={iconStyle} />
-                      WishList
-                    </button>
-                  </Link>
-                )}
-              </Menu.Item>
-            </div>
+            {isLoggedIn && (
+              <div className="px-1 py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <Link href="/profile">
+                      <button
+                        className={`${
+                          active ? "bg-gray-500 text-white" : "text-white"
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <CgProfile className={iconStyle} />
+                        Profile
+                      </button>
+                    </Link>
+                  )}
+                </Menu.Item>
+              </div>
+            )}
+            {user && user.is_organiser && (
+              <div className="px-1 py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <Link href="/organise-event">
+                      <button
+                        className={`${
+                          active ? "bg-gray-500 text-white" : "text-white"
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <IoCreateOutline className={iconStyle} />
+                        Create Event
+                      </button>
+                    </Link>
+                  )}
+                </Menu.Item>
+              </div>
+            )}
+            {user && user.is_participant && (
+              <div className="px-1 py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <Link href="/profile#pastevents">
+                      <button
+                        className={`${
+                          active ? "bg-gray-500 text-white" : "text-white"
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <BsCalendarEvent className={`text-base ${iconStyle}`} />
+                        My Participations
+                      </button>
+                    </Link>
+                  )}
+                </Menu.Item>
+              </div>
+            )}
+            {user && (user.is_organiser || user.is_admin) && (
+              <div className="px-1 py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <Link href="/admin">
+                      <button
+                        className={`${
+                          active ? "bg-gray-500 text-white" : "text-white"
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <MdOutlineAdminPanelSettings className={iconStyle} />
+                        Admin Panel
+                      </button>
+                    </Link>
+                  )}
+                </Menu.Item>
+              </div>
+            )}
+            {user && user.is_participant && (
+              <div className="px-1 py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <Link href="/profile#wishevents">
+                      <button
+                        className={`${
+                          active ? "bg-gray-500 text-white" : "text-white"
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <HiStar className={iconStyle} />
+                        WishList
+                      </button>
+                    </Link>
+                  )}
+                </Menu.Item>
+              </div>
+            )}
             <div className="px-1 py-1">
               <Menu.Item>
                 {({ active }) => (
@@ -188,22 +207,25 @@ const NavDropdown = () => {
                 )}
               </Menu.Item>
             </div>
-            <div className="px-1 py-1">
-              <Menu.Item>
-                {({ active }) => (
-                  <Link href="/">
-                    <button
-                      className={`${
-                        active ? "bg-gray-500 text-white" : "text-white"
-                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                    >
-                      <HiLogout className={iconStyle} />
-                      LogOut
-                    </button>
-                  </Link>
-                )}
-              </Menu.Item>
-            </div>
+            {isLoggedIn && (
+              <div className="px-1 py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <Link href="/">
+                      <button
+                        onClick={handleLogout}
+                        className={`${
+                          active ? "bg-gray-500 text-white" : "text-white"
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <HiLogout className={iconStyle} />
+                        LogOut
+                      </button>
+                    </Link>
+                  )}
+                </Menu.Item>
+              </div>
+            )}
           </Menu.Items>
         </Transition>
       </Menu>

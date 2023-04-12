@@ -3,6 +3,7 @@ import Users from "../../models/User";
 import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 import Verify from "../../models/Verify";
+import nodemailer from "nodemailer";
 
 const handler = async (req, res) => {
   let {
@@ -106,10 +107,16 @@ const handler = async (req, res) => {
                 is_email_verified: true,
               }
             );
-            res.status(200).json({ sucess: "User Created!" });
+            let token = jwt.sign({ existingUser }, process.env.SECRETKEY);
+            res
+              .status(200)
+              .json({ success: "User Created!", authToken: token });
           } else {
             let deletedUser = await Users.findOneAndDelete({ email });
-            res.status(500).json({ error: "Validation Failed!", deletedUser });
+            let deletedCode = await Verify.findOneAndDelete({ email });
+            res
+              .status(500)
+              .json({ error: "Validation Failed!", deletedUser, deletedCode });
           }
         } else {
           res.status(500).json({ error: "User already verified!" });
