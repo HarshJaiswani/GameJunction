@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 // Next Components
 import Link from "next/link";
 // Custom Components
@@ -8,7 +8,10 @@ import About from "../components/About";
 import { ImAndroid } from "react-icons/im";
 
 const Home = () => {
-  let isWebView = /android/i.test(navigator.userAgent);
+  let isWebView = false;
+  useEffect(() => {
+    isWebView = /android/i.test(navigator.userAgent);
+  }, []);
   return (
     <div className="pt-8">
       <Header />

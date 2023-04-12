@@ -7,6 +7,7 @@ import nodemailer from "nodemailer";
 
 const handler = async (req, res) => {
   let {
+    token,
     _id,
     name,
     email,
@@ -26,7 +27,9 @@ const handler = async (req, res) => {
     overall_rating,
   } = req.body;
   if (req.method == "GET") {
-    let user = await Users.findOne({ _id });
+    let tokenData = jwt.verify(token, process.env.SECRETKEY);
+    console.log(tokenData);
+    let user = await Users.findOne({ _id: tokenData.user._id });
     if (user.is_deleted) {
       res.status(500).json({ error: "No User Found" });
     } else {
