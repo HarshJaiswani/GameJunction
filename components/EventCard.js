@@ -30,7 +30,7 @@ const EventCard = ({ post }) => {
             <div className="flex items-center">
               <span className="text-gray-300 mr-2">by</span>
               <span className="text-yellow-400 text-sm font-semibold">
-                {post.organiserName.toUpperCase()}
+                {/* {post.organiserName.toUpperCase()} */}
               </span>
             </div>
           </div>
@@ -59,7 +59,9 @@ const EventCard = ({ post }) => {
             </div>
           </div>
           <div className="text-gray-400 font-semibold my-4">
-            <span className="text-green-500">{post.participants.length}+</span>{" "}
+            <span className="text-green-500">
+              {/* {post.participants.length} */}+
+            </span>{" "}
             Participants
           </div>
         </div>
