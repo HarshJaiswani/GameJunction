@@ -46,6 +46,7 @@ const UserSchema = mongoose.Schema(
     events_organised: [String],
     prices_won: [String],
     overall_rating: Number,
+    wishlist_events: [String],
     is_deleted: {
       type: Boolean,
       required: true,

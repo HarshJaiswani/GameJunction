@@ -1,15 +1,11 @@
 import React from "react";
 
-const RankCard = ({ user, type, theme }) => {
+const RankCard = ({ user, theme }) => {
   return (
     <li className="w-full flex items-center justify-center">
       <div className="px-4 py-1 sm:py-2 font-semibold text-gray-400 sm:text-lg bg-gray-200/50 rounded-tl-lg rounded-bl-lg">
         <span className="icon-font text-gray-400 text-xl font-semibold">#</span>
-        <span>
-          {type.toLowerCase() == "organiser"
-            ? user.organiser_rank
-            : user.participant_rank}
-        </span>
+        <span>{user.overall_ranking}</span>
       </div>
       <div
         className={`w-full my-4 px-4 py-2 sm:p-4 flex items-center justify-between cursor-pointer rounded-2xl shadow ${
@@ -23,12 +19,16 @@ const RankCard = ({ user, type, theme }) => {
           </h3>
         </div>
         <div className="hidden sm:flex items-center">
-          <div className="w-10 h-10 rounded-full bg-yellow-200 mx-2 flex items-center justify-center font-semibold text-gray-500">
-            {user.events_oraganised}
-          </div>
-          <div className="w-10 h-10 rounded-full bg-teal-200 mx-2 flex items-center justify-center font-semibold text-gray-500">
-            {user.overall_ranking}
-          </div>
+          {user.is_organiser && (
+            <div className="w-10 h-10 rounded-full bg-yellow-200 mx-2 flex items-center justify-center font-semibold text-gray-500">
+              {user.organiser_rank}
+            </div>
+          )}
+          {user.is_participant && (
+            <div className="w-10 h-10 rounded-full bg-teal-200 mx-2 flex items-center justify-center font-semibold text-gray-500">
+              {user.participant_rank}
+            </div>
+          )}
         </div>
       </div>
     </li>

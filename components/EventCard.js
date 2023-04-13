@@ -18,9 +18,10 @@ const EventCard = ({ post }) => {
       router.push("/signin");
     }
   };
+  const handleAddToWishList = () => {};
   return (
     <li className="w-full md:w-[45%] my-4 cursor-pointer rounded-2xl ring-2 ring-gray-100 bg-white hover:ring-teal-200">
-      <Link href={`/events/${post.id}`}>
+      <Link href={`/events/${post._id}`}>
         <div className="p-4 flex items-center justify-between">
           <div className="">
             <h3 className="text-lg font-semibold font-sans nunito-font">
@@ -29,7 +30,7 @@ const EventCard = ({ post }) => {
             <div className="flex items-center">
               <span className="text-gray-300 mr-2">by</span>
               <span className="text-yellow-400 text-sm font-semibold">
-                {post.organiser.toUpperCase()}
+                {post.organiserName.toUpperCase()}
               </span>
             </div>
           </div>
@@ -37,9 +38,12 @@ const EventCard = ({ post }) => {
             className="flex items-center"
             onClick={(e) => e.preventDefault()}
           >
-            <div className="p-2 rounded-full mx-2 bg-gray-100/60 hover:ring-2 hover:ring-teal-200 shadow w-fit">
-              {/* <AiFillHeart className="text-[red] text-2xl" /> */}
-              <AiOutlineHeart className="text-[gray] text-2xl" />
+            <div
+              onClick={handleAddToWishList}
+              className="p-2 rounded-full mx-2 bg-gray-100/60 hover:ring-2 hover:ring-teal-200 shadow w-fit"
+            >
+              <AiFillHeart className="text-[red] text-2xl" />
+              {/* <AiOutlineHeart className="text-[gray] text-2xl" /> */}
             </div>
             <div className="p-2 rounded-full mx-2 bg-gray-100/60 hover:ring-2 hover:ring-teal-200 shadow w-fit">
               <TiArrowForwardOutline className="text-blue-400 text-2xl" />
@@ -51,11 +55,12 @@ const EventCard = ({ post }) => {
           <div className="mr-4">
             <span className="text-gray-300">Theme : </span>
             <div className="px-6 py-2 rounded-full border text-gray-400 w-fit">
-              No Restriction
+              {post.theme || "No Restriction"}
             </div>
           </div>
           <div className="text-gray-400 font-semibold my-4">
-            <span className="text-green-500">1000+</span> Participants
+            <span className="text-green-500">{post.participants.length}+</span>{" "}
+            Participants
           </div>
         </div>
         <div className="sm:mb-4 p-4 flex items-center justify-start flex-wrap">

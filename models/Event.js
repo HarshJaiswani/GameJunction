@@ -6,6 +6,14 @@ const EventSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    organiserName: {
+      type: String,
+      required: true,
+    },
+    poster: {
+      type: String,
+      required: true,
+    },
     title: {
       type: String,
       unique: true,

@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 // Next components
 import Link from "next/link";
 // Headless Ui
@@ -21,17 +21,33 @@ import { AppContext } from "../context/AppContext";
 const iconStyle = "text-lg mr-2";
 
 const NavDropdown = () => {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const { isLoggedIn } = useContext(AppContext);
-  // const user = null;
-  const user = {
-    // is_organiser: true,
-    // is_participant: true,
-    is_admin: true,
-  };
-
+  const { isLoggedIn, setLoggedIn } = useContext(AppContext);
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchUser();
+    }
+  }, [isLoggedIn]);
   const handleLogout = () => {
     localStorage.removeItem("auth-token");
+    setLoggedIn(false);
+  };
+  const fetchUser = async () => {
+    const token = JSON.parse(localStorage.getItem("auth-token"));
+    const response = await fetch("/api/getusers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": token,
+      },
+      body: JSON.stringify({ token }),
+    });
+    const json = await response.json();
+    if (json.error) {
+      alert("Some Error Occured!");
+    } else {
+      setUser(json.user);
+    }
   };
   return (
     <div className="ml-8">
@@ -229,7 +245,6 @@ const NavDropdown = () => {
           </Menu.Items>
         </Transition>
       </Menu>
-      {showDropdown && <div></div>}
     </div>
   );
 };

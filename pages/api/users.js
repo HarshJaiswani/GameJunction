@@ -25,17 +25,9 @@ const handler = async (req, res) => {
     events_organised,
     prices_won,
     overall_rating,
+    wishlist_events,
   } = req.body;
-  if (req.method == "GET") {
-    let tokenData = jwt.verify(token, process.env.SECRETKEY);
-    console.log(tokenData);
-    let user = await Users.findOne({ _id: tokenData.user._id });
-    if (user.is_deleted) {
-      res.status(500).json({ error: "No User Found" });
-    } else {
-      res.status(200).json({ user });
-    }
-  } else if (req.method == "POST") {
+  if (req.method == "POST") {
     if (req.body.sendMail) {
       let existUser = await Users.findOne({ email });
       if (existUser) {
@@ -92,11 +84,18 @@ const handler = async (req, res) => {
           sports,
           is_organiser,
           is_participant,
+          organiser_rank,
+          participant_rank,
+          events_organised,
+          events_participated,
+          prices_won,
+          overall_rating,
+          wishlist_events,
         });
         await newUser.save();
         // let token = jwt.sign({ newUser }, process.env.SECRETKEY).toString();
         // res.status(200).json({ authToken: token });
-        res.status(200).json({ message: "Email Sent Successfully!", otp });
+        res.status(200).json({ message: "Email Sent Successfully!" });
       }
     } else {
       let existingUser = await Users.findOne({ email });
@@ -110,7 +109,11 @@ const handler = async (req, res) => {
                 is_email_verified: true,
               }
             );
-            let token = jwt.sign({ user: existingUser }, process.env.SECRETKEY);
+            const senduser = {
+              email: existingUser.email,
+              _id: existingUser._id,
+            };
+            let token = jwt.sign({ user: senduser }, process.env.SECRETKEY);
             res
               .status(200)
               .json({ success: "User Created!", authToken: token });

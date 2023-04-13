@@ -16,7 +16,11 @@ const handler = async (req, res) => {
       let bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRETKEY);
       let originalText = bytes.toString(CryptoJS.enc.Utf8);
       if (originalText == password) {
-        let token = jwt.sign({ user }, process.env.SECRETKEY);
+        const senduser = {
+          email: user.email,
+          _id: user._id,
+        };
+        let token = jwt.sign({ user: senduser }, process.env.SECRETKEY);
         res.status(200).json({ authToken: token });
       } else {
         res.status(500).json({ error: "Invalid Credentials!" });

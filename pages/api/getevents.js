@@ -6,6 +6,19 @@ const handler = async (req, res) => {
     let events = await Events.find();
     events = events.filter((e) => !e.is_deleted);
     res.status(200).json({ events });
+  } else if (req.method == "POST") {
+    try {
+      let all_events = [];
+      req.body.eventids.forEach(async (e) => {
+        let event = await Events.findById(e);
+        if (event && !event.is_deleted) {
+          all_events.push(event);
+        }
+      });
+      res.status(200).json({ all_events });
+    } catch (err) {
+      res.status(500).json({ error: err });
+    }
   } else {
     res.status(500).json({ error: "Invalid OpCode" });
   }

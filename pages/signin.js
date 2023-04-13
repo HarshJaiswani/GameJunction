@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 // Next components
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -8,9 +8,12 @@ import Logo from "../components/Logo";
 import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { AiOutlineEye } from "react-icons/ai";
 import SpinnerIcon from "../components/SpinnerIcon";
+// App Context
+import { AppContext } from "../context/AppContext";
 
 const Signin = () => {
   const router = useRouter();
+  const { setLoggedIn } = useContext(AppContext);
   const [showPass, setShowPass] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -38,6 +41,7 @@ const Signin = () => {
     } else {
       localStorage.setItem("auth-token", JSON.stringify(json.authToken));
       router.push("/");
+      setLoggedIn(true);
     }
     setIsSubmitting(false);
   };

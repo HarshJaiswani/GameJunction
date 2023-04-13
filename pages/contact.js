@@ -1,25 +1,90 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+// Next Components
+import { useRouter } from "next/router";
 // Headless Ui
 import { Disclosure } from "@headlessui/react";
 // Icons
 import { BsFillArrowRightCircleFill, BsChevronDown } from "react-icons/bs";
+import SpinnerIcon from "../components/SpinnerIcon";
+// React Toastify
+import { toast } from "react-toastify";
+// App Context
+import { AppContext } from "../context/AppContext";
 
 const FAQs = [
   {
-    title: "What is your refund policy?",
-    data: `If you're unhappy with your purchase for any reason,email us within 90 days and we'll refund you in full, no questions asked.`,
+    title: "How do I register for an event on your website?",
+    data: `To register for an event on our website, go to the event's page and click on the "Apply" button. You will be prompted to provide some basic information and complete the registration process.`,
   },
   {
-    title: "What is your refund policy?",
-    data: `If you're unhappy with your purchase for any reason,email us within 90 days and we'll refund you in full, no questions asked.`,
+    title: "How do I know if I have been selected to participate in an event?",
+    data: `Once the registration period has ended, the event organizer will review all applications and select participants based on their criteria. If you have been selected, you will receive a notification via email or through our website's messaging system.`,
   },
   {
-    title: "What is your refund policy?",
-    data: `If you're unhappy with your purchase for any reason,email us within 90 days and we'll refund you in full, no questions asked.`,
+    title: "Can I participate in multiple events?",
+    data: `Yes, you can participate in as many events as you want, provided that you meet the eligibility criteria for each event.`,
+  },
+  {
+    title: "How are participant ratings calculated?",
+    data: `Participant ratings are based on various factors such as performance in events, frequency of participation, and behavior. The exact formula for calculating ratings is not disclosed to prevent any attempts at gaming the system.`,
+  },
+  {
+    title: "How do I create an event on your website?",
+    data: `To create an event on our website, simply click on the "Create Event" button on the homepage and follow the prompts to provide event details, such as date, location, rules, and prizes.`,
+  },
+  // {
+  //   title: "How do I receive payments for event registration fees?",
+  //   data: `We handle payment processing for event registration fees, and the funds are typically transferred to the organizer's account within a few business days after the event has ended.`,
+  // },
+  {
+    title: "How can I communicate with participants?",
+    data: `You can communicate with participants through our website's messaging system. Once participants have registered for your event, you will be able to see their contact information and send them messages through our platform.`,
+  },
+  {
+    title: "How are organizer ratings calculated?",
+    data: `Organizer ratings are based on various factors such as the quality of events, participant feedback, and timeliness. The exact formula for calculating ratings is not disclosed to prevent any attempts at gaming the system.`,
   },
 ];
 
 const Contact = () => {
+  const { isLoggedIn } = useContext(AppContext);
+  const router = useRouter();
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitQuery = async (e) => {
+    e.preventDefault();
+    if (isLoggedIn) {
+      setIsSubmitting(true);
+      const token = JSON.parse(localStorage.getItem("auth-token"));
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": token,
+        },
+        body: JSON.stringify({ message }),
+      });
+      const json = await response.json();
+      if (json.error) {
+        alert("Some Error Occured!");
+      } else {
+        toast.success("Query Registered!", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+      setIsSubmitting(false);
+      setMessage("");
+    } else {
+      router.push("/signin");
+    }
+  };
   return (
     <div className="bg-gray-50 w-full min-h-screen">
       <div className="w-[90%] sm:w-4/5 mx-auto">
@@ -39,14 +104,21 @@ const Contact = () => {
           </p>
           <p className="font-semibold">Feel free to ask us below !</p>
         </div>
-        <form>
+        <form onSubmit={submitQuery}>
           <textarea
             name="messgae"
             id="message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
             className="outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4 resize-none min-h-[200px]"
             placeholder="Let us know your thoughts!"
           />
-          <button className="font-sans font-semibold hover:bg-yellow-200 flex items-center w-fit ml-auto px-4 py-2 text-center rounded-full my-4 bg-white shadow text-gray-500">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="font-sans font-semibold hover:bg-yellow-200 flex items-center w-fit ml-auto px-4 py-2 text-center rounded-full my-4 bg-white shadow text-gray-500"
+          >
+            {isSubmitting && <SpinnerIcon />}
             Send
             <BsFillArrowRightCircleFill className="ml-2 text-xl" />
           </button>

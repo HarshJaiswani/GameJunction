@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 // Next Components
 import { useRouter } from "next/router";
 // App Context
@@ -16,6 +16,10 @@ import ImageIcon from "../../components/Icons/ImageIcon";
 const EventId = () => {
   const router = useRouter();
   const { isLoggedIn } = useContext(AppContext);
+  const [event, setEvent] = useState({});
+  useEffect(() => {
+    fetchEvent();
+  }, []);
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
   const handleApplyEvent = (e) => {
@@ -25,15 +29,37 @@ const EventId = () => {
       router.push("/signin");
     }
   };
+  const fetchEvent = async () => {
+    const response = await fetch("/api/fetchsingleevent", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ eventid: router.query.event_id }),
+    });
+    const json = await response.json();
+    if (json.error) {
+      alert("Some Error Occured!");
+    } else {
+      console.log(json);
+      setEvent(json.event);
+    }
+  };
   return (
     <div className="bg-gray-50 p-5 sm:py-12">
       <div className="w-full lg:w-2/3 mx-auto">
         <h2 className="text-3xl font-semibold text-gray-500 mb-4 text-center">
-          Title of the Event
+          {event.title}
         </h2>
-        <div className="h-[350px] my-8 mx-auto cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
-          <ImageIcon className="text-5xl text-green-400" />
-          <span className="text-gray-500 my-2">Event&apos;s Poster</span>
+        <div className="h-[350px] my-8 mx-auto overflow-hidden cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
+          {event.poster ? (
+            <img src={event.poster} alt="" />
+          ) : (
+            <>
+              <ImageIcon className="text-5xl text-green-400" />
+              <span className="text-gray-500 my-2">Event&apos;s Poster</span>
+            </>
+          )}
         </div>
         <div className="p-5 md:p-12 border rounded-2xl bg-white shadow mx-auto mb-8">
           <div className="px-4 border-l-2 mb-8 border-blue-400">

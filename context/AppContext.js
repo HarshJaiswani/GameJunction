@@ -14,7 +14,7 @@ const AppState = (props) => {
 
   return (
     <AppContext.Provider
-      value={{ msg: "Namaste Dunia!", isLoggedIn: loggedIn }}
+      value={{ msg: "Namaste Dunia!", isLoggedIn: loggedIn, setLoggedIn }}
     >
       {props.children}
     </AppContext.Provider>

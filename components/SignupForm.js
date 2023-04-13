@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 // Next Components
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -10,6 +10,8 @@ import CheckIcon from "./Icons/CheckIcon";
 import ImageIcon from "./Icons/ImageIcon";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import SpinnerIcon from "./SpinnerIcon";
+// App Context
+import { AppContext } from "../context/AppContext";
 
 const stakeholder = [
   {
@@ -42,6 +44,7 @@ const gender = [
 
 const SignupForm = () => {
   const router = useRouter();
+  const { setLoggedIn } = useContext(AppContext);
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerification, setIsVerification] = useState(false);
@@ -63,11 +66,11 @@ const SignupForm = () => {
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
 
-  const handleSelection = (id) => {
-    if (gamesSelected.includes(id)) {
-      setGamesSelected((prevState) => prevState.filter((e) => e != id));
+  const handleSelection = (name) => {
+    if (gamesSelected.includes(name)) {
+      setGamesSelected((prevState) => prevState.filter((e) => e != name));
     } else {
-      setGamesSelected((prevState) => [...prevState, id]);
+      setGamesSelected((prevState) => [...prevState, name]);
     }
   };
 
@@ -127,7 +130,6 @@ const SignupForm = () => {
       body: JSON.stringify(data),
     });
     const json = await reponse.json();
-    console.log(json);
     setIsVerification(true);
     setIsSubmitting(false);
   };
@@ -153,7 +155,8 @@ const SignupForm = () => {
       router.reload();
     } else {
       localStorage.setItem("auth-token", JSON.stringify(json.authToken));
-      router.push("/congrats");
+      router.push("/profile");
+      setLoggedIn(true);
     }
     setIsSubmitting(false);
   };
@@ -380,17 +383,17 @@ const SignupForm = () => {
                 <div
                   key={index}
                   className={`flex my-2 w-full relative cursor-pointer rounded-lg p-2 focus:outline-none items-center justify-between border ${
-                    gamesSelected.includes(game._id)
+                    gamesSelected.includes(game.name)
                       ? "bg-gray-500 ring-2 ring-sky-200"
                       : "bg-white"
                   }`}
-                  onClick={() => handleSelection(game._id)}
+                  onClick={() => handleSelection(game.name)}
                 >
                   <div className="flex items-center">
                     <div className="text-sm flex items-center">
                       <div
                         className={`font-sans font-semibold tracking-wider ${
-                          gamesSelected.includes(game._id)
+                          gamesSelected.includes(game.name)
                             ? "text-white"
                             : "text-gray-500"
                         }`}
@@ -399,7 +402,7 @@ const SignupForm = () => {
                       </div>
                       <span
                         className={`py-1 px-2 text-xs mx-4 rounded-md ${
-                          gamesSelected.includes(game._id)
+                          gamesSelected.includes(game.name)
                             ? "bg-gray-300/20 text-white"
                             : "bg-yellow-400 text-black"
                         }`}
@@ -408,7 +411,7 @@ const SignupForm = () => {
                       </span>
                     </div>
                   </div>
-                  {gamesSelected.includes(game._id) && (
+                  {gamesSelected.includes(game.name) && (
                     <div className="shrink-0 text-white">
                       <CheckIcon className="h-6 w-6" />
                     </div>

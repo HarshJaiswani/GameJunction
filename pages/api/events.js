@@ -7,6 +7,7 @@ const handler = async (req, res) => {
   let {
     _id,
     organiserId,
+    organiserName,
     title,
     theme,
     details,
@@ -46,6 +47,7 @@ const handler = async (req, res) => {
     } else {
       let newEvent = new Events({
         organiserId,
+        organiserName,
         title,
         theme,
         details,
@@ -84,6 +86,7 @@ const handler = async (req, res) => {
   } else if (req.method == "PUT") {
     let existingEvent = await Events.findByIdAndUpdate(_id, {
       organiserId,
+      organiserName,
       title,
       theme,
       details,

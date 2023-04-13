@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 const fetchUser = (handler) => (req, res) => {
   // get the user from the jwt token and add id and name to req object
   const token = req.headers["auth-token"];
-  // console.log(token);
   if (!token) {
     return res
       .status(401)
