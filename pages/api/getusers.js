@@ -6,9 +6,14 @@ import fetchUser from "../../middleware/fetchUser";
 const handler = async (req, res) => {
   let { token } = req.body;
   if (req.method == "GET") {
-    let users = await Users.find();
-    users = users.filter((e) => !e.is_deleted);
-    res.status(200).json({ users });
+    let user = await Users.findOne({ email: req.user.email });
+    if (user.is_admin) {
+      let users = await Users.find();
+      users = users.filter((e) => !e.is_deleted);
+      res.status(200).json({ users });
+    } else {
+      res.status(400).json({ error: "Unauthorised Access!" });
+    }
   } else if (req.method == "POST") {
     let tokenData = jwt.verify(token, process.env.SECRETKEY);
     let user = await Users.findOne({ _id: tokenData.user._id });

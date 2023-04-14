@@ -6,8 +6,6 @@ import Users from "../../models/User";
 const handler = async (req, res) => {
   let {
     _id,
-    organiserId,
-    organiserName,
     title,
     theme,
     details,
@@ -20,12 +18,11 @@ const handler = async (req, res) => {
     minTeam,
     maxTeam,
     eventDate,
-    eventTime,
     rewards,
     eligibility,
+    poster,
     registrationFee,
     lastDateOfRegistration,
-    lastTimeOfRegistration,
     contact,
     email,
     website,
@@ -45,13 +42,15 @@ const handler = async (req, res) => {
     if (existEvent) {
       res.status(500).json({ error: "Event Title Taken!" });
     } else {
+      let organiserUser = await Users.findOne({ _id: req.user._id });
       let newEvent = new Events({
-        organiserId,
-        organiserName,
+        organiserId: organiserUser._id,
+        organiserName: organiserUser.name,
         title,
         theme,
         details,
         category,
+        poster,
         sport,
         mode,
         platform,
@@ -60,12 +59,10 @@ const handler = async (req, res) => {
         minTeam,
         maxTeam,
         eventDate,
-        eventTime,
         rewards,
         eligibility,
         registrationFee,
         lastDateOfRegistration,
-        lastTimeOfRegistration,
         contact,
         email,
         website,
@@ -78,8 +75,8 @@ const handler = async (req, res) => {
         other,
       });
       await newEvent.save();
-      let organiser = await Users.findByIdAndUpdate(organiserId, {
-        events_organised: [...events_organised, newEvent._id],
+      let organiser = await Users.findByIdAndUpdate(req.user._id, {
+        events_organised: [...organiserUser.events_organised, newEvent._id],
       });
       res.status(200).json({ newEvent, organiser });
     }
@@ -98,13 +95,12 @@ const handler = async (req, res) => {
       location,
       minTeam,
       maxTeam,
+      poster,
       eventDate,
-      eventTime,
       rewards,
       eligibility,
       registrationFee,
       lastDateOfRegistration,
-      lastTimeOfRegistration,
       contact,
       email,
       website,

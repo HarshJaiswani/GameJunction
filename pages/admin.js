@@ -10,8 +10,8 @@ import Organiser from "../components/AdminScreens/Organiser";
 
 const Admin = () => {
   // const userStake = "chkbsdhcb";
-  const userStake = "admin";
-  // const userStake = "organiser";
+  // const userStake = "admin";
+  const userStake = "organiser";
   // const userStake = "participant";
   if (userStake == "participant") {
     return (

@@ -14,13 +14,13 @@ const Organiser = () => {
             <h2 className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-semibold my-4">
               Current Events
             </h2>
-            <DataTable />
+            {/* <DataTable /> */}
           </div>
           <div className="py-4 sm:py-8">
             <h2 className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-semibold my-4">
               Past Events
             </h2>
-            <DataTable />
+            {/* <DataTable /> */}
           </div>
         </div>
       </div>

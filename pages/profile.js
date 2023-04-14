@@ -18,12 +18,8 @@ const Profile = () => {
   const [currEvents, setCurrEvents] = useState([]);
   const [passEvents, setPassEvents] = useState([]);
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchUser();
-    } else {
-      router.push("/");
-    }
-  }, [isLoggedIn]);
+    fetchUser();
+  }, []);
   const fetchUser = async () => {
     const token = JSON.parse(localStorage.getItem("auth-token"));
     const response = await fetch("/api/getusers", {

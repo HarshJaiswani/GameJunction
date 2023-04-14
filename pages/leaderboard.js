@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // Headless Ui
 import { Tab } from "@headlessui/react";
 // Custom Components
@@ -12,22 +12,46 @@ function classNames(...classes) {
 
 const Leaderboard = () => {
   const types = ["Organiser", "Participant"];
-  const data = Array(5).fill({
-    id: 5,
-    name: "Harsh Jaiswani",
-    email: "dummyemail@gmail.com",
-    age: 20,
-    gender: "Male",
-    sports: ["Cricket", "Football"],
-    stake: "organiser,participant",
-    organiser_rank: 52,
-    participant_rank: 63,
-    profile_pic: "",
-    events_participated: 5,
-    events_oraganised: 2,
-    prices_won: 1,
-    overall_ranking: 2, //every event will have a rating of 5 then average of all the events of a organiser is ranking
-  });
+  const [organisers, setOrganisers] = useState([]);
+  const [participants, setParticipants] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  useEffect(() => {
+    fetchUsers();
+    fetchCurrentUser();
+  }, []);
+
+  const fetchCurrentUser = async () => {
+    let token = JSON.parse(localStorage.getItem("auth-token"));
+    const response = await fetch("/api/getusers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": token,
+      },
+      body: JSON.stringify({ token }),
+    });
+    const json = await response.json();
+    if (json.error) {
+      alert("Some Error Occured!");
+    } else {
+      setCurrentUser(json.user);
+    }
+  };
+  const fetchUsers = async () => {
+    const response = await fetch("/api/leaderboard", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const json = await response.json();
+    if (json.error) {
+      alert("Some Error Occured!");
+    } else {
+      setOrganisers(json.organisers);
+      setParticipants(json.participants);
+    }
+  };
   return (
     <div>
       <div className="w-full mx-auto">
@@ -57,32 +81,31 @@ const Leaderboard = () => {
                   "rounded-xl p-3 bg-gray-50 w-full min-h-[75vh]"
                 )}
               >
-                <div>
-                  {type.toLowerCase() == "participant" &&
-                    data[0].participant_rank && (
-                      <div className="w-full sm:w-[80%] mx-auto">
-                        <RankCard type={type} user={data[0]} theme="dark" />
-                      </div>
-                    )}
-                  {type.toLowerCase() == "organiser" &&
-                    data[0].organiser_rank && (
-                      <div className="w-full sm:w-[80%] mx-auto">
-                        <RankCard type={type} user={data[0]} theme="dark" />
-                      </div>
-                    )}
-                </div>
+                {currentUser && (
+                  <div>
+                    {type.toLowerCase() == "participant" &&
+                      currentUser.is_participant && (
+                        <div className="w-full sm:w-[80%] mx-auto">
+                          <RankCard user={currentUser} theme="dark" />
+                        </div>
+                      )}
+                    {type.toLowerCase() == "organiser" &&
+                      currentUser.is_organiser && (
+                        <div className="w-full sm:w-[80%] mx-auto">
+                          <RankCard user={currentUser} theme="dark" />
+                        </div>
+                      )}
+                  </div>
+                )}
                 <ul className="w-full sm:w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
-                  {data.map(
-                    (user) =>
-                      user.stake.includes(type.toLowerCase()) && (
-                        <RankCard
-                          key={user.id}
-                          user={user}
-                          type={type}
-                          theme="light"
-                        />
-                      )
-                  )}
+                  {type.toLowerCase() == "organiser" &&
+                    organisers.map((or) => (
+                      <RankCard key={or._id} user={or} theme="light" />
+                    ))}
+                  {type.toLowerCase() == "participant" &&
+                    participants.map((pr) => (
+                      <RankCard key={pr._id} user={pr} theme="light" />
+                    ))}
                 </ul>
               </Tab.Panel>
             ))}

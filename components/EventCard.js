@@ -7,6 +7,8 @@ import { AppContext } from "../context/AppContext";
 // Icons
 import { TiArrowForwardOutline } from "react-icons/ti";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+// Toast
+import { toast } from "react-toastify";
 
 const EventCard = ({ post }) => {
   const router = useRouter();
@@ -19,6 +21,23 @@ const EventCard = ({ post }) => {
     }
   };
   const handleAddToWishList = () => {};
+  const handleEventShare = () => {
+    if (navigator) {
+      navigator.clipboard.writeText(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/events/${post._id}`
+      );
+      toast.info("Event Link Copied!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
   return (
     <li className="w-full md:w-[45%] my-4 cursor-pointer rounded-2xl ring-2 ring-gray-100 bg-white hover:ring-teal-200">
       <Link href={`/events/${post._id}`}>
@@ -30,7 +49,7 @@ const EventCard = ({ post }) => {
             <div className="flex items-center">
               <span className="text-gray-300 mr-2">by</span>
               <span className="text-yellow-400 text-sm font-semibold">
-                {/* {post.organiserName.toUpperCase()} */}
+                {post.organiserName.toUpperCase()}
               </span>
             </div>
           </div>
@@ -45,7 +64,10 @@ const EventCard = ({ post }) => {
               <AiFillHeart className="text-[red] text-2xl" />
               {/* <AiOutlineHeart className="text-[gray] text-2xl" /> */}
             </div>
-            <div className="p-2 rounded-full mx-2 bg-gray-100/60 hover:ring-2 hover:ring-teal-200 shadow w-fit">
+            <div
+              onClick={handleEventShare}
+              className="p-2 rounded-full mx-2 bg-gray-100/60 hover:ring-2 hover:ring-teal-200 shadow w-fit"
+            >
               <TiArrowForwardOutline className="text-blue-400 text-2xl" />
             </div>
           </div>
@@ -59,9 +81,7 @@ const EventCard = ({ post }) => {
             </div>
           </div>
           <div className="text-gray-400 font-semibold my-4">
-            <span className="text-green-500">
-              {/* {post.participants.length} */}+
-            </span>{" "}
+            <span className="text-green-500">{post.participants.length}+</span>{" "}
             Participants
           </div>
         </div>
@@ -83,7 +103,7 @@ const EventCard = ({ post }) => {
               Rs. {post.registrationFee || "0"}
             </span>
           </div>
-          {post.isActive ? (
+          {post.is_active ? (
             <button
               onClick={handleApplyEvent}
               className="my-4 sm:my-0 ml-auto hover:bg-blue-400 block w-full sm:w-fit px-4 py-2 sm:py-2.5 rounded-lg bg-blue-500 text-white"

@@ -48,10 +48,11 @@ const AppAdmin = () => {
     }
   };
   const fetchGames = async () => {
-    const response = await fetch("/api/sport", {
+    const response = await fetch("/api/fetchadmingames", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "auth-token": JSON.parse(localStorage.getItem("auth-token")),
       },
     });
     const json = await response.json();
@@ -174,6 +175,7 @@ const AppAdmin = () => {
         <DataTable
           dataset={["name", "playable", "resource", "is_verified"]}
           data={games}
+          fetchData={fetchGames}
         />
         <h2
           id="all_enquires"

@@ -42,10 +42,6 @@ const EventSchema = mongoose.Schema(
       type: Date,
       required: true,
     },
-    eventTime: {
-      type: String,
-      required: true,
-    },
     rewards: String,
     eligibility: String,
     registrationFee: Number,
@@ -53,11 +49,7 @@ const EventSchema = mongoose.Schema(
       type: Date,
       required: true,
     },
-    lastTimeOfRegistration: {
-      type: String,
-      required: true,
-    },
-    contact: Number,
+    contact: String,
     email: String,
     website: String,
     youtube: String,
@@ -80,7 +72,7 @@ const EventSchema = mongoose.Schema(
     is_edited: {
       type: Boolean,
       required: true,
-      default: true,
+      default: false,
     },
     winner: String,
     is_featured: {

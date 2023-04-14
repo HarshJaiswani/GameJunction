@@ -1,4 +1,6 @@
 import React from "react";
+// Icons
+import { BsFillPersonFill } from "react-icons/bs";
 
 const RankCard = ({ user, theme }) => {
   return (
@@ -13,7 +15,13 @@ const RankCard = ({ user, theme }) => {
         }`}
       >
         <div className="flex items-center">
-          <div className="rounded-full p-1 mr-4 w-10 h-10 bg-gray-200"></div>
+          <div className="rounded-full p-1 mr-4 w-10 h-10 flex items-center justify-center bg-gray-100 overflow-hidden">
+            {user.profile_pic ? (
+              <img src={user.profile_pic} alt="" />
+            ) : (
+              <BsFillPersonFill className="text-yellow-400 text-lg" />
+            )}
+          </div>
           <h3 className="sm:text-lg font-semibold font-sans nunito-font">
             {user.name.toUpperCase()}
           </h3>

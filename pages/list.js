@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // Next Components
 // Headless Ui
 import { Tab } from "@headlessui/react";
@@ -11,32 +11,35 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
+const types = ["Sport", "ESport"];
+
 const List = () => {
-  const types = ["Sport", "ESport"];
-  const data = Array(5).fill({
-    id: 5,
-    title: "Event name",
-    shortDescp:
-      "jkncjsn kcjnjks ncjknsj kncksnc nsnjc ndcdjk ndjwnkdnm ksncjn slndcldn lkwnml cnrh nlmc kammk dcs",
-    longDescp:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo vero quia quae dolorem sapiente alias harum consectetur iure adipisci non voluptatibus nulla, inventore, dicta laboriosam. Hic numquam eum accusantium velit asperiores libero voluptate laboriosam, tenetur, aut corrupti voluptatum dolor esse atque eos! Dolorum voluptate eos incidunt exercitationem ad temporibus sint consectetur earum?",
-    mode: "online",
-    date: "",
-    timing: "",
-    organiser: "harsh jaiswani",
-    type: "sport",
-    sport: "Cricket",
-    location: null,
-    platform: "Dream11",
-    rewards: "price will be displyed here",
-    registrationFee: null,
-    isActive: true,
-    eligibility: "if any eligibility will be show here",
-    isClosed: "",
-    isDeleted: "",
-    winner: "",
-    isFeatured: "",
-  });
+  const [data, setData] = useState([]);
+  const [featuredEvent, setFeaturedEvent] = useState(null);
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    const response = await fetch("/api/getevents", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const json = await response.json();
+    if (json.error) {
+      alert("some error occured!");
+    } else {
+      setData(json.events);
+      json.events.forEach((e) => {
+        if (e.is_featured) {
+          setFeaturedEvent(e);
+        }
+      });
+    }
+  };
+
   return (
     <div>
       <div className="w-full mx-auto bg-gray-50">
@@ -65,15 +68,23 @@ const List = () => {
                 className={classNames("rounded-xl p-5 w-full min-h-[75vh]")}
               >
                 <div className="w-full lg:w-4/5 mx-auto">
-                  <div className="md:flex items-center justify-evenly">
-                    <div className="w-full md:w-[45%] h-[350px] my-8 cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
-                      <ImageIcon className="text-5xl text-green-400" />
-                      <span className="text-gray-500 my-2">
-                        Event&apos;s Poster
-                      </span>
+                  {featuredEvent && (
+                    <div className="md:flex items-center justify-evenly">
+                      <div className="w-full md:w-[45%] overflow-hidden h-[350px] my-8 cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
+                        {featuredEvent.poster ? (
+                          <img src={featuredEvent.poster} alt="" />
+                        ) : (
+                          <>
+                            <ImageIcon className="text-5xl text-green-400" />
+                            <span className="text-gray-500 my-2">
+                              Event&apos;s Poster
+                            </span>
+                          </>
+                        )}
+                      </div>
+                      <EventCard post={featuredEvent} />
                     </div>
-                    <EventCard post={data[0]} />
-                  </div>
+                  )}
                   <h2 className="md:mx-8 mt-8 md:my-12 flex items-center justify-between">
                     <span className="text-3xl mr-4 text-gray-600 font-semibold my-4">
                       Open
@@ -81,17 +92,19 @@ const List = () => {
                     <div className="w-[85%] md:w-[90%] h-0.5 bg-gray-200"></div>
                   </h2>
                   <ul className="flex items-center justify-evenly flex-wrap">
-                    {data.map(
-                      (post) =>
-                        post.type.toLowerCase() == type.toLowerCase() && (
-                          <EventCard key={post.id} post={post} />
-                        )
-                    )}
+                    {data &&
+                      data.map(
+                        (post) =>
+                          post.category.toLowerCase() == type.toLowerCase() &&
+                          post.is_active && (
+                            <EventCard key={post._id} post={post} />
+                          )
+                      )}
                   </ul>
-                  <button className="rounded-full px-12 ml-auto block py-2 shadow bg-white text-green-400 font-semibold">
+                  {/* <button className="rounded-full px-12 ml-auto block py-2 shadow bg-white text-green-400 font-semibold">
                     Show More
-                  </button>
-                  <h2 className="md:mx-8 mt-8 md:my-12 flex items-center justify-between">
+                  </button> */}
+                  {/* <h2 className="md:mx-8 mt-8 md:my-12 flex items-center justify-between">
                     <span className="mr-4 text-3xl text-gray-600 font-semibold my-4">
                       Upcoming
                     </span>
@@ -107,7 +120,7 @@ const List = () => {
                   </ul>
                   <button className="rounded-full px-12 ml-auto block py-2 shadow bg-white text-green-400 font-semibold">
                     Show More
-                  </button>
+                  </button> */}
                   <h2 className="md:mx-8 mt-8 md:my-12 flex items-center justify-between">
                     <span className="mr-4 text-3xl text-gray-600 font-semibold my-4">
                       Past
@@ -115,16 +128,18 @@ const List = () => {
                     <div className="w-[90%] h-0.5 bg-gray-200"></div>
                   </h2>
                   <ul className="flex items-center justify-evenly flex-wrap">
-                    {data.map(
-                      (post) =>
-                        post.type.toLowerCase() == type.toLowerCase() && (
-                          <EventCard key={post.id} post={post} />
-                        )
-                    )}
+                    {data &&
+                      data.map(
+                        (post) =>
+                          post.category.toLowerCase() == type.toLowerCase() &&
+                          !post.is_active && (
+                            <EventCard key={post._id} post={post} />
+                          )
+                      )}
                   </ul>
-                  <button className="rounded-full px-12 ml-auto block py-2 shadow bg-white text-green-400 font-semibold">
+                  {/* <button className="rounded-full px-12 ml-auto block py-2 shadow bg-white text-green-400 font-semibold">
                     Show More
-                  </button>
+                  </button> */}
                 </div>
               </Tab.Panel>
             ))}

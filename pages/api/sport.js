@@ -2,13 +2,10 @@ import connectDb from "../../middleware/connectDB";
 import Sports from "../../models/Sport";
 
 const handler = async (req, res) => {
-  let { _id, name, resource, playable, flag, is_verified } = req.body;
+  let { _id, name, resource, playable, is_verified } = req.body;
   if (req.method == "GET") {
     let sports = await Sports.find();
     sports = sports.filter((s) => s.is_verified && !s.is_deleted);
-    if (flag) {
-      sports = sports.filter((s) => s.playable == flag);
-    }
     res.status(200).json({ sports });
   } else if (req.method == "POST") {
     let existSport = await Sports.findOne({ name });

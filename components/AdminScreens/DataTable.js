@@ -1,6 +1,6 @@
 import React from "react";
 
-const DataTable = ({ dataset, data }) => {
+const DataTable = ({ dataset, data, fetchData = () => {} }) => {
   const getAge = (d) => {
     let dob = new Date(d);
     let time = Math.abs(Date.now() - dob);
@@ -10,6 +10,22 @@ const DataTable = ({ dataset, data }) => {
     let day = hour / 24;
     let year = day / 365;
     return Math.floor(year);
+  };
+  const verifyGame = async (id) => {
+    const response = await fetch("/api/sport", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ _id: id, is_verified: true }),
+    });
+    const json = await response.json();
+    if (json.error) {
+      alert("some error!");
+    } else {
+      alert("sucess");
+      fetchData();
+    }
   };
   return (
     <div className="p-5 sm:p-12 bg-white rounded-2xl shadow">
@@ -32,9 +48,23 @@ const DataTable = ({ dataset, data }) => {
               >
                 <>
                   {dataset.map((s, idx) =>
-                    s == "dob" ? (
+                    s == "dob" || s == "is_verified" ? (
                       <td key={idx} className="px-6 py-4">
-                        {getAge(e[s])}
+                        {s == "dob" && getAge(e[s])}
+                        {s == "is_verified" && (
+                          <>
+                            {e[s] ? (
+                              "Verified"
+                            ) : (
+                              <button
+                                onClick={() => verifyGame(e._id)}
+                                className="underline text-blue-600"
+                              >
+                                Verify
+                              </button>
+                            )}
+                          </>
+                        )}
                       </td>
                     ) : (
                       <td key={idx} className="px-6 py-4">
