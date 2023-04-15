@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 // Next Components
+import { useRouter } from "next/router";
 import Link from "next/link";
 // Custom Components
 import Navbar from "../Navbar";
@@ -13,9 +14,12 @@ import { TiTick } from "react-icons/ti";
 import CheckIcon from "../Icons/CheckIcon";
 
 const Organiser = () => {
+  const router = useRouter();
   const [allEvents, setAllEvents] = useState([]);
   const [showWinnerModal, setShowWinnerModal] = useState(false);
   const [allParticipants, setAllParticipants] = useState({});
+  const [closingEvent, setClosingEvent] = useState(0);
+  const [selectedWinner, setSelectedWinner] = useState([]);
 
   useEffect(() => {
     fetchUserEvents();
@@ -52,15 +56,17 @@ const Organiser = () => {
     } else {
       setAllEvents(json2.all_events);
       let curatedData = {};
-      json2.all_events.forEach((e) => {
-        curatedData[e] = getParticipants(e.participants);
+      await json2.all_events.forEach(async (e) => {
+        let part = await getParticipants(e.participants);
+        curatedData[e._id] = part;
       });
       setAllParticipants(curatedData);
-      console.log(curatedData);
     }
   };
+
   const handleCloseEvent = (id) => {
     setShowWinnerModal(true);
+    setClosingEvent(id);
   };
 
   const getParticipants = async (ids) => {
@@ -77,6 +83,29 @@ const Organiser = () => {
       alert("some error!");
     } else {
       return json.all_participants;
+    }
+  };
+
+  const handleSetWinner = async () => {
+    const response = await fetch("/api/events", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": JSON.parse(localStorage.getItem("auth-token")),
+      },
+      body: JSON.stringify({
+        _id: closingEvent,
+        winner: selectedWinner,
+        is_active: false,
+      }),
+    });
+    const json = await response.json();
+    if (json.error) {
+      alert("some error!");
+    } else {
+      alert("done");
+      setShowWinnerModal(false);
+      router.push("/list");
     }
   };
 
@@ -112,7 +141,7 @@ const Organiser = () => {
                 you as soon as possible
               </p>
             </div>
-            <Link href={`mailto:${process.env.EMAIL}`}>
+            <Link href={`mailto:game.junction.official@gmail.com`}>
               <button className="px-6 py-2 mt-4 sm:mt-0 rounded-full bg-white hover:bg-yellow-300 shadow text-gray-500 font-semibold">
                 Contact Us
               </button>
@@ -166,7 +195,12 @@ const Organiser = () => {
                                 {e.participants.length}
                               </span>
                             </div>
-                            {/* <FetchParticipants ids={e.participants} /> */}
+                            {allParticipants[e._id] &&
+                              allParticipants[e._id].map((p, index) => (
+                                <div key={index}>
+                                  {p.name} ({p.email})
+                                </div>
+                              ))}
                           </Disclosure.Panel>
                         </>
                       )}
@@ -211,7 +245,12 @@ const Organiser = () => {
                                 {e.participants.length}
                               </span>
                             </div>
-                            {/* <FetchParticipants ids={e.participants} /> */}
+                            {allParticipants[e._id] &&
+                              allParticipants[e._id].map((p, index) => (
+                                <div key={index}>
+                                  {p.name} ({p.email})
+                                </div>
+                              ))}
                           </Disclosure.Panel>
                         </>
                       )}
@@ -223,7 +262,7 @@ const Organiser = () => {
         </div>
       </div>
       {showWinnerModal && (
-        <div className="w-full z-[20] h-screen flex items-center justify-center absolute top-0 left-0">
+        <div className="w-full h-screen flex items-center justify-center absolute top-0 left-0">
           <Transition appear show={showWinnerModal} as={Fragment}>
             <Dialog
               as="div"
@@ -253,66 +292,65 @@ const Organiser = () => {
                     leaveFrom="opacity-100 scale-100"
                     leaveTo="opacity-0 scale-95"
                   >
-                    <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                    <Dialog.Panel className="w-[90%] sm:w-[70%] md:w-1/2 transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                       <Dialog.Title
                         as="h3"
                         className="text-lg font-medium leading-6 text-gray-900"
                       >
                         Select Winner of the Event!
                       </Dialog.Title>
-                      <div className="w-2/3 sm:mx-8">
+                      <div className="w-2/3 my-4">
                         <RadioGroup
-                          value={genderSelection}
-                          onChange={setGenderSelection}
+                          value={selectedWinner}
+                          onChange={setSelectedWinner}
                         >
                           <div className="space-y-2">
-                            {gender.map((stake) => (
-                              <RadioGroup.Option
-                                key={stake.name}
-                                value={stake}
-                                className={({ active, checked }) =>
-                                  `
-                  ${active ? "ring-2 ring-blue-200" : ""}
-                  ${checked ? "bg-gray-500" : "bg-white"}
-                    relative flex cursor-pointer rounded-lg border p-2 focus:outline-none`
-                                }
-                              >
-                                {({ active, checked }) => (
-                                  <>
-                                    <div className="flex w-full items-center justify-between">
-                                      <div className="flex items-center">
-                                        <div className="text-sm">
-                                          <RadioGroup.Label
-                                            as="p"
-                                            className={`font-sans font-semibold tracking-wider ${
-                                              checked
-                                                ? "text-white"
-                                                : "text-gray-500"
-                                            }`}
-                                          >
-                                            {stake.name}
-                                          </RadioGroup.Label>
+                            {allParticipants[closingEvent] &&
+                              allParticipants[closingEvent].map((p, index) => (
+                                <RadioGroup.Option
+                                  key={index}
+                                  value={p.name}
+                                  className={({ active, checked }) =>
+                                    `${active ? "ring-2 ring-blue-200" : ""} ${
+                                      checked ? "bg-gray-500" : "bg-white"
+                                    } relative flex cursor-pointer rounded-lg border p-2 focus:outline-none`
+                                  }
+                                >
+                                  {({ active, checked }) => (
+                                    <>
+                                      <div className="flex w-full items-center justify-between">
+                                        <div className="flex items-center">
+                                          <div className="text-sm">
+                                            <RadioGroup.Label
+                                              as="p"
+                                              className={`font-sans font-semibold tracking-wider ${
+                                                checked
+                                                  ? "text-white"
+                                                  : "text-gray-500"
+                                              }`}
+                                            >
+                                              {p.name} ({p.email})
+                                            </RadioGroup.Label>
+                                          </div>
                                         </div>
+                                        {checked && (
+                                          <div className="shrink-0 text-white">
+                                            <CheckIcon className="h-6 w-6" />
+                                          </div>
+                                        )}
                                       </div>
-                                      {checked && (
-                                        <div className="shrink-0 text-white">
-                                          <CheckIcon className="h-6 w-6" />
-                                        </div>
-                                      )}
-                                    </div>
-                                  </>
-                                )}
-                              </RadioGroup.Option>
-                            ))}
+                                    </>
+                                  )}
+                                </RadioGroup.Option>
+                              ))}
                           </div>
                         </RadioGroup>
                       </div>
 
                       <div className="mt-4">
                         <button
-                          type="button"
-                          className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                          onClick={() => setShowWinnerModal(false)}
+                          className="cursor-pointer inline-flex justify-center rounded bg-gray-100 px-6 py-2 text-sm font-medium text-green-500"
+                          onClick={handleSetWinner}
                         >
                           Save
                         </button>

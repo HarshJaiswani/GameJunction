@@ -57,7 +57,10 @@ const Footer = () => {
             >
               <SiInstagram className={iconStyle} />
             </Link>
-            <Link href={`mailto:${process.env.EMAIL}`} target="_blank">
+            <Link
+              href={`mailto:game.junction.official@gmail.com`}
+              target="_blank"
+            >
               <IoMail className={`${iconStyle} text-3xl sm:text-4xl`} />
             </Link>
           </div>

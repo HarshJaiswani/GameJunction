@@ -57,7 +57,7 @@ const Home = () => {
             back to you as soon as possible
           </p>
         </div>
-        <Link href={`mailto:${process.env.EMAIL}`}>
+        <Link href={`mailto:game.junction.official@gmail.com`}>
           <button className="px-6 py-2 mt-4 sm:mt-0 rounded-full bg-white hover:bg-yellow-300 shadow text-gray-500 font-semibold">
             Contact Us
           </button>
