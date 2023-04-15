@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 // Next Components
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -12,9 +12,15 @@ import { IoPencil } from "react-icons/io5";
 import { AiFillDelete } from "react-icons/ai";
 import { TiTick } from "react-icons/ti";
 import CheckIcon from "../Icons/CheckIcon";
+// App Context
+import { AppContext } from "../../context/AppContext";
+// Toast
+import { toast } from "react-toastify";
 
 const Organiser = () => {
   const router = useRouter();
+  const { isLoggedIn } = useContext(AppContext);
+
   const [allEvents, setAllEvents] = useState([]);
   const [showWinnerModal, setShowWinnerModal] = useState(false);
   const [allParticipants, setAllParticipants] = useState({});
@@ -22,7 +28,9 @@ const Organiser = () => {
   const [selectedWinner, setSelectedWinner] = useState([]);
 
   useEffect(() => {
-    fetchUserEvents();
+    if (isLoggedIn) {
+      fetchUserEvents();
+    }
   }, []);
 
   const fetchUserEvents = async () => {
@@ -38,7 +46,16 @@ const Organiser = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       user = json.user;
     }
@@ -52,7 +69,16 @@ const Organiser = () => {
     });
     const json2 = await response2.json();
     if (json2.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       setAllEvents(json2.all_events);
       let curatedData = {};
@@ -80,7 +106,16 @@ const Organiser = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("some error!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       return json.all_participants;
     }
@@ -101,9 +136,17 @@ const Organiser = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("some error!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
-      alert("done");
       setShowWinnerModal(false);
       router.push("/list");
     }
@@ -120,9 +163,27 @@ const Organiser = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("error");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
-      alert("done");
+      toast.success(`Event Deleted!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
 
@@ -173,13 +234,19 @@ const Organiser = () => {
                                 <IoPencil className="text-xl text-[white]" />
                               </Link>
                               <div
-                                onClick={() => handleEventDelete(e._id)}
+                                onClick={(ev) => {
+                                  ev.preventDefault();
+                                  handleEventDelete(e._id);
+                                }}
                                 className="p-2 bg-cyan-800 rounded-full mr-2 cursor-pointer"
                               >
                                 <AiFillDelete className="text-xl text-[white]" />
                               </div>
                               <div
-                                onClick={() => handleCloseEvent(e._id)}
+                                onClick={(ev) => {
+                                  ev.preventDefault();
+                                  handleCloseEvent(e._id);
+                                }}
                                 className="p-2 bg-cyan-800 mr-2 rounded-full cursor-pointer"
                               >
                                 <TiTick className="text-xl text-[white]" />
@@ -229,7 +296,10 @@ const Organiser = () => {
                             </Link>
                             <div className="flex items-center justify-evenly">
                               <div
-                                onClick={handleEventDelete}
+                                onClick={(ev) => {
+                                  ev.preventDefault();
+                                  handleEventDelete(e._id);
+                                }}
                                 className="p-2 bg-cyan-800 rounded-full mr-2 cursor-pointer"
                               >
                                 <AiFillDelete className="text-xl text-[white]" />

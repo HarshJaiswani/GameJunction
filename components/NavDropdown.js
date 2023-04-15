@@ -17,12 +17,16 @@ import {
 } from "react-icons/md";
 // Context
 import { AppContext } from "../context/AppContext";
+// Toast
+import { toast } from "react-toastify";
 
 const iconStyle = "text-lg mr-2";
 
 const NavDropdown = () => {
   const { isLoggedIn, handleLogout } = useContext(AppContext);
+
   const [user, setUser] = useState(null);
+
   useEffect(() => {
     if (isLoggedIn) {
       fetchUser();
@@ -41,11 +45,21 @@ const NavDropdown = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       setUser(json.user);
     }
   };
+
   return (
     <div className="ml-8">
       <Menu as="div" className="relative inline-block text-left">

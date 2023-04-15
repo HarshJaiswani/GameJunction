@@ -7,21 +7,24 @@ import { AppContext } from "../context/AppContext";
 // Icons
 import { TiArrowForwardOutline } from "react-icons/ti";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import SpinnerIcon from "./SpinnerIcon";
 // Toast
 import { toast } from "react-toastify";
-import SpinnerIcon from "./SpinnerIcon";
 
 const EventCard = ({ post }) => {
   const router = useRouter();
   const { isLoggedIn } = useContext(AppContext);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
+
   useEffect(() => {
     if (isLoggedIn) {
       fetchCurrentUser();
     }
   }, []);
+
   const handleApplyEvent = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -36,9 +39,27 @@ const EventCard = ({ post }) => {
       });
       const json = await response.json();
       if (json.error) {
-        alert("error");
+        toast.error(`${json.error}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       } else {
-        alert("applied");
+        toast.success(`Applied in Event!`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
         router.reload();
       }
     } else {
@@ -46,6 +67,7 @@ const EventCard = ({ post }) => {
     }
     setIsSubmitting(false);
   };
+
   const fetchCurrentUser = async () => {
     let token = JSON.parse(localStorage.getItem("auth-token"));
     const response = await fetch("/api/getusers", {
@@ -58,7 +80,16 @@ const EventCard = ({ post }) => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       if (json.user.events_participated.includes(post._id.toString())) {
         setIsApplied(true);
@@ -68,6 +99,7 @@ const EventCard = ({ post }) => {
       }
     }
   };
+
   const handleAddToWishList = async () => {
     if (isLoggedIn) {
       const response = await fetch("/api/wishlist-event", {
@@ -80,19 +112,49 @@ const EventCard = ({ post }) => {
       });
       const json = await response.json();
       if (json.error) {
-        alert("error");
+        toast.error(`${json.error}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       } else {
-        alert("added");
+        toast.success(`Added to wishlist!`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
         router.reload();
       }
     } else {
-      alert("login kro");
+      toast.error(`Kindly SignIn!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   };
+
   const handleEventShare = () => {
     if (navigator) {
       navigator.clipboard.writeText(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/events/${post._id}`
+        `${
+          process.env.NEXT_PUBLIC_HOST || `https://${process.env.VERCEL_URL}`
+        }/events/${post._id}`
       );
       toast.info("Event Link Copied!", {
         position: "top-right",
@@ -106,6 +168,7 @@ const EventCard = ({ post }) => {
       });
     }
   };
+
   return (
     <li className="w-full md:w-[45%] my-4 cursor-pointer rounded-2xl ring-2 ring-gray-100 bg-white hover:ring-teal-200">
       <Link href={`/events/${post._id}`}>

@@ -12,6 +12,8 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import SpinnerIcon from "./SpinnerIcon";
 // App Context
 import { AppContext } from "../context/AppContext";
+// Toast
+import { toast } from "react-toastify";
 
 const stakeholder = [
   {
@@ -45,6 +47,7 @@ const gender = [
 const SignupForm = ({ data }) => {
   const router = useRouter();
   const { setLoggedIn } = useContext(AppContext);
+
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerification, setIsVerification] = useState(false);
@@ -75,8 +78,9 @@ const SignupForm = ({ data }) => {
     dob: (data && new Date(data?.dob).toISOString().split("T")[0]) || "",
   });
 
-  const inputStyle =
-    "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
+  useEffect(() => {
+    fetchGames();
+  }, []);
 
   const handleSelection = (name) => {
     if (gamesSelected.includes(name)) {
@@ -88,12 +92,6 @@ const SignupForm = ({ data }) => {
 
   const profileRef = useRef();
   const addProfile = (e) => {
-    // if (e.target.files && e.target.files[0]) {
-    //   console.log(e.target.files);
-    //   let img = URL.createObjectURL(e.target.files[0]);
-    //   console.log(e.target.files[0].toDataURL());
-    //   setProfileImg(img);
-    // }
     const selectedfile = e.target.files;
     if (selectedfile.length > 0) {
       const [imageFile] = selectedfile;
@@ -106,19 +104,29 @@ const SignupForm = ({ data }) => {
     }
   };
 
-  useEffect(() => {
-    fetchGames();
-  }, []);
-
   const fetchGames = async () => {
     const response = await fetch("/api/sport");
     const json = await response.json();
-    setGames(json.sports);
+    if (json.error) {
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      setGames(json.sports);
+    }
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     const data = {
       name: formData.name,
       email: formData.email,
@@ -134,6 +142,7 @@ const SignupForm = ({ data }) => {
       profile_pic: profileImg,
       sendMail: true,
     };
+
     const reponse = await fetch("/api/users", {
       method: "POST",
       headers: {
@@ -143,9 +152,27 @@ const SignupForm = ({ data }) => {
     });
     const json = await reponse.json();
     if (json.error) {
-      alert("err");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
-      alert("Proceed");
+      toast.success(`Email Sent!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
     setIsVerification(true);
     setIsSubmitting(false);
@@ -154,11 +181,13 @@ const SignupForm = ({ data }) => {
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     const data = {
       email: formData.email,
       otp: Number(otp),
       sendMail: false,
     };
+
     const response = await fetch("/api/users", {
       method: "POST",
       headers: {
@@ -168,10 +197,29 @@ const SignupForm = ({ data }) => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       router.reload();
     } else {
       localStorage.setItem("auth-token", JSON.stringify(json.authToken));
+      toast.success(`Account Created!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       router.push("/profile");
       setLoggedIn(true);
     }
@@ -181,6 +229,7 @@ const SignupForm = ({ data }) => {
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     const apidata = {
       _id: data._id,
       name: formData.name,
@@ -194,6 +243,7 @@ const SignupForm = ({ data }) => {
         selectedStake.value == "participant" || selectedStake.value == "both",
       profile_pic: profileImg,
     };
+
     const reponse = await fetch("/api/updateuser", {
       method: "PUT",
       headers: {
@@ -204,13 +254,34 @@ const SignupForm = ({ data }) => {
     });
     const json = await reponse.json();
     if (json.error) {
-      alert(json.error);
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
-      alert("Proceed");
+      toast.success(`Profile Updated`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       router.push("/profile");
     }
     setIsSubmitting(false);
   };
+
+  const inputStyle =
+    "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
 
   return (
     <>
@@ -222,7 +293,7 @@ const SignupForm = ({ data }) => {
           {/* Profile Image */}
           <div
             onClick={() => profileRef.current.click()}
-            className="w-[300px] h-[300px] overflow-hidden mx-auto my-8 cursor-pointer flex flex-col items-center justify-center rounded-full bg-gray-100 shadow"
+            className="w-[250px] h-[250px] sm:w-[300px] sm:h-[300px] overflow-hidden mx-auto my-8 cursor-pointer flex flex-col items-center justify-center rounded-full bg-gray-100 shadow"
           >
             {!profileImg ? (
               <>

@@ -3,9 +3,12 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 // Icons
 import SpinnerIcon from "../components/SpinnerIcon";
+// Toast
+import { toast } from "react-toastify";
 
 const ForgotPassword = () => {
   const router = useRouter();
+
   const [token, setToken] = useState("");
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,18 +35,39 @@ const ForgotPassword = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Err");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
-      alert("email sent");
+      toast.success(`Retrieval Email Sent!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       setEmail("");
     }
     setIsSubmitting(false);
   };
+
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
+
   const handleChangePass = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     if (password == cpassword) {
       const response = await fetch("/api/login", {
         method: "PUT",
@@ -58,19 +82,51 @@ const ForgotPassword = () => {
       });
       const json = await response.json();
       if (json.error) {
-        alert("err");
+        toast.error(`${json.error}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       } else {
+        toast.success(`Password Changed Successfully!`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
         router.push("/signin");
       }
     } else {
-      alert("Password dont match!");
+      toast.error(`Passwords Don't Match!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
     setIsSubmitting(false);
   };
+
   return (
     <div className="bg-gray-50 flex items-center justify-center w-full min-h-[50vh]">
       {token == "" ? (
-        <form onSubmit={handleEmailSend} className="w-full lg:w-1/2">
+        <form
+          onSubmit={handleEmailSend}
+          className="w-[90%] md:w-[70%] lg:w-1/2"
+        >
           <h2 className="text-xl font-semibold text-gray-500 text-center my-4">
             Forgot Password ?
           </h2>
@@ -93,7 +149,10 @@ const ForgotPassword = () => {
           </button>
         </form>
       ) : (
-        <form onSubmit={handleChangePass} className="w-full lg:w-1/2">
+        <form
+          onSubmit={handleChangePass}
+          className="w-[90%] md:w-[70%] lg:w-1/2"
+        >
           <h2 className="text-xl font-semibold text-gray-500 text-center my-4">
             Change Password
           </h2>

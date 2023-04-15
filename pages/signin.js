@@ -10,23 +10,29 @@ import { AiOutlineEye } from "react-icons/ai";
 import SpinnerIcon from "../components/SpinnerIcon";
 // App Context
 import { AppContext } from "../context/AppContext";
+// Toast
+import { toast } from "react-toastify";
 
 const Signin = () => {
   const router = useRouter();
   const { setLoggedIn } = useContext(AppContext);
+
   const [showPass, setShowPass] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     const data = {
       email: formData.email,
       password: formData.password,
     };
+
     const response = await fetch("/api/login", {
       method: "POST",
       headers: {
@@ -36,15 +42,35 @@ const Signin = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       router.reload();
     } else {
       localStorage.setItem("auth-token", JSON.stringify(json.authToken));
+      toast.success(`LoggedIn Successfully!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       router.push("/");
       setLoggedIn(true);
     }
     setIsSubmitting(false);
   };
+
   return (
     <div className="bg-gray-50 flex items-center justify-center flex-col w-full min-h-screen">
       <Logo />

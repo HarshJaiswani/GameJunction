@@ -15,13 +15,17 @@ import { FaTelegramPlane } from "react-icons/fa";
 import ImageIcon from "../../components/Icons/ImageIcon";
 import { HiOutlineCurrencyRupee } from "react-icons/hi";
 import SpinnerIcon from "../../components/SpinnerIcon";
+// Toast
+import { toast } from "react-toastify";
 
 const EventId = () => {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { isLoggedIn } = useContext(AppContext);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [event, setEvent] = useState({});
   const [isApplied, setIsApplied] = useState(false);
+
   useEffect(() => {
     if (router.isReady) {
       fetchEvent();
@@ -30,8 +34,10 @@ const EventId = () => {
       }
     }
   }, [router.isReady]);
+
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
+
   const handleApplyEvent = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -46,9 +52,27 @@ const EventId = () => {
       });
       const json = await response.json();
       if (json.error) {
-        alert("error");
+        toast.error(`${json.error}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       } else {
-        alert("applied");
+        toast.success(`Applied In Event`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
         router.reload();
       }
     } else {
@@ -56,6 +80,7 @@ const EventId = () => {
     }
     setIsSubmitting(false);
   };
+
   const fetchCurrentUser = async () => {
     let token = JSON.parse(localStorage.getItem("auth-token"));
     const response = await fetch("/api/getusers", {
@@ -68,7 +93,16 @@ const EventId = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       if (
         json.user.events_participated.includes(router.query.event_id.toString())
@@ -77,6 +111,7 @@ const EventId = () => {
       }
     }
   };
+
   const fetchEvent = async () => {
     const response = await fetch("/api/fetchsingleevent", {
       method: "POST",
@@ -87,12 +122,21 @@ const EventId = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
-      console.log(json);
       setEvent(json.event);
     }
   };
+
   return (
     <div className="bg-gray-50 p-5 sm:py-12">
       {event.winner && (
@@ -143,7 +187,9 @@ const EventId = () => {
         </div>
         <div className="px-6 py-4 text-lg rounded-md bg-white shadow">
           <span className="text-gray-400">Theme:</span>{" "}
-          <span className="text-red-400 font-semibold">{event.theme}</span>
+          <span className="text-red-400 font-semibold">
+            {event.theme || "No Theme"}
+          </span>
         </div>
         <div className="my-8 text-gray-400 text-lg">{event.details}</div>
         <div className="p-5 md:p-12 flex flex-wrap items-center border rounded-2xl bg-white shadow mx-auto mb-8">
@@ -181,14 +227,10 @@ const EventId = () => {
               Registration Fee:{" "}
             </p>
             <span className="text-gray-400 font-semibold">
-              {event.registrationFee == 0 ? (
-                "Nada."
-              ) : (
-                <div className="flex items-center">
-                  <HiOutlineCurrencyRupee className="text-xl mr-2" />
-                  {event.registrationFee}
-                </div>
-              )}
+              <div className="flex items-center">
+                <HiOutlineCurrencyRupee className="text-xl mr-2" />
+                {event.registrationFee}
+              </div>
             </span>
           </div>
         </div>

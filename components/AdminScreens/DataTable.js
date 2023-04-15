@@ -1,4 +1,6 @@
 import React from "react";
+// Toast
+import { toast } from "react-toastify";
 
 const DataTable = ({ dataset, data, fetchData = () => {} }) => {
   const getAge = (d) => {
@@ -11,6 +13,7 @@ const DataTable = ({ dataset, data, fetchData = () => {} }) => {
     let year = day / 365;
     return Math.floor(year);
   };
+
   const verifyGame = async (id) => {
     const response = await fetch("/api/sport", {
       method: "PUT",
@@ -21,12 +24,31 @@ const DataTable = ({ dataset, data, fetchData = () => {} }) => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("some error!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
-      alert("sucess");
+      toast.success(`Game Verified!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       fetchData();
     }
   };
+
   return (
     <div className="p-5 sm:p-12 bg-white rounded-2xl shadow">
       <div className="relative overflow-x-auto rounded-lg border">

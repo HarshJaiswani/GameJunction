@@ -11,16 +11,21 @@ import AppAdmin from "../components/AdminScreens/AppAdmin";
 import Organiser from "../components/AdminScreens/Organiser";
 // App Context
 import { AppContext } from "../context/AppContext";
+// Toast
+import { toast } from "react-toastify";
 
 const Admin = () => {
+  const { isLoggedIn } = useContext(AppContext);
+
   const [userStake, setUserStake] = useState("participant");
   const [currentUser, setCurrentUser] = useState(null);
-  const { isLoggedIn } = useContext(AppContext);
+
   useEffect(() => {
     if (isLoggedIn) {
       fetchCurrentUser();
     }
-  }, []);
+  }, [isLoggedIn]);
+
   const fetchCurrentUser = async () => {
     let token = JSON.parse(localStorage.getItem("auth-token"));
     const response = await fetch("/api/getusers", {
@@ -33,7 +38,16 @@ const Admin = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       setCurrentUser(json.user);
       if (json.user.is_participant) {
@@ -50,6 +64,7 @@ const Admin = () => {
       }
     }
   };
+
   if (userStake == "participant") {
     return (
       <div className="flex items-center justify-center flex-col w-full min-h-screen">

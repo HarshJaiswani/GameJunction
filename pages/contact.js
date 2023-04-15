@@ -47,10 +47,12 @@ const FAQs = [
 ];
 
 const Contact = () => {
-  const { isLoggedIn } = useContext(AppContext);
   const router = useRouter();
+  const { isLoggedIn } = useContext(AppContext);
+
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const submitQuery = async (e) => {
     e.preventDefault();
     if (isLoggedIn) {
@@ -66,7 +68,16 @@ const Contact = () => {
       });
       const json = await response.json();
       if (json.error) {
-        alert("Some Error Occured!");
+        toast.error(`${json.error}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       } else {
         toast.success("Query Registered!", {
           position: "top-right",
@@ -85,6 +96,7 @@ const Contact = () => {
       router.push("/signin");
     }
   };
+
   return (
     <div className="bg-gray-50 w-full min-h-screen">
       <div className="w-[90%] sm:w-4/5 mx-auto">

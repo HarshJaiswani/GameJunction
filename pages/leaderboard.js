@@ -1,23 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 // Headless Ui
 import { Tab } from "@headlessui/react";
 // Custom Components
 import RankCard from "../components/RankCard";
+// App Context
+import { AppContext } from "../context/AppContext";
+import SpinnerIcon from "../components/SpinnerIcon";
+// Toast
+import { toast } from "react-toastify";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-// data[0] is the current logged in user fetch it from context
+const types = ["Organiser", "Participant"];
 
 const Leaderboard = () => {
-  const types = ["Organiser", "Participant"];
+  const { isLoggedIn } = useContext(AppContext);
   const [organisers, setOrganisers] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     fetchUsers();
-    fetchCurrentUser();
+    if (isLoggedIn) {
+      fetchCurrentUser();
+    }
   }, []);
 
   const fetchCurrentUser = async () => {
@@ -31,13 +40,13 @@ const Leaderboard = () => {
       body: JSON.stringify({ token }),
     });
     const json = await response.json();
-    if (json.error) {
-      alert("Some Error Occured!");
-    } else {
+    if (!json.error) {
       setCurrentUser(json.user);
     }
   };
+
   const fetchUsers = async () => {
+    setLoading(true);
     const response = await fetch("/api/leaderboard", {
       method: "GET",
       headers: {
@@ -46,12 +55,23 @@ const Leaderboard = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       setOrganisers(json.organisers);
       setParticipants(json.participants);
     }
+    setLoading(false);
   };
+
   return (
     <div>
       <div className="w-full mx-auto">
@@ -81,6 +101,11 @@ const Leaderboard = () => {
                   "rounded-xl p-3 bg-gray-50 w-full min-h-[75vh]"
                 )}
               >
+                {loading && (
+                  <div className="flex items-center justify-center py-4">
+                    <SpinnerIcon />
+                  </div>
+                )}
                 {currentUser && (
                   <div>
                     {type.toLowerCase() == "participant" &&
@@ -98,6 +123,12 @@ const Leaderboard = () => {
                   </div>
                 )}
                 <ul className="w-full sm:w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
+                  {type.toLowerCase() == "organiser" &&
+                    organisers.length == 0 &&
+                    "More Organisers Coming Soon!"}
+                  {type.toLowerCase() == "participant" &&
+                    participants.length == 0 &&
+                    "More Participants Coming Soon!"}
                   {type.toLowerCase() == "organiser" &&
                     organisers.map((or) => (
                       <RankCard key={or._id} user={or} theme="light" />

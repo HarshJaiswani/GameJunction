@@ -1,24 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 // Next Components
 import Link from "next/link";
 // Custom Components
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import DataTable from "./DataTable";
-import PieChart from "../Chart/PieChart";
+// import PieChart from "../Chart/PieChart";
 // Icons
 import { TiTick } from "react-icons/ti";
+// App Context
+import { AppContext } from "../../context/AppContext";
+// Toast
+import { toast } from "react-toastify";
 
 const AppAdmin = () => {
+  const { isLoggedIn } = useContext(AppContext);
+
   const [organisers, setOrganisers] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [games, setGames] = useState([]);
   const [enquires, setEnquires] = useState([]);
+
   useEffect(() => {
-    fetchUsers();
-    fetchGames();
-    fetchEnquires();
+    if (isLoggedIn) {
+      fetchUsers();
+      fetchGames();
+      fetchEnquires();
+    }
   }, []);
+
   const fetchUsers = async () => {
     const token = JSON.parse(localStorage.getItem("auth-token"));
     const response = await fetch("/api/getusers", {
@@ -30,7 +40,16 @@ const AppAdmin = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       let organisers = [];
       let participants = [];
@@ -44,9 +63,9 @@ const AppAdmin = () => {
       });
       setOrganisers(organisers);
       setParticipants(participants);
-      console.log(json);
     }
   };
+
   const fetchGames = async () => {
     const response = await fetch("/api/fetchadmingames", {
       method: "GET",
@@ -57,12 +76,21 @@ const AppAdmin = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       setGames(json.sports);
-      console.log(json);
     }
   };
+
   const fetchEnquires = async () => {
     const token = JSON.parse(localStorage.getItem("auth-token"));
     const response = await fetch("/api/contact", {
@@ -74,12 +102,21 @@ const AppAdmin = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       setEnquires(json.contacts);
-      console.log(json);
     }
   };
+
   const handleResolve = async (id) => {
     const token = JSON.parse(localStorage.getItem("auth-token"));
     const data = {
@@ -96,11 +133,21 @@ const AppAdmin = () => {
     });
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       fetchEnquires();
     }
   };
+
   return (
     <>
       <Navbar />

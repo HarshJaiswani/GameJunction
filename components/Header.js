@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 const Header = () => {
   return (
-    <div className="w-full min-h-[60vh] sm:py-8 flex items-center justify-between">
+    <div className="w-full min-h-[60vh] sm:pb-8 flex items-center justify-between">
       <motion.div
         initial={{ x: -100 }}
         whileInView={{ x: 0 }}
@@ -41,8 +41,6 @@ const Header = () => {
       <div className="w-[40%] hidden lg:flex items-center justify-center px-12">
         <img src="/assets/hero.svg" className="w-[500px]" alt="" />
       </div>
-      {/* It will be a community of all sorts of players wheather be it a physical game or esports the world most estimed community which plays games someway or the other */}
-      {/* it will have two segments physical sports and esports */}
     </div>
   );
 };

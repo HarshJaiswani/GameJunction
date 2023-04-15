@@ -8,49 +8,49 @@ import { TfiInstagram } from "react-icons/tfi";
 import { VscGithubAlt } from "react-icons/vsc";
 import { IoMdLink } from "react-icons/io";
 
+const data = [
+  {
+    name: "Akshat Soni",
+    img: "/team/akshat.jpg",
+    quote:
+      "It's not the will to win that matters.It's the will to prepare to win that matters.",
+    instagram: "https://www.instagram.com/akshat_210/",
+    linkedin: "https://www.linkedin.com/in/akshat-soni-b49b27240",
+    portfolio: "mailto:sakshat551@gmail.com",
+    github: "https://github.com/AkshatSoni1",
+  },
+  {
+    name: "Deepak Singh",
+    img: "/team/deepak.jpg",
+    quote:
+      "Winning is enjoyable only when people are eagerly anticipating your defeat.",
+    instagram: "https://www.instagram.com/___deepak___0503/",
+    linkedin: "https://www.linkedin.com/in/deepak-singh-9a0211211/",
+    portfolio: "mailto:deepaksingh052003@gmail.com",
+    github: "https://github.com/deepaksingh0503/",
+  },
+  {
+    name: "Harsh Jaiswani",
+    img: "/team/harsh.jpg",
+    quote:
+      "We don't stop playing because we grow old, we grow old because we stop playing.",
+    instagram: "",
+    linkedin: "https://www.linkedin.com/in/harsh-jaiswani-26108823b/",
+    portfolio: "mailto:harshjaiswani2003@gmail.com",
+    github: "https://github.com/HarshJaiswani",
+  },
+  {
+    name: "B. Lohit Kumar",
+    img: "/team/lohit.jpg",
+    quote: "When life gives you a second chance then make complete use of it.",
+    instagram: "https://www.instagram.com/who.lohitt/",
+    linkedin: "https://www.linkedin.com/in/lohit-kumar-1851ba271/",
+    portfolio: "mailto:lohitrock290503@gmail.com",
+    github: "https://github.com/Lohitkumarr",
+  },
+];
+
 const About = () => {
-  const data = [
-    {
-      name: "Akshat Soni",
-      img: "/team/akshat.jpg",
-      quote:
-        "It's not the will to win that matters.It's the will to prepare to win that matters.",
-      instagram: "https://www.instagram.com/akshat_210/",
-      linkedin: "https://www.linkedin.com/in/akshat-soni-b49b27240",
-      portfolio: "mailto:sakshat551@gmail.com",
-      github: "https://github.com/AkshatSoni1",
-    },
-    {
-      name: "Deepak Singh",
-      img: "/team/deepak.jpg",
-      quote:
-        "Winning is enjoyable only when people are eagerly anticipating your defeat.",
-      instagram: "https://www.instagram.com/___deepak___0503/",
-      linkedin: "https://www.linkedin.com/in/deepak-singh-9a0211211/",
-      portfolio: "mailto:deepaksingh052003@gmail.com",
-      github: "https://github.com/deepaksingh0503/",
-    },
-    {
-      name: "Harsh Jaiswani",
-      img: "/team/harsh.jpg",
-      quote:
-        "We don't stop playing because we grow old, we grow old because we stop playing.",
-      instagram: "",
-      linkedin: "https://www.linkedin.com/in/harsh-jaiswani-26108823b/",
-      portfolio: "mailto:harshjaiswani2003@gmail.com",
-      github: "https://github.com/HarshJaiswani",
-    },
-    {
-      name: "B. Lohit Kumar",
-      img: "/team/lohit.jpg",
-      quote:
-        "When life gives you a second chance then make complete use of it.",
-      instagram: "https://www.instagram.com/who.lohitt/",
-      linkedin: "https://www.linkedin.com/in/lohit-kumar-1851ba271/",
-      portfolio: "mailto:lohitrock290503@gmail.com",
-      github: "https://github.com/Lohitkumarr",
-    },
-  ];
   return (
     <div className="w-full p-5 sm:p-12">
       <h2 className="text-xl sm:text-2xl md:text-3xl text-gray-600 my-4 font-semibold text-center flex flex-wrap items-center justify-center">
@@ -60,6 +60,8 @@ const About = () => {
           (Our Story)
         </div>
       </h2>
+
+      {/* Note from Creators */}
       <div className="my-8">
         <h3 className="text-xl sm:text-2xl text-center sm:text-left font-sans font-semibold mb-8">
           Note from <span className="text-teal-400">Creators</span>!
@@ -102,6 +104,8 @@ const About = () => {
           ))}
         </div>
       </div>
+
+      {/* Our History and Vison */}
       <div className="my-12 sm:my-24 flex items-center lg:flex-row flex-col-reverse">
         <div className="w-full lg:w-1/2 sm:pr-8 text-gray-500">
           <h2 className="text-2xl font-semibold text-red-400 my-2">

@@ -25,6 +25,8 @@ import ImageIcon from "./Icons/ImageIcon";
 import SpinnerIcon from "./SpinnerIcon";
 // App Context
 import { AppContext } from "../context/AppContext";
+// Toast
+import { toast } from "react-toastify";
 
 const modes = [
   {
@@ -60,13 +62,10 @@ const isTeam = [
 ];
 
 const CreateEventForm = ({ data: event }) => {
-  // const [event, setEvent] = useState(data);
-  // useEffect(() => {
-  //   setEvent(data);
-  // }, [data]);
   const gameinputref = useRef();
   const router = useRouter();
   const { isLoggedIn } = useContext(AppContext);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modeSelect, setModeSelect] = useState(
     event?.mode == "offline" ? modes[1] : modes[0]
@@ -74,7 +73,7 @@ const CreateEventForm = ({ data: event }) => {
   const [categorySelect, setCategorySelect] = useState(
     event?.category == "esport" ? category[1] : category[0]
   );
-  const [posterImg, setPosterImg] = useState(event?.posterImg || null);
+  const [posterImg, setPosterImg] = useState(event?.poster || null);
   const [isTeamSelect, setIsTeamSelect] = useState(
     event?.maxTeam > 1 ? isTeam[0] : isTeam[1]
   );
@@ -113,8 +112,6 @@ const CreateEventForm = ({ data: event }) => {
     twitter: event?.twitter || "",
     other: event?.other || "",
   });
-  const inputStyle =
-    "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
   const [sports, setSports] = useState([]);
   const [esports, setEsports] = useState([]);
   const [gameSelect, setGameSelect] = useState(
@@ -124,8 +121,8 @@ const CreateEventForm = ({ data: event }) => {
       ? sports
       : esports
   );
-  const [query, setQuery] = useState("");
 
+  const [query, setQuery] = useState("");
   const filteredGames =
     query === ""
       ? categorySelect.value == "sport"
@@ -149,7 +146,16 @@ const CreateEventForm = ({ data: event }) => {
     const response = await fetch("/api/sport");
     const json = await response.json();
     if (json.error) {
-      alert("Some Error Occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
       let sports = [];
       let esports = [];
@@ -164,9 +170,11 @@ const CreateEventForm = ({ data: event }) => {
       setEsports(esports);
     }
   };
+
   const handleCreateEvent = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     const data = {
       poster: posterImg,
       title: formData.title,
@@ -196,6 +204,7 @@ const CreateEventForm = ({ data: event }) => {
       twitter: formData.twitter,
       other: formData.other,
     };
+
     const token = JSON.parse(localStorage.getItem("auth-token"));
     const reponse = await fetch("/api/events", {
       method: "POST",
@@ -207,21 +216,34 @@ const CreateEventForm = ({ data: event }) => {
     });
     const json = await reponse.json();
     if (json.error) {
-      alert("some error occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
-      alert("sucessful");
+      toast.success(`Event Created!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      router.push("/list");
     }
     setIsSubmitting(false);
   };
 
   const posterRef = useRef();
   const addPoster = (e) => {
-    // if (e.target.files && e.target.files[0]) {
-    //   console.log(e.target.files);
-    //   let img = URL.createObjectURL(e.target.files[0]);
-    //   console.log(e.target.files[0].toDataURL());
-    //   setProfileImg(img);
-    // }
     const selectedfile = e.target.files;
     if (selectedfile.length > 0) {
       const [imageFile] = selectedfile;
@@ -237,6 +259,7 @@ const CreateEventForm = ({ data: event }) => {
   const handleUpdateEvent = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     const data = {
       _id: event._id,
       poster: posterImg,
@@ -267,6 +290,7 @@ const CreateEventForm = ({ data: event }) => {
       twitter: formData.twitter,
       other: formData.other,
     };
+
     const token = JSON.parse(localStorage.getItem("auth-token"));
     const reponse = await fetch("/api/events", {
       method: "PUT",
@@ -278,13 +302,34 @@ const CreateEventForm = ({ data: event }) => {
     });
     const json = await reponse.json();
     if (json.error) {
-      alert("some error occured!");
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } else {
-      alert("sucessful");
+      toast.success(`Event Updated!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       router.push("/list");
     }
     setIsSubmitting(false);
   };
+
+  const inputStyle =
+    "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
 
   return (
     <>
@@ -407,7 +452,7 @@ const CreateEventForm = ({ data: event }) => {
                 <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left sm:text-sm">
                   <Combobox.Input
                     className="w-full outline-none border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-                    displayValue={(game) => game.name}
+                    displayValue={(game) => game?.name}
                     placeholder="Select Game"
                     onChange={(event) => setQuery(event.target.value)}
                     ref={gameinputref}

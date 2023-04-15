@@ -39,7 +39,7 @@ const handler = async (req, res) => {
     });
     res.status(200).json({ existingUser });
   } else if (req.method == "DELETE") {
-    let existingUser = await Users.findByIdAndUpdate(_id, {
+    let existingUser = await Users.findByIdAndUpdate(req.user._id, {
       is_deleted: true,
     });
     res.status(200).json({ existingUser });

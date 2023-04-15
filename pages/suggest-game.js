@@ -4,6 +4,8 @@ import { RadioGroup } from "@headlessui/react";
 // Icons
 import CheckIcon from "../components/Icons/CheckIcon";
 import SpinnerIcon from "../components/SpinnerIcon";
+// Toast
+import { toast } from "react-toastify";
 
 const select = [
   {
@@ -21,18 +23,20 @@ const SuggestGame = () => {
   const [gameName, setGameName] = useState("");
   const [resource, setResource] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
     const data = {
       name: gameName,
       resource,
       playable: selectedOption.value,
     };
-    console.log(data);
-    setIsSubmitting(true);
+
     const reponse = await fetch("/api/sport", {
       method: "POST",
       headers: {
@@ -41,7 +45,29 @@ const SuggestGame = () => {
       body: JSON.stringify(data),
     });
     const json = await reponse.json();
-    console.log(json);
+    if (json.error) {
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      toast.success(`Game Suggested!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
     setGameName("");
     setResource("");
     setIsSubmitting(false);
@@ -121,6 +147,12 @@ const SuggestGame = () => {
             className={inputStyle}
           />
 
+          <p className="text-sm font-semibold my-4 text-center text-gray-500">
+            <span className="text-red-400">* </span>
+            <span>
+              This game will be ready for use once the admin accepts it!
+            </span>
+          </p>
           <button
             disabled={isSubmitting}
             className="my-4 px-4 py-2 w-1/2 lg:w-1/3 block ml-auto hover:bg-yellow-200 rounded-2xl bg-white shadow-md text-gray-500 font-sans font-semibold"

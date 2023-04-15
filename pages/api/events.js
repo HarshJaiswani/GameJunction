@@ -78,7 +78,7 @@ const handler = async (req, res) => {
       let organiser = await Users.findByIdAndUpdate(req.user._id, {
         events_organised: [...organiserUser.events_organised, newEvent._id],
       });
-      res.status(200).json({ newEvent, organiser });
+      res.status(200).json({ success: "Event Created!" });
     }
   } else if (req.method == "PUT") {
     let existingEvent = await Events.findByIdAndUpdate(_id, {

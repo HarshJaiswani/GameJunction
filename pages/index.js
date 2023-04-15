@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 // Next Components
 import Link from "next/link";
 // Custom Components
@@ -9,8 +9,10 @@ import { ImAndroid } from "react-icons/im";
 
 const Home = () => {
   return (
-    <div className="pt-8">
+    <div className="">
       <Header />
+
+      {/* Android App Section */}
       <div
         id="hideAppSection"
         className="w-full px-12 py-8 flex items-center justify-center flex-col"
@@ -31,7 +33,10 @@ const Home = () => {
           <span className="text-green-400 font-semibold">Download App</span>
         </Link>
       </div>
+
       <About />
+
+      {/* Game Section */}
       <div className="w-[90%] mb-16 p-8 sm:p-12 flex flex-wrap items-center justify-between mx-auto rounded-2xl shadow bg-gradient-to-r from-[#091921] to-cyan-500">
         <div>
           <h2 className="text-2xl sm:text-3xl text-[white]">
@@ -47,6 +52,8 @@ const Home = () => {
           </button>
         </Link>
       </div>
+
+      {/* Advertisment Section */}
       <div className="w-[90%] my-8 p-8 sm:p-12 flex flex-wrap items-center justify-between mx-auto rounded-2xl shadow bg-gradient-to-r from-gray-800 to-green-500">
         <div>
           <h2 className="text-2xl text-[white]">

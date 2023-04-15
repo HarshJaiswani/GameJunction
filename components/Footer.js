@@ -29,16 +29,25 @@ const Footer = () => {
           </p>
         </div>
         <div className="w-full md:w-1/2 mt-8 md:mt-0 flex items-center justify-center">
-          <div className="flex items-center">
-            <Link href="https://t.me/GameJunction_official" target="_blank">
+          <div className="flex items-center justify-center flex-wrap">
+            <Link
+              href="https://t.me/GameJunction_official"
+              className="mt-2"
+              target="_blank"
+            >
               <FaTelegramPlane className={iconStyle} />
             </Link>
-            <Link href="https://twitter.com/Game_junction_" target="_blank">
+            <Link
+              href="https://twitter.com/Game_junction_"
+              className="mt-2"
+              target="_blank"
+            >
               <ImTwitter className={iconStyle} />
             </Link>
             <Link
               href="https://www.linkedin.com/in/game-junction-36006b271/"
               target="_blank"
+              className="mt-2"
             >
               <TfiLinkedin className={iconStyle} />
             </Link>
@@ -48,18 +57,21 @@ const Footer = () => {
             <Link
               href="https://github.com/HarshJaiswani/GameJunction"
               target="_blank"
+              className="mt-2"
             >
               <SiGithub className={iconStyle} />
             </Link>
             <Link
               href="https://www.instagram.com/gamejunction_official/"
               target="_blank"
+              className="mt-2"
             >
               <SiInstagram className={iconStyle} />
             </Link>
             <Link
               href={`mailto:game.junction.official@gmail.com`}
               target="_blank"
+              className="mt-2"
             >
               <IoMail className={`${iconStyle} text-3xl sm:text-4xl`} />
             </Link>

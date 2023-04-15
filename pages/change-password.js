@@ -5,14 +5,18 @@ import { useRouter } from "next/router";
 import SpinnerIcon from "../components/SpinnerIcon";
 // App Context
 import { AppContext } from "../context/AppContext";
+// Toast
+import { toast } from "react-toastify";
 
 const ChangePassword = () => {
   const router = useRouter();
   const { handleLogout } = useContext(AppContext);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newCPassword, setNewCPassword] = useState("");
+
   const handleChangePass = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -31,21 +35,41 @@ const ChangePassword = () => {
       });
       const json = await response.json();
       if (json.error) {
-        alert(json.error);
+        toast.error(`${json.error}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       } else {
         handleLogout();
         router.push("/signin");
       }
     } else {
-      alert("password dont match");
+      toast.error(`Passwords Don't Match`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
     setIsSubmitting(false);
   };
+
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
+
   return (
     <div className="w-full min-h-[60vh] bg-gray-50 flex items-center justify-center flex-col">
-      <form onSubmit={handleChangePass} className="w-full lg:w-1/2">
+      <form onSubmit={handleChangePass} className="w-[90%] md:w-[70%] lg:w-1/2">
         <h2 className="text-xl font-semibold text-gray-500 text-center my-4">
           Change Password
         </h2>
