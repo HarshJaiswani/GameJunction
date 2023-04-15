@@ -42,25 +42,37 @@ const gender = [
   },
 ];
 
-const SignupForm = () => {
+const SignupForm = ({ data }) => {
   const router = useRouter();
   const { setLoggedIn } = useContext(AppContext);
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerification, setIsVerification] = useState(false);
-  const [selectedStake, setSelectedStake] = useState(stakeholder[0]);
-  const [genderSelection, setGenderSelection] = useState(gender[0]);
-  const [profileImg, setProfileImg] = useState();
+  const [selectedStake, setSelectedStake] = useState(
+    data?.is_participant && data?.is_organiser
+      ? stakeholder[2]
+      : data?.is_participant
+      ? stakeholder[1]
+      : stakeholder[0]
+  );
+  const [genderSelection, setGenderSelection] = useState(
+    data?.gender == "female"
+      ? gender[1]
+      : data?.gender == "other"
+      ? gender[2]
+      : gender[0]
+  );
+  const [profileImg, setProfileImg] = useState(data?.profile_pic || null);
   const [showPass, setShowPass] = useState(false);
   const [games, setGames] = useState([]);
-  const [gamesSelected, setGamesSelected] = useState([]);
+  const [gamesSelected, setGamesSelected] = useState(data?.sports || []);
   const [otp, setOtp] = useState("");
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
+    name: data?.name || "",
+    email: data?.email || "",
     password: "",
-    contact: "",
-    dob: "",
+    contact: data?.contact || "",
+    dob: (data && new Date(data?.dob).toISOString().split("T")[0]) || "",
   });
 
   const inputStyle =
@@ -130,6 +142,11 @@ const SignupForm = () => {
       body: JSON.stringify(data),
     });
     const json = await reponse.json();
+    if (json.error) {
+      alert("err");
+    } else {
+      alert("Proceed");
+    }
     setIsVerification(true);
     setIsSubmitting(false);
   };
@@ -161,10 +178,47 @@ const SignupForm = () => {
     setIsSubmitting(false);
   };
 
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const apidata = {
+      _id: data._id,
+      name: formData.name,
+      contact: formData.contact,
+      dob: formData.dob,
+      gender: genderSelection.value,
+      sports: gamesSelected,
+      is_organiser:
+        selectedStake.value == "organiser" || selectedStake.value == "both",
+      is_participant:
+        selectedStake.value == "participant" || selectedStake.value == "both",
+      profile_pic: profileImg,
+    };
+    const reponse = await fetch("/api/updateuser", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": JSON.parse(localStorage.getItem("auth-token")),
+      },
+      body: JSON.stringify(apidata),
+    });
+    const json = await reponse.json();
+    if (json.error) {
+      alert(json.error);
+    } else {
+      alert("Proceed");
+      router.push("/profile");
+    }
+    setIsSubmitting(false);
+  };
+
   return (
     <>
       {!isVerification && (
-        <form onSubmit={handleFormSubmit} className="w-full lg:w-1/2">
+        <form
+          onSubmit={data ? handleProfileUpdate : handleFormSubmit}
+          className="w-full lg:w-1/2"
+        >
           {/* Profile Image */}
           <div
             onClick={() => profileRef.current.click()}
@@ -208,37 +262,40 @@ const SignupForm = () => {
               setFormData({ ...formData, email: e.target.value })
             }
             placeholder="Email"
+            disabled={data && true}
             className={inputStyle}
           />
 
           {/* Password */}
-          <div className="relative">
-            <input
-              type={showPass ? "text" : "password"}
-              placeholder="Password"
-              className={inputStyle}
-              required={true}
-              value={formData.password}
-              minLength={6}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-            />
-            <div className="absolute top-8 right-3">
-              {showPass && (
-                <AiOutlineEye
-                  className="text-lg text-gray-300 cursor-pointer"
-                  onClick={() => setShowPass(!showPass)}
-                />
-              )}
-              {!showPass && (
-                <AiOutlineEyeInvisible
-                  className="text-lg text-gray-300 cursor-pointer"
-                  onClick={() => setShowPass(!showPass)}
-                />
-              )}
+          {!data && (
+            <div className="relative">
+              <input
+                type={showPass ? "text" : "password"}
+                placeholder="Password"
+                className={inputStyle}
+                required={true}
+                value={formData.password}
+                minLength={6}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+              />
+              <div className="absolute top-8 right-3">
+                {showPass && (
+                  <AiOutlineEye
+                    className="text-lg text-gray-300 cursor-pointer"
+                    onClick={() => setShowPass(!showPass)}
+                  />
+                )}
+                {!showPass && (
+                  <AiOutlineEyeInvisible
+                    className="text-lg text-gray-300 cursor-pointer"
+                    onClick={() => setShowPass(!showPass)}
+                  />
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Contact */}
           <div className={`${inputStyle} flex items-center`}>
@@ -443,7 +500,7 @@ const SignupForm = () => {
             className="my-4 px-4 py-2 w-1/2 md:w-1/3 block ml-auto hover:bg-yellow-200 rounded-2xl bg-white shadow-md text-gray-500 font-sans font-semibold"
           >
             {isSubmitting && <SpinnerIcon />}
-            Sign Up
+            {data ? "Update Profile" : "Sign Up"}
           </button>
         </form>
       )}

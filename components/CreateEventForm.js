@@ -59,46 +59,70 @@ const isTeam = [
   },
 ];
 
-const CreateEventForm = () => {
+const CreateEventForm = ({ data: event }) => {
+  // const [event, setEvent] = useState(data);
+  // useEffect(() => {
+  //   setEvent(data);
+  // }, [data]);
   const gameinputref = useRef();
   const router = useRouter();
   const { isLoggedIn } = useContext(AppContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [modeSelect, setModeSelect] = useState(modes[0]);
-  const [categorySelect, setCategorySelect] = useState(category[0]);
-  const [posterImg, setPosterImg] = useState(null);
-  const [isTeamSelect, setIsTeamSelect] = useState(isTeam[0]);
+  const [modeSelect, setModeSelect] = useState(
+    event?.mode == "offline" ? modes[1] : modes[0]
+  );
+  const [categorySelect, setCategorySelect] = useState(
+    event?.category == "esport" ? category[1] : category[0]
+  );
+  const [posterImg, setPosterImg] = useState(event?.posterImg || null);
+  const [isTeamSelect, setIsTeamSelect] = useState(
+    event?.maxTeam > 1 ? isTeam[0] : isTeam[1]
+  );
   const [formData, setFormData] = useState({
-    title: "",
-    theme: "",
-    details: "",
-    platform: "",
-    link: "",
-    location: "",
-    minTeam: 1,
-    maxTeam: 1,
-    eventDate: "",
-    rewards: "",
-    eligibility: "",
-    registrationFee: 0,
-    lastDateOfRegistration: "",
-    contact: "",
-    email: "",
-    website: "",
-    linkedin: "",
-    instagram: "",
-    youtube: "",
-    telegram: "",
-    discord: "",
-    twitter: "",
-    other: "",
+    title: event?.title || "",
+    theme: event?.theme || "",
+    details: event?.details || "",
+    platform: event?.platform || "",
+    link: event?.link || "",
+    location: event?.location || "",
+    minTeam: event?.minTeam || 1,
+    maxTeam: event?.maxTeam || 1,
+    eventDate:
+      (event &&
+        new Date(event?.eventDate)
+          .toISOString()
+          .replace(/(?:\.\d{1,3})?Z$/, "")) ||
+      "",
+    rewards: event?.rewards || "",
+    eligibility: event?.eligibility || "",
+    registrationFee: event?.registrationFee || 0,
+    lastDateOfRegistration:
+      (event &&
+        new Date(event?.lastDateOfRegistration)
+          .toISOString()
+          .replace(/(?:\.\d{1,3})?Z$/, "")) ||
+      "",
+    contact: event?.contact || "",
+    email: event?.email || "",
+    website: event?.website || "",
+    linkedin: event?.linkedin || "",
+    instagram: event?.instagram || "",
+    youtube: event?.youtube || "",
+    telegram: event?.telegram || "",
+    discord: event?.discord || "",
+    twitter: event?.twitter || "",
+    other: event?.other || "",
   });
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
   const [sports, setSports] = useState([]);
   const [esports, setEsports] = useState([]);
   const [gameSelect, setGameSelect] = useState(
-    categorySelect.value == "sport" ? sports : esports
+    event?.sport
+      ? { name: event.sport }
+      : categorySelect.value == "sport"
+      ? sports
+      : esports
   );
   const [query, setQuery] = useState("");
 
@@ -115,7 +139,7 @@ const CreateEventForm = () => {
         );
 
   useEffect(() => {
-    if (gameinputref.current) {
+    if (!event && gameinputref.current) {
       gameinputref.current.value = "";
     }
     fetchSports();
@@ -210,11 +234,63 @@ const CreateEventForm = () => {
     }
   };
 
+  const handleUpdateEvent = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const data = {
+      _id: event._id,
+      poster: posterImg,
+      title: formData.title,
+      theme: formData.theme,
+      details: formData.details,
+      category: categorySelect.value,
+      sport: gameSelect.name,
+      mode: modeSelect.value,
+      platform: formData.platform,
+      link: formData.link,
+      location: formData.location,
+      minTeam: formData.minTeam,
+      maxTeam: formData.maxTeam,
+      eventDate: formData.eventDate,
+      rewards: formData.rewards,
+      eligibility: formData.eligibility,
+      registrationFee: formData.registrationFee,
+      lastDateOfRegistration: formData.lastDateOfRegistration,
+      contact: formData.contact,
+      email: formData.email,
+      website: formData.website,
+      linkedin: formData.linkedin,
+      instagram: formData.instagram,
+      youtube: formData.youtube,
+      telegram: formData.telegram,
+      discord: formData.discord,
+      twitter: formData.twitter,
+      other: formData.other,
+    };
+    const token = JSON.parse(localStorage.getItem("auth-token"));
+    const reponse = await fetch("/api/events", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": token,
+      },
+      body: JSON.stringify(data),
+    });
+    const json = await reponse.json();
+    if (json.error) {
+      alert("some error occured!");
+    } else {
+      alert("sucessful");
+      router.push("/list");
+    }
+    setIsSubmitting(false);
+  };
+
   return (
     <>
       {isLoggedIn ? (
         <form
-          onSubmit={handleCreateEvent}
+          onSubmit={event ? handleUpdateEvent : handleCreateEvent}
           className="w-[90%] md:w-[75%] lg:w-2/3 mx-auto"
         >
           {/* Poster */}
@@ -840,7 +916,7 @@ const CreateEventForm = () => {
             className="my-4 px-4 py-2 w-1/2 lg:w-1/3 block ml-auto hover:bg-yellow-200 rounded-2xl bg-white shadow-md text-gray-500 font-sans font-semibold"
           >
             {isSubmitting && <SpinnerIcon />}
-            Create Event
+            {event ? "Update Event" : "Create Event"}
           </button>
         </form>
       ) : (

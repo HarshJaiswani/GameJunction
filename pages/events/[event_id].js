@@ -14,23 +14,67 @@ import { RxDiscordLogo } from "react-icons/rx";
 import { FaTelegramPlane } from "react-icons/fa";
 import ImageIcon from "../../components/Icons/ImageIcon";
 import { HiOutlineCurrencyRupee } from "react-icons/hi";
+import SpinnerIcon from "../../components/SpinnerIcon";
 
 const EventId = () => {
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { isLoggedIn } = useContext(AppContext);
   const [event, setEvent] = useState({});
+  const [isApplied, setIsApplied] = useState(false);
   useEffect(() => {
     if (router.isReady) {
       fetchEvent();
+      if (isLoggedIn) {
+        fetchCurrentUser();
+      }
     }
   }, [router.isReady]);
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
-  const handleApplyEvent = (e) => {
+  const handleApplyEvent = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     if (isLoggedIn) {
+      const response = await fetch("/api/applyintoevent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": JSON.parse(localStorage.getItem("auth-token")),
+        },
+        body: JSON.stringify({ eventId: event._id }),
+      });
+      const json = await response.json();
+      if (json.error) {
+        alert("error");
+      } else {
+        alert("applied");
+        router.reload();
+      }
     } else {
       router.push("/signin");
+    }
+    setIsSubmitting(false);
+  };
+  const fetchCurrentUser = async () => {
+    let token = JSON.parse(localStorage.getItem("auth-token"));
+    const response = await fetch("/api/getusers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": token,
+      },
+      body: JSON.stringify({ token }),
+    });
+    const json = await response.json();
+    if (json.error) {
+      alert("Some Error Occured!");
+    } else {
+      if (
+        json.user.events_participated.includes(router.query.event_id.toString())
+      ) {
+        setIsApplied(true);
+      }
     }
   };
   const fetchEvent = async () => {
@@ -51,6 +95,12 @@ const EventId = () => {
   };
   return (
     <div className="bg-gray-50 p-5 sm:py-12">
+      {event.winner && (
+        <div className="w-fit bg-gray-50 rounded-full text-center px-8 py-2 text-2xl mx-auto mb-8 shadow">
+          <span className="text-gray-400">Winner : </span>
+          <span className="text-yellow-400">{event.winner}</span>
+        </div>
+      )}
       <div className="w-full lg:w-2/3 mx-auto">
         <h2 className="text-3xl font-semibold text-gray-500 mb-4 text-center">
           {event.title}
@@ -80,10 +130,20 @@ const EventId = () => {
           </div>
           <button
             onClick={handleApplyEvent}
-            className="w-full rounded-lg font-semibold bg-[blue] my-4 text-white shadow py-2"
+            disabled={isSubmitting || isApplied}
+            className={`w-full rounded-lg font-semibold ${
+              isApplied
+                ? "bg-yellow-500 hover:bg-yellow-400"
+                : "bg-blue-500 hover:bg-blue-500"
+            } my-4 text-white shadow py-2`}
           >
-            Apply Now
+            {isSubmitting && <SpinnerIcon />}
+            {isApplied ? "Applied" : "Apply Now"}
           </button>
+        </div>
+        <div className="px-6 py-4 text-lg rounded-md bg-white shadow">
+          <span className="text-gray-400">Theme:</span>{" "}
+          <span className="text-red-400 font-semibold">{event.theme}</span>
         </div>
         <div className="my-8 text-gray-400 text-lg">{event.details}</div>
         <div className="p-5 md:p-12 flex flex-wrap items-center border rounded-2xl bg-white shadow mx-auto mb-8">

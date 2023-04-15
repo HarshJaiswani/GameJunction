@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 // Next Components
 import { useRouter } from "next/router";
+import Link from "next/link";
 // Custom Components
 import EventCard from "../components/EventCard";
 import RankCard from "../components/RankCard";
@@ -17,6 +18,7 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [currEvents, setCurrEvents] = useState([]);
   const [passEvents, setPassEvents] = useState([]);
+  const [allEvents, setAllEvents] = useState([]);
   useEffect(() => {
     fetchUser();
   }, []);
@@ -62,15 +64,19 @@ const Profile = () => {
       });
       setCurrEvents(currEvents);
       setPassEvents(passEvents);
+      setAllEvents(json.all_events);
     }
   };
   return (
     <>
       {user && (
         <div className="p-5 sm:p-12 bg-gray-50 relative">
-          <div className="absolute top-4 right-4 p-2 bg-cyan-800 rounded-full cursor-pointer">
+          <Link
+            href="/signup?isEdit=true"
+            className="absolute top-4 right-4 p-2 bg-cyan-800 rounded-full cursor-pointer"
+          >
             <IoPencil className="text-xl text-[yellow]" />
-          </div>
+          </Link>
           <div className="flex items-center flex-col md:flex-row">
             <div className="w-36 h-36 rounded-full shadow bg-gray-100 overflow-hidden flex items-center justify-center">
               {user.profile_pic == undefined ? (
@@ -157,9 +163,12 @@ const Profile = () => {
           <ul className="w-full sm:w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
             {user.wishlist_events.length == 0 &&
               "Add events to your wishlist by clicking heart on events"}
-            {user.wishlist_events.map((post) => (
-              <EventCard key={post._id} post={post} />
-            ))}
+            {allEvents.map(
+              (post) =>
+                user.wishlist_events.includes(post._id.toString()) && (
+                  <EventCard key={post._id} post={post} />
+                )
+            )}
           </ul>
         </div>
       )}

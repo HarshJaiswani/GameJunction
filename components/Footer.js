@@ -7,6 +7,7 @@ import Logo from "./Logo";
 import { FaTelegramPlane } from "react-icons/fa";
 import { ImTwitter } from "react-icons/im";
 import { TfiLinkedin } from "react-icons/tfi";
+import { IoMail } from "react-icons/io5";
 // import { IoLogoDiscord } from "react-icons/io5";
 import { SiGithub, SiInstagram } from "react-icons/si";
 
@@ -55,6 +56,9 @@ const Footer = () => {
               target="_blank"
             >
               <SiInstagram className={iconStyle} />
+            </Link>
+            <Link href={`mailto:${process.env.EMAIL}`} target="_blank">
+              <IoMail className={`${iconStyle} text-3xl sm:text-4xl`} />
             </Link>
           </div>
         </div>

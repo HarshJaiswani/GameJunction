@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 // Next Components
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,18 +9,86 @@ import { TiArrowForwardOutline } from "react-icons/ti";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 // Toast
 import { toast } from "react-toastify";
+import SpinnerIcon from "./SpinnerIcon";
 
 const EventCard = ({ post }) => {
   const router = useRouter();
   const { isLoggedIn } = useContext(AppContext);
-  const handleApplyEvent = (e) => {
-    e.preventDefault();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isApplied, setIsApplied] = useState(false);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  useEffect(() => {
     if (isLoggedIn) {
+      fetchCurrentUser();
+    }
+  }, []);
+  const handleApplyEvent = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    if (isLoggedIn) {
+      const response = await fetch("/api/applyintoevent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": JSON.parse(localStorage.getItem("auth-token")),
+        },
+        body: JSON.stringify({ eventId: post._id }),
+      });
+      const json = await response.json();
+      if (json.error) {
+        alert("error");
+      } else {
+        alert("applied");
+        router.reload();
+      }
     } else {
       router.push("/signin");
     }
+    setIsSubmitting(false);
   };
-  const handleAddToWishList = () => {};
+  const fetchCurrentUser = async () => {
+    let token = JSON.parse(localStorage.getItem("auth-token"));
+    const response = await fetch("/api/getusers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": token,
+      },
+      body: JSON.stringify({ token }),
+    });
+    const json = await response.json();
+    if (json.error) {
+      alert("Some Error Occured!");
+    } else {
+      if (json.user.events_participated.includes(post._id.toString())) {
+        setIsApplied(true);
+      }
+      if (json.user.wishlist_events.includes(post._id.toString())) {
+        setIsWishlisted(true);
+      }
+    }
+  };
+  const handleAddToWishList = async () => {
+    if (isLoggedIn) {
+      const response = await fetch("/api/wishlist-event", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": JSON.parse(localStorage.getItem("auth-token")),
+        },
+        body: JSON.stringify({ eventId: post._id, toAdd: !isWishlisted }),
+      });
+      const json = await response.json();
+      if (json.error) {
+        alert("error");
+      } else {
+        alert("added");
+        router.reload();
+      }
+    } else {
+      alert("login kro");
+    }
+  };
   const handleEventShare = () => {
     if (navigator) {
       navigator.clipboard.writeText(
@@ -61,8 +129,11 @@ const EventCard = ({ post }) => {
               onClick={handleAddToWishList}
               className="p-2 rounded-full mx-2 bg-gray-100/60 hover:ring-2 hover:ring-teal-200 shadow w-fit"
             >
-              <AiFillHeart className="text-[red] text-2xl" />
-              {/* <AiOutlineHeart className="text-[gray] text-2xl" /> */}
+              {isWishlisted ? (
+                <AiFillHeart className="text-[red] text-2xl" />
+              ) : (
+                <AiOutlineHeart className="text-[gray] text-2xl" />
+              )}
             </div>
             <div
               onClick={handleEventShare}
@@ -77,7 +148,7 @@ const EventCard = ({ post }) => {
           <div className="mr-4">
             <span className="text-gray-300">Theme : </span>
             <div className="px-6 py-2 rounded-full border text-gray-400 w-fit">
-              {post.theme || "No Restriction"}
+              {post.theme || "No Theme"}
             </div>
           </div>
           <div className="text-gray-400 font-semibold my-4">
@@ -106,9 +177,15 @@ const EventCard = ({ post }) => {
           {post.is_active ? (
             <button
               onClick={handleApplyEvent}
-              className="my-4 sm:my-0 ml-auto hover:bg-blue-400 block w-full sm:w-fit px-4 py-2 sm:py-2.5 rounded-lg bg-blue-500 text-white"
+              disabled={isSubmitting || isApplied}
+              className={`my-4 sm:my-0 ml-auto block w-full sm:w-fit px-4 py-2 sm:py-2.5 rounded-lg ${
+                isApplied
+                  ? "bg-yellow-500 hover:bg-yellow-400"
+                  : "bg-blue-500 hover:bg-blue-500"
+              } text-white`}
             >
-              Apply Now
+              {isSubmitting && <SpinnerIcon />}
+              {isApplied ? "Applied" : "Apply Now"}
             </button>
           ) : (
             <button className="ml-auto hover:bg-yellow-400 block px-4 py-2.5 rounded-lg bg-yellow-500 text-white">

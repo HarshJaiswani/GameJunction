@@ -11,7 +11,10 @@ const Home = () => {
   return (
     <div className="pt-8">
       <Header />
-      <div className="w-full px-12 py-8 flex items-center justify-center flex-col">
+      <div
+        id="hideAppSection"
+        className="w-full px-12 py-8 flex items-center justify-center flex-col"
+      >
         <p className="text-lg md:text-2xl font-semibold text-gray-400">
           For more
         </p>
@@ -41,6 +44,22 @@ const Home = () => {
         <Link href="/suggest-game">
           <button className="px-6 py-2 mt-4 sm:mt-0 rounded-full bg-white hover:bg-yellow-300 shadow text-gray-500 font-semibold">
             Suggest Game
+          </button>
+        </Link>
+      </div>
+      <div className="w-[90%] my-8 p-8 sm:p-12 flex flex-wrap items-center justify-between mx-auto rounded-2xl shadow bg-gradient-to-r from-gray-800 to-green-500">
+        <div>
+          <h2 className="text-2xl text-[white]">
+            Want to showcase your brand with us?
+          </h2>
+          <p className="my-2 text-lg text-white">
+            Contact Us with for you advertisment requirements and we will get
+            back to you as soon as possible
+          </p>
+        </div>
+        <Link href={`mailto:${process.env.EMAIL}`}>
+          <button className="px-6 py-2 mt-4 sm:mt-0 rounded-full bg-white hover:bg-yellow-300 shadow text-gray-500 font-semibold">
+            Contact Us
           </button>
         </Link>
       </div>

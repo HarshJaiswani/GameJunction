@@ -9,13 +9,11 @@ const handler = async (req, res) => {
     res.status(200).json({ events });
   } else if (req.method == "POST") {
     try {
-      let all_events = [];
-      req.body.eventids.forEach(async (e) => {
-        let event = await Events.findById(e);
-        if (event && !event.is_deleted) {
-          all_events.push(event);
-        }
-      });
+      let all_events = await Events.find();
+      all_events = all_events.filter((e) => !e.is_deleted);
+      all_events = all_events.filter((e) =>
+        req.body.eventids.includes(e._id.toString())
+      );
       res.status(200).json({ all_events });
     } catch (err) {
       res.status(500).json({ error: err });

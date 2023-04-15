@@ -21,17 +21,14 @@ import { AppContext } from "../context/AppContext";
 const iconStyle = "text-lg mr-2";
 
 const NavDropdown = () => {
-  const { isLoggedIn, setLoggedIn } = useContext(AppContext);
+  const { isLoggedIn, handleLogout } = useContext(AppContext);
   const [user, setUser] = useState(null);
   useEffect(() => {
     if (isLoggedIn) {
       fetchUser();
     }
   }, [isLoggedIn]);
-  const handleLogout = () => {
-    localStorage.removeItem("auth-token");
-    setLoggedIn(false);
-  };
+
   const fetchUser = async () => {
     const token = JSON.parse(localStorage.getItem("auth-token"));
     const response = await fetch("/api/getusers", {

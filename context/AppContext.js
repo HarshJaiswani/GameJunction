@@ -11,10 +11,19 @@ const AppState = (props) => {
       setLoggedIn(false);
     }
   }, []);
+  const handleLogout = () => {
+    localStorage.removeItem("auth-token");
+    setLoggedIn(false);
+  };
 
   return (
     <AppContext.Provider
-      value={{ msg: "Namaste Dunia!", isLoggedIn: loggedIn, setLoggedIn }}
+      value={{
+        msg: "Namaste Dunia!",
+        isLoggedIn: loggedIn,
+        setLoggedIn,
+        handleLogout,
+      }}
     >
       {props.children}
     </AppContext.Provider>
