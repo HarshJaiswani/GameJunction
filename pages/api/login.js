@@ -55,13 +55,17 @@ const handler = async (req, res) => {
           <p>GameJunction</p>
         </div>`,
         };
-        transporter.sendMail(mailOptions, (err, info) => {
-          if (err) {
-            res.status(500).json({ error: err });
-          } else {
-            console.log("email sent" + info.response);
-          }
+        const success = await new Promise((resolve, reject) => {
+          transporter.sendMail(mailOptions, (err, info) => {
+            if (info.response.includes("250")) {
+              resolve(true);
+            }
+            reject(err);
+          });
         });
+        if (!success) {
+          res.status(500).json({ error: "Error sending email" });
+        }
         let verifyCode = await Verify.findOneAndUpdate(
           { email },
           {
