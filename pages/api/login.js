@@ -49,9 +49,7 @@ const handler = async (req, res) => {
           <p style="font-size: 1.2rem;">GameJunction</p>
           <p>We hope that you will grow and enjoy with Us!</p>
           <p>Wish you the best for opportunities ahead!</p>
-          <p>Your link to change password is: <a style="font-weight: bolder;font-size: 1rem;display: block;" href="${
-            process.env.NEXT_PUBLIC_HOST || `https://${process.env.VERCEL_URL}`
-          }/forgot-password?token=${token}">Click Here to reset!</a></p>
+          <p>Your link to change password is: <a style="font-weight: bolder;font-size: 1rem;display: block;" href="${process.env.NEXT_PUBLIC_HOST}/forgot-password?token=${token}">Click Here to reset!</a></p>
           <p>Ignore if you have not requested!</p>
           <p>Team</p>
           <p>GameJunction</p>

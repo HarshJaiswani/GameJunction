@@ -152,9 +152,7 @@ const EventCard = ({ post }) => {
   const handleEventShare = () => {
     if (navigator) {
       navigator.clipboard.writeText(
-        `${
-          process.env.NEXT_PUBLIC_HOST || `https://${process.env.VERCEL_URL}`
-        }/events/${post._id}`
+        `${process.env.NEXT_PUBLIC_HOST}/events/${post._id}`
       );
       toast.info("Event Link Copied!", {
         position: "top-right",
