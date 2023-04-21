@@ -39,7 +39,6 @@ const handler = async (req, res) => {
         });
 
         let token = jwt.sign({ email }, process.env.SECRETKEY);
-
         const mailOptions = {
           from: process.env.EMAIL,
           to: email,

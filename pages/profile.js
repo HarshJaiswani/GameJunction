@@ -58,6 +58,7 @@ const Profile = () => {
     } else {
       setUser(json.user);
       fetchEvents(json.user);
+      fetchAllEvents();
     }
   };
 
@@ -94,6 +95,30 @@ const Profile = () => {
       setCurrEvents(currEvents);
       setPassEvents(passEvents);
       setAllEvents(json.all_events);
+    }
+  };
+
+  const fetchAllEvents = async () => {
+    const response = await fetch("/api/getevents", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const json = await response.json();
+    if (json.error) {
+      toast.error(`${json.error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } else {
+      setAllEvents(json.events);
     }
   };
 
@@ -249,7 +274,7 @@ const Profile = () => {
                 Add events to your wishlist by clicking heart on events
               </span>
             )}
-            {allEvents.map(
+            {allEvents?.map(
               (post) =>
                 user.wishlist_events.includes(post._id.toString()) && (
                   <EventCard key={post._id} post={post} />
