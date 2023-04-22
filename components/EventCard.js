@@ -2,42 +2,44 @@ import React, { useContext, useEffect, useState } from "react";
 // Next Components
 import Link from "next/link";
 import { useRouter } from "next/router";
-// App Context
-import { AppContext } from "../context/AppContext";
 // Icons
 import { TiArrowForwardOutline } from "react-icons/ti";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import SpinnerIcon from "./SpinnerIcon";
 // Toast
 import { toast } from "react-toastify";
+// hooks
+import useUser from "../hooks/useUser";
+// swr
+import { mutate } from "swr";
+// services
+import { addToWishList, applyIntoEvent } from "../Services/Events";
 
 const EventCard = ({ post }) => {
   const router = useRouter();
-  const { isLoggedIn } = useContext(AppContext);
+  const { user } = useUser();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlisting, setWishlisting] = useState(false);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchCurrentUser();
+    if (user) {
+      if (user.events_participated.includes(post._id.toString())) {
+        setIsApplied(true);
+      }
+      if (user.wishlist_events.includes(post._id.toString())) {
+        setIsWishlisted(true);
+      }
     }
-  }, []);
+  }, [user, post]);
 
   const handleApplyEvent = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    if (isLoggedIn) {
-      const response = await fetch("/api/applyintoevent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "auth-token": JSON.parse(localStorage.getItem("auth-token")),
-        },
-        body: JSON.stringify({ eventId: post._id }),
-      });
-      const json = await response.json();
+    if (user) {
+      let json = await applyIntoEvent(post._id);
       if (json.error) {
         toast.error(`${json.error}`, {
           position: "top-right",
@@ -60,7 +62,7 @@ const EventCard = ({ post }) => {
           progress: undefined,
           theme: "light",
         });
-        router.reload();
+        mutate("GETALLEVENTS");
       }
     } else {
       router.push("/signin");
@@ -68,50 +70,12 @@ const EventCard = ({ post }) => {
     setIsSubmitting(false);
   };
 
-  const fetchCurrentUser = async () => {
-    let token = JSON.parse(localStorage.getItem("auth-token"));
-    const response = await fetch("/api/getusers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-      body: JSON.stringify({ token }),
-    });
-    const json = await response.json();
-    if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      if (json.user.events_participated.includes(post._id.toString())) {
-        setIsApplied(true);
-      }
-      if (json.user.wishlist_events.includes(post._id.toString())) {
-        setIsWishlisted(true);
-      }
-    }
-  };
-
   const handleAddToWishList = async () => {
-    if (isLoggedIn) {
-      const response = await fetch("/api/wishlist-event", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "auth-token": JSON.parse(localStorage.getItem("auth-token")),
-        },
-        body: JSON.stringify({ eventId: post._id, toAdd: !isWishlisted }),
-      });
-      const json = await response.json();
+    if (user) {
+      setWishlisting(true);
+      let json = await addToWishList(post._id, isWishlisted);
       if (json.error) {
+        setWishlisting(false);
         toast.error(`${json.error}`, {
           position: "top-right",
           autoClose: 5000,
@@ -123,7 +87,8 @@ const EventCard = ({ post }) => {
           theme: "light",
         });
       } else {
-        toast.success(`Added to wishlist!`, {
+        setWishlisting(false);
+        toast.success(`${json.success}`, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -133,7 +98,7 @@ const EventCard = ({ post }) => {
           progress: undefined,
           theme: "light",
         });
-        router.reload();
+        mutate("GETALLEVENTS");
       }
     } else {
       toast.error(`Kindly SignIn!`, {
@@ -150,9 +115,9 @@ const EventCard = ({ post }) => {
   };
 
   const handleEventShare = () => {
-    if (navigator) {
+    if (navigator && window) {
       navigator.clipboard.writeText(
-        `https://gamejunction.vercel.app/events/${post._id}`
+        `${window.location.origin}/events/${post._id}`
       );
       toast.info("Event Link Copied!", {
         position: "top-right",
@@ -190,11 +155,13 @@ const EventCard = ({ post }) => {
               onClick={handleAddToWishList}
               className="p-2 rounded-full mx-2 bg-gray-100/60 hover:ring-2 hover:ring-teal-200 shadow w-fit"
             >
-              {isWishlisted ? (
-                <AiFillHeart className="text-[red] text-2xl" />
-              ) : (
-                <AiOutlineHeart className="text-[gray] text-2xl" />
-              )}
+              {wishlisting && <SpinnerIcon />}
+              {!wishlisting &&
+                (isWishlisted ? (
+                  <AiFillHeart className="text-[red] text-2xl" />
+                ) : (
+                  <AiOutlineHeart className="text-[gray] text-2xl" />
+                ))}
             </div>
             <div
               onClick={handleEventShare}

@@ -1,13 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 // Headless Ui
 import { Tab } from "@headlessui/react";
 // Custom Components
 import RankCard from "../components/RankCard";
-// App Context
-import { AppContext } from "../context/AppContext";
+// icons
 import SpinnerIcon from "../components/SpinnerIcon";
-// Toast
-import { toast } from "react-toastify";
+// hooks
+import useUser from "../hooks/useUser";
+// services
+import { leaderboard } from "../Services/User";
+// swr
+import useSWR from "swr";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -16,61 +19,17 @@ function classNames(...classes) {
 const types = ["Organiser", "Participant"];
 
 const Leaderboard = () => {
-  const { isLoggedIn } = useContext(AppContext);
+  const { user } = useUser();
   const [organisers, setOrganisers] = useState([]);
   const [participants, setParticipants] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { data, error } = useSWR("LEADERBOARD", leaderboard);
 
   useEffect(() => {
-    fetchUsers();
-    if (isLoggedIn) {
-      fetchCurrentUser();
+    if (data) {
+      setOrganisers(data.organisers);
+      setParticipants(data.participants);
     }
-  }, []);
-
-  const fetchCurrentUser = async () => {
-    let token = JSON.parse(localStorage.getItem("auth-token"));
-    const response = await fetch("/api/getusers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-      body: JSON.stringify({ token }),
-    });
-    const json = await response.json();
-    if (!json.error) {
-      setCurrentUser(json.user);
-    }
-  };
-
-  const fetchUsers = async () => {
-    setLoading(true);
-    const response = await fetch("/api/leaderboard", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await response.json();
-    if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      setOrganisers(json.organisers);
-      setParticipants(json.participants);
-    }
-    setLoading(false);
-  };
+  }, [data]);
 
   return (
     <div>
@@ -101,25 +60,24 @@ const Leaderboard = () => {
                   "rounded-xl p-3 bg-gray-50 w-full min-h-[75vh]"
                 )}
               >
-                {loading && (
+                {data && (
                   <div className="flex items-center justify-center py-4">
                     <SpinnerIcon />
                   </div>
                 )}
-                {currentUser && (
+                {user && (
                   <div>
                     {type.toLowerCase() == "participant" &&
-                      currentUser.is_participant && (
+                      user.is_participant && (
                         <div className="w-full sm:w-[80%] mx-auto">
-                          <RankCard user={currentUser} theme="dark" />
+                          <RankCard user={user} theme="dark" />
                         </div>
                       )}
-                    {type.toLowerCase() == "organiser" &&
-                      currentUser.is_organiser && (
-                        <div className="w-full sm:w-[80%] mx-auto">
-                          <RankCard user={currentUser} theme="dark" />
-                        </div>
-                      )}
+                    {type.toLowerCase() == "organiser" && user.is_organiser && (
+                      <div className="w-full sm:w-[80%] mx-auto">
+                        <RankCard user={user} theme="dark" />
+                      </div>
+                    )}
                   </div>
                 )}
                 <ul className="w-full sm:w-4/5 mx-auto flex items-center justify-evenly flex-wrap">

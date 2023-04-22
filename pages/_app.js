@@ -29,8 +29,15 @@ const MyApp = ({ Component, pageProps }) => {
   return (
     <AppState>
       <Head>
+        <meta
+          name="description"
+          content="GameJunction and is a web application that connects sports enthusiasts with tournaments and events in their local area."
+        />
+        <noscript>
+          Give Power of Javascript to Your Browser Engine to Have Embrase the
+          Beauty of this App
+        </noscript>
         <title>GameJunction</title>
-        {/* Come let's play */}
       </Head>
       {loading && <Loading />}
       {!loading && (

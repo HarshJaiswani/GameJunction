@@ -10,7 +10,7 @@ const handler = async (req, res) => {
     if (user.is_admin) {
       let users = await Users.find();
       users = users.filter((e) => !e.is_deleted);
-      res.status(200).json({ users });
+      res.status(200).json(users);
     } else {
       res.status(400).json({ error: "Unauthorised Access!" });
     }

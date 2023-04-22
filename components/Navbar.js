@@ -4,11 +4,8 @@ import Link from "next/link";
 // Custom Components
 import Logo from "./Logo";
 import NavDropdown from "./NavDropdown";
-// Context
-import { AppContext } from "../context/AppContext";
 
 const Navbar = () => {
-  const { isLoggedIn } = useContext(AppContext);
   return (
     <>
       <div

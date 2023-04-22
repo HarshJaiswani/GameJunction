@@ -17,48 +17,14 @@ import {
 } from "react-icons/md";
 // Context
 import { AppContext } from "../context/AppContext";
-// Toast
-import { toast } from "react-toastify";
+// hooks
+import useUser from "../hooks/useUser";
 
 const iconStyle = "text-lg mr-2";
 
 const NavDropdown = () => {
-  const { isLoggedIn, handleLogout } = useContext(AppContext);
-
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchUser();
-    }
-  }, [isLoggedIn]);
-
-  const fetchUser = async () => {
-    const token = JSON.parse(localStorage.getItem("auth-token"));
-    const response = await fetch("/api/getusers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-      body: JSON.stringify({ token }),
-    });
-    const json = await response.json();
-    if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      setUser(json.user);
-    }
-  };
+  const { handleLogout } = useContext(AppContext);
+  const { user } = useUser();
 
   return (
     <div className="ml-8">
@@ -78,7 +44,7 @@ const NavDropdown = () => {
           leaveTo="transform opacity-0 scale-95"
         >
           <Menu.Items className="absolute z-[10] px-4 py-1 right-0 mt-2 w-56 origin-top-right rounded-md text-white bg-gray-600 shadow">
-            {!isLoggedIn && (
+            {!user && (
               <div className="px-1 py-1">
                 <Menu.Item>
                   {({ active }) => (
@@ -128,7 +94,7 @@ const NavDropdown = () => {
                 )}
               </Menu.Item>
             </div>
-            {isLoggedIn && (
+            {user && (
               <div className="px-1 py-1">
                 <Menu.Item>
                   {({ active }) => (
@@ -234,7 +200,7 @@ const NavDropdown = () => {
                 )}
               </Menu.Item>
             </div>
-            {isLoggedIn && (
+            {user && (
               <div className="px-1 py-1">
                 <Menu.Item>
                   {({ active }) => (

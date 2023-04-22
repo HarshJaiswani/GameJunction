@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 // Next Components
 import Link from "next/link";
 // Custom Components
@@ -12,48 +12,40 @@ import { TiTick } from "react-icons/ti";
 import { AppContext } from "../../context/AppContext";
 // Toast
 import { toast } from "react-toastify";
+// services
+import { getAllAdminGames } from "../../Services/Games";
+import { getAllEnquires, resolveEnquiry } from "../../Services/Contact";
+import { getAllUsers } from "../../Services/User";
+// swr
+import useSWR from "swr";
+// hooks
+import useUser from "../../hooks/useUser";
 
 const AppAdmin = () => {
-  const { isLoggedIn } = useContext(AppContext);
+  const { user } = useUser();
 
   const [organisers, setOrganisers] = useState([]);
   const [participants, setParticipants] = useState([]);
-  const [games, setGames] = useState([]);
-  const [enquires, setEnquires] = useState([]);
+
+  const {
+    data: games,
+    error: gameError,
+    mutate,
+  } = useSWR("GETALLADMINGAMES", getAllAdminGames);
+
+  const {
+    data: enquires,
+    error: enqError,
+    mutate: mutateEnq,
+  } = useSWR("GETALLENQUIRES", getAllEnquires);
+
+  const { data: users } = useSWR("GETALLUSERS", getAllUsers);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchUsers();
-      fetchGames();
-      fetchEnquires();
-    }
-  }, []);
-
-  const fetchUsers = async () => {
-    const token = JSON.parse(localStorage.getItem("auth-token"));
-    const response = await fetch("/api/getusers", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-    });
-    const json = await response.json();
-    if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
+    if (users) {
       let organisers = [];
       let participants = [];
-      json.users.forEach((e) => {
+      users.forEach((e) => {
         if (e.is_organiser) {
           organisers.push(e);
         }
@@ -64,74 +56,14 @@ const AppAdmin = () => {
       setOrganisers(organisers);
       setParticipants(participants);
     }
-  };
-
-  const fetchGames = async () => {
-    const response = await fetch("/api/fetchadmingames", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": JSON.parse(localStorage.getItem("auth-token")),
-      },
-    });
-    const json = await response.json();
-    if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      setGames(json.sports);
-    }
-  };
-
-  const fetchEnquires = async () => {
-    const token = JSON.parse(localStorage.getItem("auth-token"));
-    const response = await fetch("/api/contact", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-    });
-    const json = await response.json();
-    if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      setEnquires(json.contacts);
-    }
-  };
+  }, [users]);
 
   const handleResolve = async (id) => {
-    const token = JSON.parse(localStorage.getItem("auth-token"));
     const data = {
       _id: id,
       is_resolved: true,
     };
-    const response = await fetch("/api/contact", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-      body: JSON.stringify(data),
-    });
-    const json = await response.json();
+    let json = await resolveEnquiry(data);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -144,7 +76,7 @@ const AppAdmin = () => {
         theme: "light",
       });
     } else {
-      fetchEnquires();
+      mutateEnq();
     }
   };
 
@@ -161,7 +93,7 @@ const AppAdmin = () => {
             className="bg-white hover:bg-green-50 cursor-pointer w-[200px] h-[100px] m-4 rounded-2xl shadow flex items-center justify-center flex-col"
           >
             <p className="text-2xl font-semibold text-green-400">
-              {organisers.length}
+              {organisers?.length}
             </p>
             <p className="text-gray-400">All Organisers</p>
           </Link>
@@ -170,7 +102,7 @@ const AppAdmin = () => {
             className="bg-white hover:bg-green-50 cursor-pointer w-[200px] h-[100px] m-4 rounded-2xl shadow flex items-center justify-center flex-col"
           >
             <p className="text-2xl font-semibold text-green-400">
-              {participants.length}
+              {participants?.length}
             </p>
             <p className="text-gray-400">All Participants</p>
           </Link>
@@ -179,7 +111,7 @@ const AppAdmin = () => {
             className="bg-white hover:bg-green-50 cursor-pointer w-[200px] h-[100px] m-4 rounded-2xl shadow flex items-center justify-center flex-col"
           >
             <p className="text-2xl font-semibold text-green-400">
-              {games.length}
+              {games?.length}
             </p>
             <p className="text-gray-400">All Game</p>
           </Link>
@@ -188,7 +120,7 @@ const AppAdmin = () => {
             className="bg-white hover:bg-green-50 cursor-pointer w-[200px] h-[100px] m-4 rounded-2xl shadow flex items-center justify-center flex-col"
           >
             <p className="text-2xl font-semibold text-green-400">
-              {enquires.length}
+              {enquires?.length}
             </p>
             <p className="text-gray-400">All Enquires</p>
           </Link>
@@ -199,31 +131,37 @@ const AppAdmin = () => {
         >
           All Organisers
         </h2>
-        <DataTable
-          data={organisers}
-          dataset={["name", "contact", "email", "dob", "gender"]}
-        />
+        {organisers && (
+          <DataTable
+            data={organisers}
+            dataset={["name", "contact", "email", "dob", "gender"]}
+          />
+        )}
         <h2
           id="all_participants"
           className="text-xl sm:text-2xl md:text-3xl mt-8 text-gray-600 font-semibold my-4"
         >
           All Participants
         </h2>
-        <DataTable
-          data={participants}
-          dataset={["name", "contact", "email", "dob", "gender"]}
-        />
+        {participants && (
+          <DataTable
+            data={participants}
+            dataset={["name", "contact", "email", "dob", "gender"]}
+          />
+        )}
         <h2
           id="all_games"
           className="text-xl sm:text-2xl md:text-3xl mt-8 text-gray-600 font-semibold my-4"
         >
           All Games
         </h2>
-        <DataTable
-          dataset={["name", "playable", "resource", "is_verified"]}
-          data={games}
-          fetchData={fetchGames}
-        />
+        {games && (
+          <DataTable
+            dataset={["name", "playable", "resource", "is_verified"]}
+            data={games}
+            fetchData={mutate}
+          />
+        )}
         <h2
           id="all_enquires"
           className="text-xl sm:text-2xl md:text-3xl mt-8 text-gray-600 font-semibold my-4"
@@ -231,8 +169,8 @@ const AppAdmin = () => {
           All Enquires
         </h2>
         <div className="flex items-center justify-start flex-wrap">
-          {enquires.length == 0 && "No Enquires!"}
-          {enquires.map((e, index) => (
+          {enquires?.length == 0 && "No Enquires!"}
+          {enquires?.map((e, index) => (
             <div
               key={index}
               className="rounded-md border bg-white shadow overflow-hidden m-4 w-fit min-w-[200px]"

@@ -10,7 +10,7 @@ const handler = async (req, res) => {
     if (user.is_admin) {
       let contacts = await Contacts.find();
       contacts = contacts.filter((c) => !c.is_resolved);
-      res.status(200).json({ contacts });
+      res.status(200).json(contacts);
     } else {
       res.status(400).json({ error: "Unauthorised Access!" });
     }

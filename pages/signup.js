@@ -5,48 +5,20 @@ import Link from "next/link";
 // Custom Components
 import Logo from "../components/Logo";
 import SignupForm from "../components/SignupForm";
-// Toast
-import { toast } from "react-toastify";
+// hooks
+import useUser from "../hooks/useUser";
 
 const Signup = () => {
   const router = useRouter();
+  const { user } = useUser();
 
   const [isEdit, setIsEdit] = useState(false);
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
     if (router.isReady && router.query.isEdit) {
       setIsEdit(true);
-      fetchUser();
     }
   }, [router.isReady]);
-
-  const fetchUser = async () => {
-    const token = JSON.parse(localStorage.getItem("auth-token"));
-    const response = await fetch("/api/getusers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-      body: JSON.stringify({ token }),
-    });
-    const json = await response.json();
-    if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      setUser(json.user);
-    }
-  };
 
   return (
     <div className="p-5 sm:p-12 bg-gray-50 w-full min-h-screen flex items-center justify-center flex-col">

@@ -14,6 +14,11 @@ import SpinnerIcon from "./SpinnerIcon";
 import { AppContext } from "../context/AppContext";
 // Toast
 import { toast } from "react-toastify";
+// services
+import { getAllGames } from "../Services/Games";
+import { createUser, updateUser } from "../Services/User";
+// swr
+import useSWR from "swr";
 
 const stakeholder = [
   {
@@ -47,6 +52,7 @@ const gender = [
 const SignupForm = ({ data }) => {
   const router = useRouter();
   const { setLoggedIn } = useContext(AppContext);
+  const { data: games, error } = useSWR("GETALLGAMES", getAllGames);
 
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,7 +73,6 @@ const SignupForm = ({ data }) => {
   );
   const [profileImg, setProfileImg] = useState(data?.profile_pic || null);
   const [showPass, setShowPass] = useState(false);
-  const [games, setGames] = useState([]);
   const [gamesSelected, setGamesSelected] = useState(data?.sports || []);
   const [otp, setOtp] = useState("");
   const [formData, setFormData] = useState({
@@ -77,10 +82,6 @@ const SignupForm = ({ data }) => {
     contact: data?.contact || "",
     dob: (data && new Date(data?.dob).toISOString().split("T")[0]) || "",
   });
-
-  useEffect(() => {
-    fetchGames();
-  }, []);
 
   const handleSelection = (name) => {
     if (gamesSelected.includes(name)) {
@@ -100,26 +101,20 @@ const SignupForm = ({ data }) => {
         const srcData = fileReader.result;
         setProfileImg(srcData);
       };
-      fileReader.readAsDataURL(imageFile);
-    }
-  };
-
-  const fetchGames = async () => {
-    const response = await fetch("/api/sport");
-    const json = await response.json();
-    if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      setGames(json.sports);
+      if (imageFile.size < 500001) {
+        fileReader.readAsDataURL(imageFile);
+      } else {
+        toast.error(`File Size Exceded!`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
     }
   };
 
@@ -143,14 +138,7 @@ const SignupForm = ({ data }) => {
       sendMail: true,
     };
 
-    const reponse = await fetch("/api/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const json = await reponse.json();
+    let json = await createUser(data);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -173,8 +161,8 @@ const SignupForm = ({ data }) => {
         progress: undefined,
         theme: "light",
       });
+      setIsVerification(true);
     }
-    setIsVerification(true);
     setIsSubmitting(false);
   };
 
@@ -188,14 +176,7 @@ const SignupForm = ({ data }) => {
       sendMail: false,
     };
 
-    const response = await fetch("/api/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const json = await response.json();
+    let json = await createUser(data);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -244,15 +225,7 @@ const SignupForm = ({ data }) => {
       profile_pic: profileImg,
     };
 
-    const reponse = await fetch("/api/updateuser", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": JSON.parse(localStorage.getItem("auth-token")),
-      },
-      body: JSON.stringify(apidata),
-    });
-    const json = await reponse.json();
+    let json = await updateUser(apidata);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -300,7 +273,7 @@ const SignupForm = ({ data }) => {
                 {" "}
                 <ImageIcon className="text-5xl text-green-400" />
                 <span className="text-gray-500 my-2">
-                  Upload Your Profile (300 x 300)
+                  Upload Your Profile (500KB)
                 </span>
               </>
             ) : (
@@ -308,6 +281,7 @@ const SignupForm = ({ data }) => {
             )}
             <input
               type="file"
+              accept="image/*"
               ref={profileRef}
               onChange={addProfile}
               className="hidden"
@@ -507,7 +481,7 @@ const SignupForm = ({ data }) => {
               In what category do you want to play/organise :{" "}
             </span>
             <div>
-              {games.map((game, index) => (
+              {games?.map((game, index) => (
                 <div
                   key={index}
                   className={`flex my-2 w-full relative cursor-pointer rounded-lg p-2 focus:outline-none items-center justify-between border ${
@@ -546,6 +520,7 @@ const SignupForm = ({ data }) => {
                   )}
                 </div>
               ))}
+              {!games && <>Loading...</>}
               <Link
                 href="/suggest-game"
                 className={`flex my-2 w-full relative cursor-pointer rounded-lg p-2 focus:outline-none items-center justify-between`}

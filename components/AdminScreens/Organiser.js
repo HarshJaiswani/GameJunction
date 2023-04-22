@@ -16,10 +16,19 @@ import CheckIcon from "../Icons/CheckIcon";
 import { AppContext } from "../../context/AppContext";
 // Toast
 import { toast } from "react-toastify";
+// hooks
+import useUser from "../../hooks/useUser";
+// services
+import {
+  deleteEvent,
+  getEventParticipants,
+  getUserEvents,
+  setWinner,
+} from "../../Services/Events";
 
 const Organiser = () => {
   const router = useRouter();
-  const { isLoggedIn } = useContext(AppContext);
+  const { user } = useUser();
 
   const [allEvents, setAllEvents] = useState([]);
   const [showWinnerModal, setShowWinnerModal] = useState(false);
@@ -28,23 +37,13 @@ const Organiser = () => {
   const [selectedWinner, setSelectedWinner] = useState([]);
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (user) {
       fetchUserEvents();
     }
   }, []);
 
   const fetchUserEvents = async () => {
-    let user;
-    let token = JSON.parse(localStorage.getItem("auth-token"));
-    const response = await fetch("/api/getusers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-      body: JSON.stringify({ token }),
-    });
-    const json = await response.json();
+    let json = await getUserEvents(user.events_organised);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -57,32 +56,9 @@ const Organiser = () => {
         theme: "light",
       });
     } else {
-      user = json.user;
-    }
-    const response2 = await fetch("/api/getevents", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-      body: JSON.stringify({ eventids: user.events_organised }),
-    });
-    const json2 = await response2.json();
-    if (json2.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      setAllEvents(json2.all_events);
+      setAllEvents(json.all_events);
       let curatedData = {};
-      await json2.all_events.forEach(async (e) => {
+      await json.all_events.forEach(async (e) => {
         let part = await getParticipants(e.participants);
         curatedData[e._id] = part;
       });
@@ -96,15 +72,7 @@ const Organiser = () => {
   };
 
   const getParticipants = async (ids) => {
-    const response = await fetch("/api/fetchparticipants", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": JSON.parse(localStorage.getItem("auth-token")),
-      },
-      body: JSON.stringify({ userids: ids }),
-    });
-    const json = await response.json();
+    let json = await getEventParticipants(ids);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -122,19 +90,7 @@ const Organiser = () => {
   };
 
   const handleSetWinner = async () => {
-    const response = await fetch("/api/events", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": JSON.parse(localStorage.getItem("auth-token")),
-      },
-      body: JSON.stringify({
-        _id: closingEvent,
-        winner: selectedWinner,
-        is_active: false,
-      }),
-    });
-    const json = await response.json();
+    let json = await setWinner(closingEvent, selectedWinner);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -153,15 +109,7 @@ const Organiser = () => {
   };
 
   const handleEventDelete = async (id) => {
-    const response = await fetch("/api/events", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": JSON.parse(localStorage.getItem("auth-token")),
-      },
-      body: JSON.stringify({ _id: id }),
-    });
-    const json = await response.json();
+    let json = await deleteEvent(id);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",

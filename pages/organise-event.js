@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import CreateEventForm from "../components/CreateEventForm";
 // Toast
 import { toast } from "react-toastify";
+import { getSingleEvent } from "../Services/Events";
 
 const OrganiseEvent = () => {
   const router = useRouter();
@@ -20,14 +21,7 @@ const OrganiseEvent = () => {
   }, [router.isReady]);
 
   const fetchEvent = async () => {
-    const response = await fetch("/api/fetchsingleevent", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ eventid: router.query.id }),
-    });
-    const json = await response.json();
+    let json = await getSingleEvent(router.query.id);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -49,6 +43,11 @@ const OrganiseEvent = () => {
       <h2 className="text-2xl sm:text-3xl text-gray-500 font-semibold font-sans text-center p-5 sm:pb-8">
         {isEdit ? "Update Event" : "Organise your Event"}
       </h2>
+      {isEdit && !event && (
+        <div className="w-full min-h-[60vh] flex items-center justify-center text-3xl font-semibold text-yellow-400">
+          Loading...
+        </div>
+      )}
       {isEdit && event && <CreateEventForm data={event} />}
       {!isEdit && <CreateEventForm />}
     </div>

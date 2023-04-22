@@ -10,6 +10,10 @@ import SpinnerIcon from "../components/SpinnerIcon";
 import { toast } from "react-toastify";
 // App Context
 import { AppContext } from "../context/AppContext";
+// services
+import { raiseEnquiry } from "../Services/Contact";
+// hooks
+import useUser from "../hooks/useUser";
 
 const FAQs = [
   {
@@ -48,25 +52,16 @@ const FAQs = [
 
 const Contact = () => {
   const router = useRouter();
-  const { isLoggedIn } = useContext(AppContext);
+  const { user } = useUser();
 
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submitQuery = async (e) => {
     e.preventDefault();
-    if (isLoggedIn) {
+    if (user) {
       setIsSubmitting(true);
-      const token = JSON.parse(localStorage.getItem("auth-token"));
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "auth-token": token,
-        },
-        body: JSON.stringify({ message }),
-      });
-      const json = await response.json();
+      let json = await raiseEnquiry(message);
       if (json.error) {
         toast.error(`${json.error}`, {
           position: "top-right",

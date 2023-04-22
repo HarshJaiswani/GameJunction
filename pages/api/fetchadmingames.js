@@ -9,7 +9,7 @@ const handler = async (req, res) => {
     if (req.method == "GET") {
       let sports = await Sports.find();
       sports = sports.filter((s) => !s.is_deleted);
-      res.status(200).json({ sports });
+      res.status(200).json(sports);
     } else {
       res.status(500).json({ error: "Invalid OpCode" });
     }

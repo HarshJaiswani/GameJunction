@@ -1,7 +1,7 @@
 import React, { Fragment, useContext, useEffect, useState } from "react";
 // Next Components
 import Link from "next/link";
-// import { useRouter } from "next/router";
+import { useRouter } from "next/router";
 // Custom Components
 import EventCard from "../components/EventCard";
 import RankCard from "../components/RankCard";
@@ -14,63 +14,45 @@ import { AiFillDelete } from "react-icons/ai";
 import { AppContext } from "../context/AppContext";
 // Toast
 import { toast } from "react-toastify";
+// hooks
+import useUser from "../hooks/useUser";
+// services
+import { getAllEvents, getUserEvents } from "../Services/Events";
+import { deactivateUser } from "../Services/User";
+// swr
+import useSWR from "swr";
 // HeadlessUi
-// import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 
 const Profile = () => {
-  // const router = useRouter();
-  const { isLoggedIn, handleLogout } = useContext(AppContext);
-
-  const [user, setUser] = useState(null);
+  const { user } = useUser();
+  const router = useRouter();
+  const { handleLogout } = useContext(AppContext);
   const [currEvents, setCurrEvents] = useState([]);
   const [passEvents, setPassEvents] = useState([]);
-  const [allEvents, setAllEvents] = useState([]);
-  // const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { data: allEvents, error } = useSWR("GETALLEVENTS", getAllEvents);
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchUser();
-    }
-  }, [isLoggedIn]);
-
-  const fetchUser = async () => {
-    const token = JSON.parse(localStorage.getItem("auth-token"));
-    const response = await fetch("/api/getusers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-      body: JSON.stringify({ token }),
-    });
-    const json = await response.json();
-    if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      setUser(json.user);
-      fetchEvents(json.user);
-      fetchAllEvents();
+  const openFullscreen = (elem) => {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      /* Safari */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      /* IE11 */
+      elem.msRequestFullscreen();
     }
   };
 
+  useEffect(() => {
+    if (user) {
+      fetchEvents(user);
+    }
+  }, [user]);
+
   const fetchEvents = async (curuser) => {
-    const response = await fetch("/api/getevents", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ eventids: curuser.events_participated }),
-    });
-    const json = await response.json();
+    let json = await getUserEvents(curuser.events_participated);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -94,18 +76,11 @@ const Profile = () => {
       });
       setCurrEvents(currEvents);
       setPassEvents(passEvents);
-      setAllEvents(json.all_events);
     }
   };
 
-  const fetchAllEvents = async () => {
-    const response = await fetch("/api/getevents", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await response.json();
+  const handleDeleteUser = async () => {
+    let json = await deactivateUser();
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -118,46 +93,20 @@ const Profile = () => {
         theme: "light",
       });
     } else {
-      setAllEvents(json.events);
+      toast.success(`Profile Deactivated!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      handleLogout();
+      router.push("/");
     }
   };
-
-  // const handleDeleteUser = async () => {
-  //   const token = JSON.parse(localStorage.getItem("auth-token"));
-  //   const response = await fetch("/api/updateuser", {
-  //     method: "DELETE",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       "auth-token": token,
-  //     },
-  //   });
-  //   const json = await response.json();
-  //   if (json.error) {
-  //     toast.error(`${json.error}`, {
-  //       position: "top-right",
-  //       autoClose: 5000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //       theme: "light",
-  //     });
-  //   } else {
-  //     toast.success(`Profile Deleted!`, {
-  //       position: "top-right",
-  //       autoClose: 5000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //       theme: "light",
-  //     });
-  //     handleLogout();
-  //     router.push("/");
-  //   }
-  // };
 
   return (
     <>
@@ -170,19 +119,23 @@ const Profile = () => {
             >
               <IoPencil className="text-xl text-[yellow]" />
             </Link>
-            {/* <button
+            <button
               onClick={() => setShowDeleteModal(true)}
               className="p-2 bg-cyan-800 rounded-full cursor-pointer"
             >
               <AiFillDelete className="text-xl text-[yellow]" />
-            </button> */}
+            </button>
           </div>
           <div className="flex items-center flex-col md:flex-row">
             <div className="w-36 h-36 rounded-full shadow bg-gray-100 overflow-hidden flex items-center justify-center">
               {user.profile_pic == undefined ? (
                 <ImageIcon className="text-5xl text-green-400" />
               ) : (
-                <img src={user.profile_pic} alt="" />
+                <img
+                  src={user.profile_pic}
+                  alt=""
+                  onClick={(e) => openFullscreen(e.target)}
+                />
               )}
             </div>
             <div className="mx-0 md:mx-8 mt-4 md:mt-0">
@@ -283,8 +236,13 @@ const Profile = () => {
           </ul>
         </div>
       )}
-      {/* {showDeleteModal && (
-        <div className="w-full h-screen flex items-center justify-center z-[20] absolute top-0 left-0">
+      {!user && (
+        <div className="w-full min-h-[60vh] flex items-center justify-center text-2xl font-semibold text-orange-300">
+          Loading...
+        </div>
+      )}
+      {showDeleteModal && (
+        <div className="w-full h-screen flex items-center justify-center z-[20]">
           <Transition appear show={showDeleteModal} as={Fragment}>
             <Dialog
               as="div"
@@ -319,29 +277,31 @@ const Profile = () => {
                         as="h3"
                         className="text-lg font-medium leading-6 text-gray-900"
                       >
-                        <span className="text-red-400 mr-2">SAD!</span>Seeing
-                        You Go!
+                        <span className="text-lg font-semibold text-red-400 mr-2">
+                          SAD!
+                        </span>
+                        <span>Seeing You Go!</span>
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-gray-500">
-                          Are you sure want to deactivate profile ?
+                          Are you sure want to deactivate your profile ?
                         </p>
                       </div>
 
                       <div className="mt-4">
                         <button
                           type="button"
-                          className="cursor-pointer rounded bg-gray-100 px-4 py-2 mr-4 font-medium text-green-400"
+                          className="px-6 py-2 mr-4 rounded bg-gray-100 text-green-400"
                           onClick={handleDeleteUser}
                         >
                           Yea!
                         </button>
                         <button
                           type="button"
-                          className="cursor-pointer rounded bg-gray-100 px-4 py-2 font-medium text-gray-500"
+                          className="px-6 py-2 rounded bg-gray-100 text-gray-500"
                           onClick={() => setShowDeleteModal(false)}
                         >
-                          Cancel
+                          Nope!
                         </button>
                       </div>
                     </Dialog.Panel>
@@ -351,7 +311,7 @@ const Profile = () => {
             </Dialog>
           </Transition>
         </div>
-      )} */}
+      )}
     </>
   );
 };

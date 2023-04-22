@@ -12,10 +12,10 @@ import SpinnerIcon from "../components/SpinnerIcon";
 import { AppContext } from "../context/AppContext";
 // Toast
 import { toast } from "react-toastify";
+import { loginUser } from "../Services/User";
 
 const Signin = () => {
   const router = useRouter();
-  const { setLoggedIn } = useContext(AppContext);
 
   const [showPass, setShowPass] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,14 +33,8 @@ const Signin = () => {
       password: formData.password,
     };
 
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const json = await response.json();
+    let json = await loginUser(data);
+
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -52,7 +46,6 @@ const Signin = () => {
         progress: undefined,
         theme: "light",
       });
-      router.reload();
     } else {
       localStorage.setItem("auth-token", JSON.stringify(json.authToken));
       toast.success(`LoggedIn Successfully!`, {
@@ -66,7 +59,6 @@ const Signin = () => {
         theme: "light",
       });
       router.push("/");
-      setLoggedIn(true);
     }
     setIsSubmitting(false);
   };

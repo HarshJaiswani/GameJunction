@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import SpinnerIcon from "../components/SpinnerIcon";
 // Toast
 import { toast } from "react-toastify";
+// services
+import { forgotPassword } from "../Services/User";
 
 const ForgotPassword = () => {
   const router = useRouter();
@@ -26,14 +28,11 @@ const ForgotPassword = () => {
   const handleEmailSend = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const response = await fetch("/api/login", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, sendMail: true }),
-    });
-    const json = await response.json();
+    const data = {
+      sendMail: true,
+      email,
+    };
+    let json = await forgotPassword(data);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -69,18 +68,11 @@ const ForgotPassword = () => {
     setIsSubmitting(true);
 
     if (password == cpassword) {
-      const response = await fetch("/api/login", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token: JSON.parse(JSON.stringify(token)),
-          sendMail: false,
-          cpassword,
-        }),
-      });
-      const json = await response.json();
+      const data = {
+        sendMail: false,
+        cpassword,
+      };
+      let json = await forgotPassword(data);
       if (json.error) {
         toast.error(`${json.error}`, {
           position: "top-right",

@@ -7,6 +7,8 @@ import SpinnerIcon from "../components/SpinnerIcon";
 import { AppContext } from "../context/AppContext";
 // Toast
 import { toast } from "react-toastify";
+// services
+import { changePassword } from "../Services/User";
 
 const ChangePassword = () => {
   const router = useRouter();
@@ -25,15 +27,7 @@ const ChangePassword = () => {
         password: oldPassword,
         cpassword: newPassword,
       };
-      const response = await fetch("/api/changepassword", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "auth-token": JSON.parse(localStorage.getItem("auth-token")),
-        },
-        body: JSON.stringify(data),
-      });
-      const json = await response.json();
+      let json = await changePassword(data);
       if (json.error) {
         toast.error(`${json.error}`, {
           position: "top-right",

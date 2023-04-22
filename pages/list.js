@@ -10,6 +10,10 @@ import EventCard from "../components/EventCard";
 import SpinnerIcon from "../components/SpinnerIcon";
 // Toast
 import { toast } from "react-toastify";
+// services
+import { getAllEvents } from "../Services/Events";
+// swr
+import useSWR from "swr";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -18,44 +22,18 @@ function classNames(...classes) {
 const types = ["Sport", "ESport"];
 
 const List = () => {
-  const [data, setData] = useState([]);
+  const { data, error } = useSWR("GETALLEVENTS", getAllEvents);
   const [featuredEvent, setFeaturedEvent] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const fetchEvents = async () => {
-    setLoading(true);
-    const response = await fetch("/api/getevents", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const json = await response.json();
-    if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      setData(json.events);
-      json.events.forEach((e) => {
+    if (data) {
+      data.forEach((e) => {
         if (e.is_featured) {
           setFeaturedEvent(e);
         }
       });
     }
-    setLoading(false);
-  };
+  }, [data]);
 
   return (
     <div>
@@ -84,7 +62,7 @@ const List = () => {
                 key={idx}
                 className={classNames("rounded-xl p-5 w-full min-h-[75vh]")}
               >
-                {loading && (
+                {!data && (
                   <div className="flex items-center justify-center py-4">
                     <SpinnerIcon />
                   </div>
@@ -114,7 +92,7 @@ const List = () => {
                     <div className="w-[85%] md:w-[90%] h-0.5 bg-gray-200"></div>
                   </h2>
                   <ul className="flex items-center justify-evenly flex-wrap">
-                    {data.length == 0 && "More Events Comming Soon!"}
+                    {data?.length == 0 && "More Events Comming Soon!"}
                     {data &&
                       data.map(
                         (post) =>
@@ -151,7 +129,7 @@ const List = () => {
                     <div className="w-[90%] h-0.5 bg-gray-200"></div>
                   </h2>
                   <ul className="flex items-center justify-evenly flex-wrap">
-                    {data.length == 0 && "More Events Comming Soon!"}
+                    {data?.length == 0 && "More Events Comming Soon!"}
                     {data &&
                       data.map(
                         (post) =>

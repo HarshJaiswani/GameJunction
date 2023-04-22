@@ -6,7 +6,7 @@ const handler = async (req, res) => {
   if (req.method == "GET") {
     let sports = await Sports.find();
     sports = sports.filter((s) => s.is_verified && !s.is_deleted);
-    res.status(200).json({ sports });
+    res.status(200).json(sports);
   } else if (req.method == "POST") {
     let existSport = await Sports.findOne({ name });
     if (existSport) {

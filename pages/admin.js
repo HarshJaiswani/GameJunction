@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 // Next Components
 import Link from "next/link";
 // Icons
@@ -9,61 +9,30 @@ import { BsFillPersonFill } from "react-icons/bs";
 // Custom Components
 import AppAdmin from "../components/AdminScreens/AppAdmin";
 import Organiser from "../components/AdminScreens/Organiser";
-// App Context
-import { AppContext } from "../context/AppContext";
-// Toast
-import { toast } from "react-toastify";
+// hooks
+import useUser from "../hooks/useUser";
 
 const Admin = () => {
-  const { isLoggedIn } = useContext(AppContext);
+  const { user } = useUser();
 
-  const [userStake, setUserStake] = useState("participant");
-  const [currentUser, setCurrentUser] = useState(null);
+  const [userStake, setUserStake] = useState(null);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchCurrentUser();
-    }
-  }, [isLoggedIn]);
-
-  const fetchCurrentUser = async () => {
-    let token = JSON.parse(localStorage.getItem("auth-token"));
-    const response = await fetch("/api/getusers", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-      body: JSON.stringify({ token }),
-    });
-    const json = await response.json();
-    if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
-      setCurrentUser(json.user);
-      if (json.user.is_participant) {
+    if (user) {
+      if (user.is_participant) {
         setUserStake("participant");
       }
-      if (json.user.is_organiser && !json.user.is_admin) {
+      if (user.is_organiser && !user.is_admin) {
         setUserStake("organiser");
       }
-      if (!json.user.is_organiser && json.user.is_admin) {
+      if (!user.is_organiser && user.is_admin) {
         setUserStake("admin");
       }
-      if (json.user.is_organiser && json.user.is_admin) {
+      if (user.is_organiser && user.is_admin) {
         setUserStake("both");
       }
     }
-  };
+  }, [user]);
 
   if (userStake == "participant") {
     return (

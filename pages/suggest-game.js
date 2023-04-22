@@ -6,6 +6,7 @@ import CheckIcon from "../components/Icons/CheckIcon";
 import SpinnerIcon from "../components/SpinnerIcon";
 // Toast
 import { toast } from "react-toastify";
+import { addGame } from "../Services/Games";
 
 const select = [
   {
@@ -36,15 +37,7 @@ const SuggestGame = () => {
       resource,
       playable: selectedOption.value,
     };
-
-    const reponse = await fetch("/api/sport", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const json = await reponse.json();
+    let json = await addGame(data);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",

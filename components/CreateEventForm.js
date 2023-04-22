@@ -1,10 +1,4 @@
-import React, {
-  Fragment,
-  useState,
-  useRef,
-  useEffect,
-  useContext,
-} from "react";
+import React, { Fragment, useState, useRef, useEffect } from "react";
 // Next Components
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -23,10 +17,15 @@ import { RxDiscordLogo } from "react-icons/rx";
 import { FaTelegramPlane } from "react-icons/fa";
 import ImageIcon from "./Icons/ImageIcon";
 import SpinnerIcon from "./SpinnerIcon";
-// App Context
-import { AppContext } from "../context/AppContext";
-// Toast
+// toast
 import { toast } from "react-toastify";
+// services
+import { getAllGames } from "../Services/Games";
+import { createEvent, updateEvent } from "../Services/Events";
+// swr
+import useSWR from "swr";
+// hooks
+import useUser from "../hooks/useUser";
 
 const modes = [
   {
@@ -64,7 +63,8 @@ const isTeam = [
 const CreateEventForm = ({ data: event }) => {
   const gameinputref = useRef();
   const router = useRouter();
-  const { isLoggedIn } = useContext(AppContext);
+  const { user } = useUser();
+  const { data: sportsData, error } = useSWR("GETALLGAMES", getAllGames);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modeSelect, setModeSelect] = useState(
@@ -139,27 +139,10 @@ const CreateEventForm = ({ data: event }) => {
     if (!event && gameinputref.current) {
       gameinputref.current.value = "";
     }
-    fetchSports();
-  }, [categorySelect]);
-
-  const fetchSports = async () => {
-    const response = await fetch("/api/sport");
-    const json = await response.json();
-    if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    } else {
+    if (sportsData) {
       let sports = [];
       let esports = [];
-      json.sports.forEach((s) => {
+      sportsData.forEach((s) => {
         if (s.playable == "offline") {
           sports.push(s);
         } else {
@@ -169,7 +152,7 @@ const CreateEventForm = ({ data: event }) => {
       setSports(sports);
       setEsports(esports);
     }
-  };
+  }, [categorySelect, sportsData]);
 
   const handleCreateEvent = async (e) => {
     e.preventDefault();
@@ -205,16 +188,7 @@ const CreateEventForm = ({ data: event }) => {
       other: formData.other,
     };
 
-    const token = JSON.parse(localStorage.getItem("auth-token"));
-    const reponse = await fetch("/api/events", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-      body: JSON.stringify(data),
-    });
-    const json = await reponse.json();
+    const json = await createEvent(data);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -252,7 +226,20 @@ const CreateEventForm = ({ data: event }) => {
         const srcData = fileReader.result;
         setPosterImg(srcData);
       };
-      fileReader.readAsDataURL(imageFile);
+      if (imageFile.size < 500001) {
+        fileReader.readAsDataURL(imageFile);
+      } else {
+        toast.error(`File Size Exceded!`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
     }
   };
 
@@ -291,16 +278,7 @@ const CreateEventForm = ({ data: event }) => {
       other: formData.other,
     };
 
-    const token = JSON.parse(localStorage.getItem("auth-token"));
-    const reponse = await fetch("/api/events", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": token,
-      },
-      body: JSON.stringify(data),
-    });
-    const json = await reponse.json();
+    let json = await updateEvent(data);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
@@ -333,7 +311,7 @@ const CreateEventForm = ({ data: event }) => {
 
   return (
     <>
-      {isLoggedIn ? (
+      {user ? (
         <form
           onSubmit={event ? handleUpdateEvent : handleCreateEvent}
           className="w-[90%] md:w-[75%] lg:w-2/3 mx-auto"
@@ -346,13 +324,16 @@ const CreateEventForm = ({ data: event }) => {
             {!posterImg ? (
               <>
                 <ImageIcon className="text-5xl text-green-400" />
-                <span className="text-gray-500 my-2">Upload Event Poster</span>
+                <span className="text-gray-500 my-2">
+                  Upload Event Poster (500KB)
+                </span>
               </>
             ) : (
               <img src={posterImg} alt="" />
             )}
             <input
               type="file"
+              accept="image/*"
               ref={posterRef}
               onChange={addPoster}
               className="hidden"

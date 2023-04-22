@@ -11,14 +11,14 @@ const handler = async (req, res) => {
       let newuser = await Users.findByIdAndUpdate(req.user._id, {
         wishlist_events: [...user.wishlist_events, eventId],
       });
-      res.status(200).json({ newuser });
+      res.status(200).json({ success: "Added to Wishlist!" });
     } else {
       let newuser = await Users.findByIdAndUpdate(req.user._id, {
         wishlist_events: user.wishlist_events.filter(
-          (e) => e._id.toString() != eventId
+          (e) => e.toString() != eventId
         ),
       });
-      res.status(200).json({ newuser });
+      res.status(200).json({ success: "Removed from Wishlist!" });
     }
   } else {
     res.status(500).json({ error: "Invalid OpCode" });

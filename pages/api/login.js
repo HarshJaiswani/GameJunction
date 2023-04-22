@@ -10,21 +10,25 @@ const handler = async (req, res) => {
 
   if (req.method == "POST") {
     let user = await Users.findOne({ email });
-    if (user.is_deleted) {
-      res.status(500).json({ error: "No User Found" });
-    } else {
-      let bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRETKEY);
-      let originalText = bytes.toString(CryptoJS.enc.Utf8);
-      if (originalText == password) {
-        const senduser = {
-          email: user.email,
-          _id: user._id,
-        };
-        let token = jwt.sign({ user: senduser }, process.env.SECRETKEY);
-        res.status(200).json({ authToken: token });
+    if (user) {
+      if (user.is_deleted) {
+        res.status(500).json({ error: "No User Found" });
       } else {
-        res.status(500).json({ error: "Invalid Credentials!" });
+        let bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRETKEY);
+        let originalText = bytes.toString(CryptoJS.enc.Utf8);
+        if (originalText == password) {
+          const senduser = {
+            email: user.email,
+            _id: user._id,
+          };
+          let token = jwt.sign({ user: senduser }, process.env.SECRETKEY);
+          res.status(200).json({ authToken: token });
+        } else {
+          res.status(500).json({ error: "Invalid Credentials!" });
+        }
       }
+    } else {
+      res.status(500).json({ error: "No User Found" });
     }
   } else if (req.method == "PUT") {
     if (req.body.sendMail) {

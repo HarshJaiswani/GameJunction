@@ -1,6 +1,8 @@
 import React from "react";
 // Toast
 import { toast } from "react-toastify";
+// services
+import { verifyGames } from "../../Services/Games";
 
 const DataTable = ({ dataset, data, fetchData = () => {} }) => {
   const getAge = (d) => {
@@ -15,14 +17,7 @@ const DataTable = ({ dataset, data, fetchData = () => {} }) => {
   };
 
   const verifyGame = async (id) => {
-    const response = await fetch("/api/sport", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ _id: id, is_verified: true }),
-    });
-    const json = await response.json();
+    let json = await verifyGames(id);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",
