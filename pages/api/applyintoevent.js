@@ -20,7 +20,6 @@ const handler = async (req, res) => {
         let updatedEvent = await Events.findByIdAndUpdate(eventId, {
           participants: [...event.participants, req.user._id],
         });
-
         res.status(200).json({ newuser, updatedEvent });
       } else {
         res.status(400).json({ error: "Cannot Apply!" });

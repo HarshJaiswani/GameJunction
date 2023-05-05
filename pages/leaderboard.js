@@ -60,12 +60,7 @@ const Leaderboard = () => {
                   "rounded-xl p-3 bg-gray-50 w-full min-h-[75vh]"
                 )}
               >
-                {data && (
-                  <div className="flex items-center justify-center py-4">
-                    <SpinnerIcon />
-                  </div>
-                )}
-                {user && (
+                {/* {user && (
                   <div>
                     {type.toLowerCase() == "participant" &&
                       user.is_participant && (
@@ -79,7 +74,7 @@ const Leaderboard = () => {
                       </div>
                     )}
                   </div>
-                )}
+                )} */}
                 <ul className="w-full sm:w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
                   {type.toLowerCase() == "organiser" &&
                     organisers.length == 0 &&
@@ -88,12 +83,22 @@ const Leaderboard = () => {
                     participants.length == 0 &&
                     "More Participants Coming Soon!"}
                   {type.toLowerCase() == "organiser" &&
-                    organisers.map((or) => (
-                      <RankCard key={or._id} user={or} theme="light" />
+                    organisers.map((or, idx) => (
+                      <RankCard
+                        key={or._id}
+                        rank={idx + 1}
+                        user={or}
+                        theme={user._id == or._id ? "dark" : "light"}
+                      />
                     ))}
                   {type.toLowerCase() == "participant" &&
-                    participants.map((pr) => (
-                      <RankCard key={pr._id} user={pr} theme="light" />
+                    participants.map((pr, idx) => (
+                      <RankCard
+                        key={pr._id}
+                        rank={idx + 1}
+                        user={pr}
+                        theme={user._id == pr._id ? "dark" : "light"}
+                      />
                     ))}
                 </ul>
               </Tab.Panel>

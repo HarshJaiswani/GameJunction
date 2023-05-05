@@ -11,13 +11,12 @@ import { toast } from "react-toastify";
 // hooks
 import useUser from "../hooks/useUser";
 // swr
-import { mutate } from "swr";
 // services
 import { addToWishList, applyIntoEvent } from "../Services/Events";
 
 const EventCard = ({ post }) => {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, mutate: mutateUser } = useUser();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
@@ -28,9 +27,13 @@ const EventCard = ({ post }) => {
     if (user) {
       if (user.events_participated.includes(post._id.toString())) {
         setIsApplied(true);
+      } else {
+        setIsApplied(false);
       }
       if (user.wishlist_events.includes(post._id.toString())) {
         setIsWishlisted(true);
+      } else {
+        setIsWishlisted(false);
       }
     }
   }, [user, post]);
@@ -62,7 +65,7 @@ const EventCard = ({ post }) => {
           progress: undefined,
           theme: "light",
         });
-        mutate("GETALLEVENTS");
+        mutateUser();
       }
     } else {
       router.push("/signin");
@@ -98,7 +101,7 @@ const EventCard = ({ post }) => {
           progress: undefined,
           theme: "light",
         });
-        mutate("GETALLEVENTS");
+        mutateUser();
       }
     } else {
       toast.error(`Kindly SignIn!`, {
@@ -155,7 +158,7 @@ const EventCard = ({ post }) => {
               onClick={handleAddToWishList}
               className="p-2 rounded-full mx-2 bg-gray-100/60 hover:ring-2 hover:ring-teal-200 shadow w-fit"
             >
-              {wishlisting && <SpinnerIcon />}
+              {wishlisting && <SpinnerIcon noMargin={true} />}
               {!wishlisting &&
                 (isWishlisted ? (
                   <AiFillHeart className="text-[red] text-2xl" />

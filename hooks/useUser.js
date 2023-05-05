@@ -2,7 +2,7 @@ import useSWR from "swr";
 import { currentUser } from "../Services/User";
 
 const useUser = () => {
-  const { data, error } = useSWR("CURRENTUSER", currentUser);
+  const { data, error, mutate } = useSWR("CURRENTUSER", currentUser);
 
   if (error) {
     return "User Not Found!";
@@ -11,7 +11,7 @@ const useUser = () => {
     return "Loading...";
   }
   if (data) {
-    return { user: data.user };
+    return { user: data.user, mutate };
   }
 };
 

@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { getAllEvents } from "../Services/Events";
 // swr
 import useSWR from "swr";
+import useUser from "../hooks/useUser";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -22,6 +23,7 @@ function classNames(...classes) {
 const types = ["Sport", "ESport"];
 
 const List = () => {
+  const user = useUser();
   const { data, error } = useSWR("GETALLEVENTS", getAllEvents);
   const [featuredEvent, setFeaturedEvent] = useState(null);
 

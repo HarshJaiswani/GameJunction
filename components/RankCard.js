@@ -2,12 +2,14 @@ import React from "react";
 // Icons
 import { BsFillPersonFill } from "react-icons/bs";
 
-const RankCard = ({ user, theme }) => {
+const RankCard = ({ user, theme, rank }) => {
   return (
     <li className="w-full flex items-center justify-center">
       <div className="px-4 py-1 sm:py-2 font-semibold text-gray-400 sm:text-lg bg-gray-200/50 rounded-tl-lg rounded-bl-lg">
-        <span className="icon-font text-gray-400 text-xl font-semibold">#</span>
-        <span>{user.overall_ranking}</span>
+        <span className="icon-font text-gray-400 text-sm mr-2 font-semibold">
+          #
+        </span>
+        <span>{rank}</span>
       </div>
       <div
         className={`w-full my-4 px-4 py-2 sm:p-4 flex items-center justify-between cursor-pointer rounded-2xl shadow ${
