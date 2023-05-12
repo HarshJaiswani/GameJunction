@@ -13,7 +13,7 @@ const RankCard = ({ user, theme, rank, type = "participant" }) => {
         <span>{rank}</span>
       </div>
       <div
-        className={`w-full my-4 px-4 py-2 sm:p-4 flex items-center justify-between cursor-pointer rounded-2xl shadow ${
+        className={`w-full my-4 px-4 py-2 sm:p-4 flex items-center justify-between rounded-2xl shadow ${
           theme == "dark" ? "bg-cyan-800 text-white" : "bg-white"
         }`}
       >

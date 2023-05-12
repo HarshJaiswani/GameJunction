@@ -75,32 +75,38 @@ const Leaderboard = () => {
                     )}
                     </div>
                 )} */}
-                {!data && <SpinnerIcon />}
+                {!data && (
+                  <div className="text-center">
+                    <SpinnerIcon />
+                  </div>
+                )}
                 <ul className="w-full sm:w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
-                  {type.toLowerCase() == "organiser" &&
+                  {data &&
+                    type.toLowerCase() == "organiser" &&
                     organisers.length == 0 &&
                     "More Organisers Coming Soon!"}
-                  {type.toLowerCase() == "participant" &&
+                  {data &&
+                    type.toLowerCase() == "participant" &&
                     participants.length == 0 &&
                     "More Participants Coming Soon!"}
                   {type.toLowerCase() == "organiser" &&
-                    organisers.map((or, idx) => (
+                    organisers?.map((or, idx) => (
                       <RankCard
                         key={or._id}
                         rank={idx + 1}
                         user={or}
                         type={type.toLowerCase()}
-                        theme={user._id == or._id ? "dark" : "light"}
+                        theme={user?._id == or._id ? "dark" : "light"}
                       />
                     ))}
                   {type.toLowerCase() == "participant" &&
-                    participants.map((pr, idx) => (
+                    participants?.map((pr, idx) => (
                       <RankCard
                         key={pr._id}
                         rank={idx + 1}
                         user={pr}
                         type={type.toLowerCase()}
-                        theme={user._id == pr._id ? "dark" : "light"}
+                        theme={user?._id == pr._id ? "dark" : "light"}
                       />
                     ))}
                 </ul>

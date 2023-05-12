@@ -73,8 +73,8 @@ const EventId = () => {
           progress: undefined,
           theme: "light",
         });
+        router.reload();
       }
-      router.reload();
     } else {
       router.push("/signin");
     }
@@ -132,6 +132,16 @@ const EventId = () => {
             <h2 className="text-3xl font-semibold text-gray-500 mb-4 text-center">
               {event.title}
             </h2>
+            {isApplied && (
+              <div className="my-4 sm:my-8 md:my-12">
+                <h2 className="text-xl font-semibold text-gray-600">
+                  Your Application
+                </h2>
+                <div className="w-full bg-white rounded-md p-2 sm:px-8 sm:py-2 shadow">
+                  <div>you have succesfully applied to the event!</div>
+                </div>
+              </div>
+            )}
             <div className="h-[350px] my-8 mx-auto overflow-hidden cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
               {event.poster ? (
                 <img
