@@ -9,18 +9,34 @@ import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 // services
 import { changePassword } from "../Services/User";
+import { TiTick } from "react-icons/ti";
+import { TbDots } from "react-icons/tb";
 
 const ChangePassword = () => {
   const router = useRouter();
   const { handleLogout } = useContext(AppContext);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPassValid, setIsPassValid] = useState(null);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newCPassword, setNewCPassword] = useState("");
 
   const handleChangePass = async (e) => {
     e.preventDefault();
+    if (isPassValid == false || null) {
+      toast.error(`Password Incorrect!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     setIsSubmitting(true);
     if (newCPassword == newPassword) {
       const data = {
@@ -58,6 +74,18 @@ const ChangePassword = () => {
     setIsSubmitting(false);
   };
 
+  const updatingPassValue = (e) => {
+    setNewPassword(e.target.value);
+    if (
+      e.target.value.toLowerCase().match("^(?=.*[a-zA-Z])(?=.*[0-9])") &&
+      e.target.value.length >= 6
+    ) {
+      setIsPassValid(true);
+    } else {
+      setIsPassValid(false);
+    }
+  };
+
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
 
@@ -80,8 +108,15 @@ const ChangePassword = () => {
           className={inputStyle}
           placeholder="Choose a password"
           value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
+          onChange={(e) => updatingPassValue(e)}
         />
+        <div className="mt-2 mx-2 flex items-center">
+          {isPassValid == true && <TiTick className="text-xl text-green-300" />}
+          {isPassValid == false && <TbDots className="text-xl text-red-300" />}
+          <p className="ml-2 text-gray-400 text-sm">
+            Password must contain minimum 6 <b>alpha-numeric</b> letters
+          </p>
+        </div>
         <input
           type="password"
           className={inputStyle}

@@ -7,7 +7,7 @@ const handler = async (req, res) => {
   let { token } = req.body;
   if (req.method == "GET") {
     let user = await Users.findOne({ email: req.user.email });
-    if (user.is_admin) {
+    if (user && user.is_admin) {
       let users = await Users.find();
       users = users.filter((e) => !e.is_deleted);
       res.status(200).json(users);
@@ -17,7 +17,7 @@ const handler = async (req, res) => {
   } else if (req.method == "POST") {
     let tokenData = jwt.verify(token, process.env.SECRETKEY);
     let user = await Users.findOne({ _id: tokenData.user._id });
-    if (user.is_deleted) {
+    if (user && user.is_deleted) {
       res.status(500).json({ error: "No User Found" });
     } else {
       res.status(200).json({ user });

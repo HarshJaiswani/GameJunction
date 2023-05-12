@@ -12,6 +12,7 @@ import { IoPencil } from "react-icons/io5";
 import { AiFillDelete } from "react-icons/ai";
 import { TiTick } from "react-icons/ti";
 import CheckIcon from "../Icons/CheckIcon";
+import { BsSendFill } from "react-icons/bs";
 // App Context
 import { AppContext } from "../../context/AppContext";
 // Toast
@@ -161,25 +162,24 @@ const Organiser = () => {
               Current Events
             </h2>
             <div>
+              {allEvents.filter((e) => e.is_active).length == 0 &&
+                "Create new events to list them here!"}
               {allEvents.map(
                 (e) =>
                   e.is_active && (
                     <Disclosure key={e._id}>
                       {({ open }) => (
                         <>
-                          <Disclosure.Button className="flex items-center w-full mb-4 justify-between rounded-lg bg-white shadow p-4">
-                            <Link
-                              href={`/events/${e._id}`}
-                              className="font-semibold font-sans"
-                            >
+                          <Disclosure.Button className="flex items-center flex-wrap md:flex-row flex-col-reverse w-full mb-4 justify-between rounded-lg bg-white shadow p-4">
+                            <div className="font-semibold font-sans my-4 md:my-0">
                               {e.title}
-                            </Link>
+                            </div>
                             <div className="flex items-center justify-evenly">
                               <Link
-                                href={`/organise-event?id=${e._id}`}
+                                href={`/organise-event?slug=${e.slug}`}
                                 className="p-2 bg-cyan-800 rounded-full mr-2 cursor-pointer"
                               >
-                                <IoPencil className="text-xl text-[white]" />
+                                <IoPencil className="text-xl text-[#ffffff]" />
                               </Link>
                               <div
                                 onClick={(ev) => {
@@ -199,14 +199,20 @@ const Organiser = () => {
                               >
                                 <TiTick className="text-xl text-[white]" />
                               </div>
+                              <Link
+                                href={`/events/${e.slug}`}
+                                className="p-2.5 bg-cyan-800 mr-2 rounded-full cursor-pointer"
+                              >
+                                <BsSendFill className="text-[white]" />
+                              </Link>
                             </div>
                           </Disclosure.Button>
                           <Disclosure.Panel className="px-4 pb-4 text-sm text-gray-500">
-                            <div className="w-fit py-2 rounded-md">
+                            <div className="w-fit py-2 rounded-md sm:text-lg">
                               <span className="text-gray-400">
                                 Total Participants:
                               </span>{" "}
-                              <span className="text-green-400 text-lg">
+                              <span className="text-green-400 mx-1">
                                 {e.participants.length}
                               </span>
                             </div>
@@ -214,6 +220,20 @@ const Organiser = () => {
                               allParticipants[e._id].map((p, index) => (
                                 <div key={index}>
                                   {p.name} ({p.email})
+                                  <table>
+                                    <tr>
+                                      <th>Name</th>
+                                      <th>Email</th>
+                                      <th>Contact</th>
+                                      <th>Applied at</th>
+                                    </tr>
+                                    <tr>
+                                      <td>{p.name}</td>
+                                      <td>{p.email}</td>
+                                      <td>{p.contact}</td>
+                                      <td>12th may 2023</td>
+                                    </tr>
+                                  </table>
                                 </div>
                               ))}
                           </Disclosure.Panel>
@@ -229,6 +249,8 @@ const Organiser = () => {
               Past Events
             </h2>
             <div>
+              {allEvents.filter((e) => !e.is_active).length == 0 &&
+                "No past events available!"}
               {allEvents.map(
                 (e) =>
                   !e.is_active && (
@@ -317,7 +339,7 @@ const Organiser = () => {
                       >
                         Select Winner of the Event!
                       </Dialog.Title>
-                      <div className="w-2/3 my-4">
+                      <div className="w-full sm:w-2/3 my-4">
                         <RadioGroup
                           value={selectedWinner}
                           onChange={setSelectedWinner}
@@ -327,7 +349,7 @@ const Organiser = () => {
                               allParticipants[closingEvent].map((p, index) => (
                                 <RadioGroup.Option
                                   key={index}
-                                  value={p.name}
+                                  value={p._id}
                                   className={({ active, checked }) =>
                                     `${active ? "ring-2 ring-blue-200" : ""} ${
                                       checked ? "bg-gray-500" : "bg-white"

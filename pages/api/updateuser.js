@@ -4,7 +4,6 @@ import Users from "../../models/User";
 
 const handler = async (req, res) => {
   let {
-    _id,
     name,
     contact,
     dob,
@@ -13,15 +12,12 @@ const handler = async (req, res) => {
     profile_pic,
     is_organiser,
     is_participant,
-    organiser_rank,
-    participant_rank,
     events_participated,
     events_organised,
     prices_won,
-    overall_rating,
   } = req.body;
   if (req.method == "PUT") {
-    let existingUser = await Users.findByIdAndUpdate(_id, {
+    let existingUser = await Users.findByIdAndUpdate(req.user._id, {
       name,
       contact,
       profile_pic,
@@ -30,12 +26,9 @@ const handler = async (req, res) => {
       sports,
       is_organiser,
       is_participant,
-      organiser_rank,
-      participant_rank,
       events_participated,
       events_organised,
       prices_won,
-      overall_rating,
     });
     res.status(200).json({ existingUser });
   } else if (req.method == "DELETE") {

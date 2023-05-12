@@ -42,7 +42,7 @@ const EventCard = ({ post }) => {
     e.preventDefault();
     setIsSubmitting(true);
     if (user) {
-      let json = await applyIntoEvent(post._id);
+      let json = await applyIntoEvent(post._id, isApplied);
       if (json.error) {
         toast.error(`${json.error}`, {
           position: "top-right",
@@ -55,7 +55,7 @@ const EventCard = ({ post }) => {
           theme: "light",
         });
       } else {
-        toast.success(`Applied in Event!`, {
+        toast.success(`${json.success}`, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -120,7 +120,7 @@ const EventCard = ({ post }) => {
   const handleEventShare = () => {
     if (navigator && window) {
       navigator.clipboard.writeText(
-        `${window.location.origin}/events/${post._id}`
+        `${window.location.origin}/events/${post.slug}`
       );
       toast.info("Event Link Copied!", {
         position: "top-right",
@@ -137,7 +137,7 @@ const EventCard = ({ post }) => {
 
   return (
     <li className="w-full md:w-[45%] my-4 cursor-pointer rounded-2xl ring-2 ring-gray-100 bg-white hover:ring-teal-200">
-      <Link href={`/events/${post._id}`}>
+      <Link href={`/events/${post.slug}`}>
         <div className="p-4 flex items-center justify-between">
           <div className="">
             <h3 className="text-lg font-semibold font-sans nunito-font">
@@ -208,7 +208,7 @@ const EventCard = ({ post }) => {
           {post.is_active ? (
             <button
               onClick={handleApplyEvent}
-              disabled={isSubmitting || isApplied}
+              disabled={isSubmitting}
               className={`my-4 sm:my-0 ml-auto block w-full sm:w-fit px-4 py-2 sm:py-2.5 rounded-lg ${
                 isApplied
                   ? "bg-yellow-500 hover:bg-yellow-400"
@@ -216,7 +216,7 @@ const EventCard = ({ post }) => {
               } text-white`}
             >
               {isSubmitting && <SpinnerIcon />}
-              {isApplied ? "Applied" : "Apply Now"}
+              {isApplied ? "Withdraw" : "Apply Now"}
             </button>
           ) : (
             <button className="ml-auto hover:bg-yellow-400 block px-4 py-2.5 rounded-lg bg-yellow-500 text-white">

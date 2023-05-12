@@ -16,6 +16,11 @@ const EventSchema = mongoose.Schema(
       unique: true,
       required: true,
     },
+    slug: {
+      type: String,
+      unique: true,
+      required: true,
+    },
     theme: String,
     details: String,
     category: {
@@ -42,6 +47,7 @@ const EventSchema = mongoose.Schema(
     rewards: String,
     eligibility: String,
     registrationFee: Number,
+    payment_method: String,
     lastDateOfRegistration: {
       type: Date,
       required: true,

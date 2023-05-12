@@ -62,19 +62,20 @@ const Leaderboard = () => {
               >
                 {/* {user && (
                   <div>
-                    {type.toLowerCase() == "participant" &&
-                      user.is_participant && (
+                  {type.toLowerCase() == "participant" &&
+                  user.is_participant && (
                         <div className="w-full sm:w-[80%] mx-auto">
                           <RankCard user={user} theme="dark" />
                         </div>
                       )}
-                    {type.toLowerCase() == "organiser" && user.is_organiser && (
-                      <div className="w-full sm:w-[80%] mx-auto">
+                      {type.toLowerCase() == "organiser" && user.is_organiser && (
+                        <div className="w-full sm:w-[80%] mx-auto">
                         <RankCard user={user} theme="dark" />
-                      </div>
+                        </div>
                     )}
-                  </div>
+                    </div>
                 )} */}
+                {!data && <SpinnerIcon />}
                 <ul className="w-full sm:w-4/5 mx-auto flex items-center justify-evenly flex-wrap">
                   {type.toLowerCase() == "organiser" &&
                     organisers.length == 0 &&
@@ -88,6 +89,7 @@ const Leaderboard = () => {
                         key={or._id}
                         rank={idx + 1}
                         user={or}
+                        type={type.toLowerCase()}
                         theme={user._id == or._id ? "dark" : "light"}
                       />
                     ))}
@@ -97,6 +99,7 @@ const Leaderboard = () => {
                         key={pr._id}
                         rank={idx + 1}
                         user={pr}
+                        type={type.toLowerCase()}
                         theme={user._id == pr._id ? "dark" : "light"}
                       />
                     ))}

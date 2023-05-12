@@ -19,12 +19,11 @@ const handler = async (req, res) => {
     profile_pic,
     is_organiser,
     is_participant,
-    organiser_rank,
-    participant_rank,
+    organiser_points,
+    participant_points,
     events_participated,
     events_organised,
     prices_won,
-    overall_rating,
     wishlist_events,
   } = req.body;
   if (req.method == "POST") {
@@ -88,12 +87,11 @@ const handler = async (req, res) => {
           sports,
           is_organiser,
           is_participant,
-          organiser_rank,
-          participant_rank,
+          organiser_points,
+          participant_points,
           events_organised,
           events_participated,
           prices_won,
-          overall_rating,
           wishlist_events,
         });
         await newUser.save();

@@ -14,14 +14,14 @@ const OrganiseEvent = () => {
   const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
-    if (router.isReady && router.query.id) {
+    if (router.isReady && router.query.slug) {
       setIsEdit(true);
       fetchEvent();
     }
   }, [router.isReady]);
 
   const fetchEvent = async () => {
-    let json = await getSingleEvent(router.query.id);
+    let json = await getSingleEvent(router.query.slug);
     if (json.error) {
       toast.error(`${json.error}`, {
         position: "top-right",

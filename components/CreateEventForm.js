@@ -95,6 +95,7 @@ const CreateEventForm = ({ data: event }) => {
     rewards: event?.rewards || "",
     eligibility: event?.eligibility || "",
     registrationFee: event?.registrationFee || 0,
+    payment_method: event?.payment_method || "",
     lastDateOfRegistration:
       (event &&
         new Date(event?.lastDateOfRegistration)
@@ -175,6 +176,7 @@ const CreateEventForm = ({ data: event }) => {
       rewards: formData.rewards,
       eligibility: formData.eligibility,
       registrationFee: formData.registrationFee,
+      payment_method: formData.payment_method,
       lastDateOfRegistration: formData.lastDateOfRegistration,
       contact: formData.contact,
       email: formData.email,
@@ -747,6 +749,19 @@ const CreateEventForm = ({ data: event }) => {
               placeholder="Registration Fee (if any)"
             />
           </div>
+
+          {/* Payment Method */}
+          {formData.registrationFee > 0 && (
+            <input
+              type="text"
+              className={inputStyle}
+              placeholder="How will participant pay?"
+              value={formData.payment_method}
+              onChange={(e) =>
+                setFormData({ ...formData, payment_method: e.target.value })
+              }
+            />
+          )}
 
           {/* Last Date for Reg. */}
           <div

@@ -212,7 +212,7 @@ const NavDropdown = () => {
                         } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                       >
                         <HiLogout className={iconStyle} />
-                        LogOut
+                        Logout
                       </button>
                     </Link>
                   )}

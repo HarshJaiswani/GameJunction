@@ -10,6 +10,8 @@ import CheckIcon from "./Icons/CheckIcon";
 import ImageIcon from "./Icons/ImageIcon";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import SpinnerIcon from "./SpinnerIcon";
+import { TiTick } from "react-icons/ti";
+import { TbDots } from "react-icons/tb";
 // App Context
 import { AppContext } from "../context/AppContext";
 // Toast
@@ -57,6 +59,7 @@ const SignupForm = ({ data }) => {
   // States
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerification, setIsVerification] = useState(false);
+  const [isPassValid, setIsPassValid] = useState(null);
   const [selectedStake, setSelectedStake] = useState(
     data?.is_participant && data?.is_organiser
       ? stakeholder[2]
@@ -120,6 +123,19 @@ const SignupForm = ({ data }) => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    if (isPassValid == false || null) {
+      toast.error(`Password Incorrect!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      return;
+    }
     setIsSubmitting(true);
 
     const data = {
@@ -212,7 +228,6 @@ const SignupForm = ({ data }) => {
     setIsSubmitting(true);
 
     const apidata = {
-      _id: data._id,
       name: formData.name,
       contact: formData.contact,
       dob: formData.dob,
@@ -251,6 +266,18 @@ const SignupForm = ({ data }) => {
       router.push("/profile");
     }
     setIsSubmitting(false);
+  };
+
+  const updatingPassValue = (e) => {
+    setFormData({ ...formData, password: e.target.value });
+    if (
+      e.target.value.toLowerCase().match("^(?=.*[a-zA-Z])(?=.*[0-9])") &&
+      e.target.value.length >= 6
+    ) {
+      setIsPassValid(true);
+    } else {
+      setIsPassValid(false);
+    }
   };
 
   const inputStyle =
@@ -321,9 +348,7 @@ const SignupForm = ({ data }) => {
                 required={true}
                 value={formData.password}
                 minLength={6}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
+                onChange={(e) => updatingPassValue(e)}
               />
               <div className="absolute top-8 right-3">
                 {showPass && (
@@ -338,6 +363,17 @@ const SignupForm = ({ data }) => {
                     onClick={() => setShowPass(!showPass)}
                   />
                 )}
+              </div>
+              <div className="mt-2 mx-2 flex items-center">
+                {isPassValid == true && (
+                  <TiTick className="text-xl text-green-300" />
+                )}
+                {isPassValid == false && (
+                  <TbDots className="text-xl text-red-300" />
+                )}
+                <p className="ml-2 text-gray-400 text-sm">
+                  Password must contain minimum 6 <b>alpha-numeric</b> letters
+                </p>
               </div>
             </div>
           )}

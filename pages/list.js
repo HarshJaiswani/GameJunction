@@ -94,7 +94,11 @@ const List = () => {
                     <div className="w-[85%] md:w-[90%] h-0.5 bg-gray-200"></div>
                   </h2>
                   <ul className="flex items-center justify-evenly flex-wrap">
-                    {data?.length == 0 && "More Events Comming Soon!"}
+                    {data?.filter(
+                      (e) =>
+                        e.category.toLowerCase() == type.toLowerCase() &&
+                        e.is_active
+                    ).length == 0 && "More Events Comming Soon!"}
                     {data &&
                       data.map(
                         (post) =>
@@ -131,7 +135,11 @@ const List = () => {
                     <div className="w-[90%] h-0.5 bg-gray-200"></div>
                   </h2>
                   <ul className="flex items-center justify-evenly flex-wrap">
-                    {data?.length == 0 && "More Events Comming Soon!"}
+                    {data?.filter(
+                      (e) =>
+                        e.category.toLowerCase() == type.toLowerCase() &&
+                        !e.is_active
+                    ).length == 0 && "More Events Comming Soon!"}
                     {data &&
                       data.map(
                         (post) =>

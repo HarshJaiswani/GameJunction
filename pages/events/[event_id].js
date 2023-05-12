@@ -34,14 +34,14 @@ const EventId = () => {
     if (router.isReady) {
       fetchEvent();
       if (user) {
-        if (
-          user.events_participated.includes(router.query.event_id.toString())
-        ) {
+        if (user.events_participated.includes(event?._id.toString())) {
           setIsApplied(true);
+        } else {
+          setIsApplied(false);
         }
       }
     }
-  }, [router.isReady, user, router.query.event_id]);
+  }, [router.isReady, user, event]);
 
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
@@ -50,7 +50,7 @@ const EventId = () => {
     e.preventDefault();
     setIsSubmitting(true);
     if (user) {
-      let json = await applyIntoEvent(event._id);
+      let json = await applyIntoEvent(event._id, isApplied);
       if (json.error) {
         toast.error(`${json.error}`, {
           position: "top-right",
@@ -63,7 +63,7 @@ const EventId = () => {
           theme: "light",
         });
       } else {
-        toast.success(`Applied In Event`, {
+        toast.success(`${json.success}`, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -73,8 +73,8 @@ const EventId = () => {
           progress: undefined,
           theme: "light",
         });
-        router.reload();
       }
+      router.reload();
     } else {
       router.push("/signin");
     }
@@ -123,7 +123,9 @@ const EventId = () => {
           {event.winner && (
             <div className="w-fit bg-gray-50 rounded-full text-center px-8 py-2 text-2xl mx-auto mb-8 shadow">
               <span className="text-gray-400">Winner : </span>
-              <span className="text-yellow-400">{event.winner}</span>
+              <span className="text-yellow-400">
+                {event.winner.split(",")[0]}
+              </span>
             </div>
           )}
           <div className="w-full lg:w-2/3 mx-auto">
@@ -161,7 +163,7 @@ const EventId = () => {
               </div>
               <button
                 onClick={handleApplyEvent}
-                disabled={isSubmitting || isApplied}
+                disabled={isSubmitting}
                 className={`w-full rounded-lg font-semibold ${
                   isApplied
                     ? "bg-yellow-500 hover:bg-yellow-400"
@@ -169,7 +171,7 @@ const EventId = () => {
                 } my-4 text-white shadow py-2`}
               >
                 {isSubmitting && <SpinnerIcon />}
-                {isApplied ? "Applied" : "Apply Now"}
+                {isApplied ? "Withdraw" : "Apply Now"}
               </button>
             </div>
             <div className="px-6 py-4 text-lg rounded-md bg-white shadow">
@@ -200,7 +202,7 @@ const EventId = () => {
                 </div>
               )}
             </div>
-            <div className="p-5 md:p-12 flex flex-wrap items-center justify-between border rounded-2xl bg-gray-100 shadow mx-auto mb-8">
+            <div className="p-5 md:p-12 flex flex-wrap items-center justify-between border rounded-2xl bg-gray-100 shadow mx-auto mb-4">
               <div className="w-full sm:w-[45%] shadow bg-white p-4 rounded-md">
                 <p className="text-gray-500 text-lg font-semibold mb-4">
                   Team Size:{" "}
@@ -221,6 +223,16 @@ const EventId = () => {
                 </span>
               </div>
             </div>
+            {event.payment_method && (
+              <div className="bg-gray-100 rounded-2xl shadow p-5 mb-8">
+                <h2 className="text-gray-500 font-semibold text-xl mb-2">
+                  Payment Method
+                </h2>
+                <div className="rounded-2xl bg-white shadow p-4">
+                  {event.payment_method}
+                </div>
+              </div>
+            )}
             <div className="bg-gray-100 rounded-2xl shadow p-5 md:p-12">
               <h2 className="text-gray-500 font-semibold text-xl mb-2">
                 Rewards:

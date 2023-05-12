@@ -1,8 +1,9 @@
 import React from "react";
 // Icons
 import { BsFillPersonFill } from "react-icons/bs";
+import { TbHomeInfinity } from "react-icons/tb";
 
-const RankCard = ({ user, theme, rank }) => {
+const RankCard = ({ user, theme, rank, type = "participant" }) => {
   return (
     <li className="w-full flex items-center justify-center">
       <div className="px-4 py-1 sm:py-2 font-semibold text-gray-400 sm:text-lg bg-gray-200/50 rounded-tl-lg rounded-bl-lg">
@@ -28,17 +29,13 @@ const RankCard = ({ user, theme, rank }) => {
             {user.name.toUpperCase()}
           </h3>
         </div>
-        <div className="hidden sm:flex items-center">
-          {user.is_organiser && (
-            <div className="w-10 h-10 rounded-full bg-yellow-200 mx-2 flex items-center justify-center font-semibold text-gray-500">
-              {user.organiser_rank}
-            </div>
-          )}
-          {user.is_participant && (
-            <div className="w-10 h-10 rounded-full bg-teal-200 mx-2 flex items-center justify-center font-semibold text-gray-500">
-              {user.participant_rank}
-            </div>
-          )}
+        <div className="flex items-center bg-gray-100 rounded-2xl px-4 py-2 w-fit">
+          <TbHomeInfinity className="mr-2 text-xl text-teal-400" />
+          <span className="text-gray-700">
+            {type == "organiser"
+              ? user.organiser_points
+              : user.participant_points}
+          </span>
         </div>
       </div>
     </li>

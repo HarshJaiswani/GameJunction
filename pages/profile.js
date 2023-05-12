@@ -23,6 +23,7 @@ import { deactivateUser } from "../Services/User";
 import useSWR from "swr";
 // HeadlessUi
 import { Dialog, Transition } from "@headlessui/react";
+import { TbHomeInfinity } from "react-icons/tb";
 
 const Profile = () => {
   const { user } = useUser();
@@ -160,7 +161,7 @@ const Profile = () => {
               <p className="text-gray-400 w-fit mx-auto sm:mx-0">
                 {user.email}
               </p>
-              <div className="my-4 flex items-center sm:justify-start justify-center flex-wrap">
+              <div className="mt-4 flex items-center sm:justify-start justify-center flex-wrap">
                 {user.sports.map((s, index) => (
                   <div
                     key={index}
@@ -170,19 +171,35 @@ const Profile = () => {
                   </div>
                 ))}
               </div>
+              <div>
+                <div className="flex items-center bg-gray-100 rounded-2xl px-4 py-2 w-fit">
+                  <TbHomeInfinity className="mr-2 text-xl text-teal-400" />
+                  <span className="text-gray-500">
+                    {user.is_organiser && (
+                      <>
+                        {" "}
+                        <span>{user.organiser_points}</span>
+                        <span className="text-xs text-gray-400">
+                          (organiser)
+                        </span>{" "}
+                        &
+                      </>
+                    )}
+                    {user.is_participant && (
+                      <>
+                        {" "}
+                        <span>{user.participant_points}</span>
+                        <span className="text-xs text-gray-400">
+                          (participant)
+                        </span>
+                      </>
+                    )}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="mb-4 sm:my-8">
-            <h2 className="flex items-center justify-between">
-              <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl inline-block whitespace-nowrap mr-4 text-gray-600 font-semibold my-4">
-                Overall Rank
-              </span>
-              <div className="w-[80%] h-0.5 bg-gray-200"></div>
-            </h2>
-            <RankCard user={user} theme="light" />
-          </div>
-          {/* <RankCard type="participant" user={dataUser[0]} theme="light" /> */}
-          <h2 className="flex items-center justify-between">
+          <h2 className="flex items-center justify-between mt-12">
             <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl inline-block whitespace-nowrap mr-4 text-gray-600 font-semibold my-4">
               Current Participations
             </span>

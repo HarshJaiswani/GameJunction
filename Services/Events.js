@@ -37,14 +37,14 @@ const updateEvent = async (data) => {
   return json;
 };
 
-const applyIntoEvent = async (id) => {
+const applyIntoEvent = async (id, isApplied) => {
   const response = await fetch("/api/applyintoevent", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "auth-token": JSON.parse(localStorage.getItem("auth-token")),
     },
-    body: JSON.stringify({ eventId: id }),
+    body: JSON.stringify({ eventId: id, isApplied }),
   });
   const json = await response.json();
   return json;
@@ -119,13 +119,13 @@ const setWinner = async (id, winId) => {
   return json;
 };
 
-const getSingleEvent = async (id) => {
+const getSingleEvent = async (slug) => {
   const response = await fetch("/api/fetchsingleevent", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ eventid: id }),
+    body: JSON.stringify({ slug }),
   });
   const json = await response.json();
   return json;

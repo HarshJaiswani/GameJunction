@@ -40,12 +40,17 @@ const UserSchema = mongoose.Schema(
       default: false,
     },
     profile_pic: String, // we have to store image refrence string here
-    organiser_rank: Number,
-    participant_rank: Number,
+    organiser_points: {
+      type: Number,
+      default: 0,
+    },
+    participant_points: {
+      type: Number,
+      default: 0,
+    },
     events_participated: [String],
     events_organised: [String],
     prices_won: [String],
-    overall_rating: Number,
     wishlist_events: [String],
     is_deleted: {
       type: Boolean,
