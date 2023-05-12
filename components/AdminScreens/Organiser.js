@@ -207,7 +207,7 @@ const Organiser = () => {
                               </Link>
                             </div>
                           </Disclosure.Button>
-                          <Disclosure.Panel className="px-4 pb-4 text-sm text-gray-500">
+                          <Disclosure.Panel className="sm:px-4 pb-4 text-sm text-gray-500">
                             <div className="w-fit py-2 rounded-md sm:text-lg">
                               <span className="text-gray-400">
                                 Total Participants:
@@ -218,21 +218,35 @@ const Organiser = () => {
                             </div>
                             {allParticipants[e._id] &&
                               allParticipants[e._id].map((p, index) => (
-                                <div key={index}>
-                                  {p.name} ({p.email})
-                                  <table>
-                                    <tr>
-                                      <th>Name</th>
-                                      <th>Email</th>
-                                      <th>Contact</th>
-                                      <th>Applied at</th>
-                                    </tr>
-                                    <tr>
-                                      <td>{p.name}</td>
-                                      <td>{p.email}</td>
-                                      <td>{p.contact}</td>
-                                      <td>12th may 2023</td>
-                                    </tr>
+                                <div
+                                  key={index}
+                                  className="relative overflow-x-auto"
+                                >
+                                  <table className="w-full">
+                                    <thead>
+                                      <tr>
+                                        <th className="text-left py-4">Name</th>
+                                        <th className="text-left px-4 py-4">
+                                          Email
+                                        </th>
+                                        <th className="text-left py-4">
+                                          Contact
+                                        </th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                        <td className="py-2 whitespace-nowrap">
+                                          {p.name}
+                                        </td>
+                                        <td className="px-4 py-2 whitespace-nowrap">
+                                          {p.email}
+                                        </td>
+                                        <td className="py-2 whitespace-nowrap">
+                                          {p.contact}
+                                        </td>
+                                      </tr>
+                                    </tbody>
                                   </table>
                                 </div>
                               ))}

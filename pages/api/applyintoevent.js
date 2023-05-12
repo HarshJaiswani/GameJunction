@@ -45,7 +45,7 @@ const handler = async (req, res) => {
           });
           let event = await Events.findById(eventId);
           let updatedEvent = await Events.findByIdAndUpdate(eventId, {
-            participants: event.participants.filter((e) => e != eventId),
+            participants: event.participants.filter((e) => e != req.user._id),
           });
           res.status(200).json({ success: "Withdrawn!" });
         } else {
