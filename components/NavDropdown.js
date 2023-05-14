@@ -4,7 +4,7 @@ import Link from "next/link";
 // Headless Ui
 import { Menu, Transition } from "@headlessui/react";
 // Icons
-import { HiOutlineBars3BottomLeft } from "react-icons/hi2";
+import { HiOutlineBars3BottomLeft, HiOutlineUserGroup } from "react-icons/hi2";
 import { HiStar, HiLogout, HiLogin } from "react-icons/hi";
 import { CgProfile } from "react-icons/cg";
 import { BsCalendarEvent } from "react-icons/bs";
@@ -124,6 +124,26 @@ const NavDropdown = () => {
                       >
                         <IoCreateOutline className={iconStyle} />
                         Create Event
+                      </button>
+                    </Link>
+                  )}
+                </Menu.Item>
+              </div>
+            )}
+            {user && user.is_participant && (
+              <div className="px-1 py-1">
+                <Menu.Item>
+                  {({ active }) => (
+                    <Link href="/teams">
+                      <button
+                        className={`${
+                          active ? "bg-gray-500 text-white" : "text-white"
+                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      >
+                        <HiOutlineUserGroup
+                          className={`text-base ${iconStyle}`}
+                        />
+                        My Teams
                       </button>
                     </Link>
                   )}
