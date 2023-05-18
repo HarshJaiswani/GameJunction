@@ -30,7 +30,7 @@ const handler = async (req, res) => {
     if (req.body.sendMail) {
       let existUser = await Users.findOne({ email });
       if (existUser) {
-        res.status(500).json({ error: "User already exist!" });
+        return res.status(500).json({ error: "User already exist!" });
       } else {
         const transporter = nodemailer.createTransport({
           service: "gmail",
@@ -65,7 +65,7 @@ const handler = async (req, res) => {
           });
         });
         if (!success) {
-          res.status(500).json({ error: "Error sending email" });
+          return res.status(500).json({ error: "Error sending email" });
         }
         let newVerifyCode = new Verify({
           email,
@@ -95,9 +95,7 @@ const handler = async (req, res) => {
           wishlist_events,
         });
         await newUser.save();
-        // let token = jwt.sign({ newUser }, process.env.SECRETKEY).toString();
-        // res.status(200).json({ authToken: token });
-        res.status(200).json({ message: "Email Sent Successfully!" });
+        return res.status(200).json({ message: "Email Sent Successfully!" });
       }
     } else {
       let existingUser = await Users.findOne({ email });
@@ -127,15 +125,15 @@ const handler = async (req, res) => {
               .json({ error: "Validation Failed!", deletedUser, deletedCode });
           }
         } else {
-          res.status(500).json({ error: "User already verified!" });
+          return res.status(500).json({ error: "User already verified!" });
         }
       } else {
         let deletedUser = await Users.findOneAndDelete({ email });
-        res.status(500).json({ error: "Time Out!", deletedUser });
+        return res.status(500).json({ error: "Time Out!", deletedUser });
       }
     }
   } else {
-    res.status(500).json({ error: "Invalid OpCode" });
+    return res.status(500).json({ error: "Invalid OpCode" });
   }
 };
 

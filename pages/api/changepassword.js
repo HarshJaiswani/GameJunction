@@ -9,7 +9,7 @@ const handler = async (req, res) => {
   if (req.method == "POST") {
     let user = await Users.findById(req.user._id);
     if (!user || user.is_deleted) {
-      res.status(500).json({ error: "No User Found" });
+      return res.status(500).json({ error: "No User Found" });
     } else {
       let bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRETKEY);
       let originalText = bytes.toString(CryptoJS.enc.Utf8);
@@ -20,13 +20,13 @@ const handler = async (req, res) => {
             process.env.SECRETKEY
           ).toString(),
         });
-        res.status(200).json({ success: "Password Updated" });
+        return res.status(200).json({ success: "Password Updated" });
       } else {
-        res.status(500).json({ error: "Invalid Credentials!" });
+        return res.status(500).json({ error: "Invalid Credentials!" });
       }
     }
   } else {
-    res.status(500).json({ error: "Invalid OpCode" });
+    return res.status(500).json({ error: "Invalid OpCode" });
   }
 };
 

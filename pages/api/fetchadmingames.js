@@ -9,12 +9,12 @@ const handler = async (req, res) => {
     if (req.method == "GET") {
       let sports = await Sports.find();
       sports = sports.filter((s) => !s.is_deleted);
-      res.status(200).json(sports);
+      return res.status(200).json(sports);
     } else {
-      res.status(500).json({ error: "Invalid OpCode" });
+      return res.status(500).json({ error: "Invalid OpCode" });
     }
   } else {
-    res.status(400).json({ error: "Unauthorised Access!" });
+    return res.status(400).json({ error: "Unauthorised Access!" });
   }
 };
 

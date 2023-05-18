@@ -68,7 +68,7 @@ const Profile = () => {
     } else {
       let currEvents = [];
       let passEvents = [];
-      json.all_events.forEach((e) => {
+      await json.all_events.forEach((e) => {
         if (e.is_active) {
           currEvents.push(e);
         } else {

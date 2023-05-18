@@ -30,14 +30,14 @@ const handler = async (req, res) => {
       events_organised,
       prices_won,
     });
-    res.status(200).json({ existingUser });
+    return res.status(200).json({ existingUser });
   } else if (req.method == "DELETE") {
     let existingUser = await Users.findByIdAndUpdate(req.user._id, {
       is_deleted: true,
     });
-    res.status(200).json({ existingUser });
+    return res.status(200).json({ existingUser });
   } else {
-    res.status(500).json({ error: "Invalid OpCode" });
+    return res.status(500).json({ error: "Invalid OpCode" });
   }
 };
 

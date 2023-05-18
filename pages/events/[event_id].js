@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 // Next Components
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -21,6 +21,11 @@ import { toast } from "react-toastify";
 import useUser from "../../hooks/useUser";
 // services
 import { applyIntoEvent, getSingleEvent } from "../../Services/Events";
+import { fetchAllTeamsOfUser } from "Services/Teams";
+// headlessui
+import { Dialog, Transition } from "@headlessui/react";
+// swr
+import useSWR from "swr";
 
 const EventId = () => {
   const router = useRouter();
@@ -29,6 +34,13 @@ const EventId = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [event, setEvent] = useState(null);
   const [isApplied, setIsApplied] = useState(false);
+  const [showTeamModal, setShowTeamModal] = useState(false);
+
+  const {
+    data: teams,
+    error,
+    mutate: mutateTeam,
+  } = useSWR("TEAMS", fetchAllTeamsOfUser);
 
   useEffect(() => {
     if (router.isReady) {
@@ -46,11 +58,29 @@ const EventId = () => {
   const inputStyle =
     "outline-none px-4 py-3 shadow bg-white rounded-2xl w-full text-gray-600 mt-4";
 
-  const handleApplyEvent = async (e) => {
+  const event_applyable = (e) => {
     e.preventDefault();
+    if (isApplied) {
+      let team_id = null;
+      teams.filter((e) => {
+        if (e.participations.includes(event._id)) {
+          team_id = e._id;
+        }
+      });
+      handleApplyEvent(team_id);
+    } else {
+      if (event.maxTeam > 1) {
+        setShowTeamModal(true);
+      } else {
+        handleApplyEvent(false);
+      }
+    }
+  };
+
+  const handleApplyEvent = async (team_id) => {
     setIsSubmitting(true);
     if (user) {
-      let json = await applyIntoEvent(event._id, isApplied);
+      let json = await applyIntoEvent(event._id, isApplied, team_id);
       if (json.error) {
         toast.error(`${json.error}`, {
           position: "top-right",
@@ -132,16 +162,6 @@ const EventId = () => {
             <h2 className="text-3xl font-semibold text-gray-500 mb-4 text-center">
               {event.title}
             </h2>
-            {isApplied && (
-              <div className="my-4 sm:my-8 md:my-12">
-                <h2 className="text-xl font-semibold text-gray-600">
-                  Your Application
-                </h2>
-                <div className="w-full bg-white rounded-md p-2 sm:px-8 sm:py-2 shadow">
-                  <div>you have succesfully applied to the event!</div>
-                </div>
-              </div>
-            )}
             <div className="h-[350px] my-8 mx-auto overflow-hidden cursor-pointer flex flex-col items-center justify-center rounded-2xl bg-gray-100 shadow">
               {event.poster ? (
                 <img
@@ -172,7 +192,7 @@ const EventId = () => {
                 </p>
               </div>
               <button
-                onClick={handleApplyEvent}
+                onClick={event_applyable}
                 disabled={isSubmitting}
                 className={`w-full rounded-lg font-semibold ${
                   isApplied
@@ -203,7 +223,7 @@ const EventId = () => {
                     {event.platform}
                   </div>
                   <div className="px-8 py-2 rounded-2xl w-fit mx-4 my-2 bg-gray-100 text-green-400 font-semibold">
-                    <Link href={event.link}>Link to event</Link>
+                    <a href={event.link}>Link to event</a>
                   </div>
                 </>
               ) : (
@@ -287,7 +307,9 @@ const EventId = () => {
                   {event.email == "" ? (
                     "No Email Available"
                   ) : (
-                    <Link href={`malto:${event.email}`}>{event.email}</Link>
+                    <Link href={`malto:${event.email}`} className="break-words">
+                      {event.email}
+                    </Link>
                   )}
                 </div>
               </div>
@@ -299,7 +321,9 @@ const EventId = () => {
                   {event.website == "" ? (
                     "No Website Available"
                   ) : (
-                    <Link href={`${event.website}`}>{event.website}</Link>
+                    <Link href={`${event.website}`} className="break-words">
+                      {event.website}
+                    </Link>
                   )}
                 </div>
               </div>
@@ -311,7 +335,9 @@ const EventId = () => {
                   {event.youtube == "" ? (
                     "No Youtube Available"
                   ) : (
-                    <Link href={`${event.youtube}`}>{event.youtube}</Link>
+                    <Link href={`${event.youtube}`} className="break-words">
+                      {event.youtube}
+                    </Link>
                   )}
                 </div>
               </div>
@@ -323,7 +349,9 @@ const EventId = () => {
                   {event.linkedin == "" ? (
                     "No LinkedIn Available"
                   ) : (
-                    <Link href={`${event.linkedin}`}>{event.linkedin}</Link>
+                    <Link href={`${event.linkedin}`} className="break-words">
+                      {event.linkedin}
+                    </Link>
                   )}
                 </div>
               </div>
@@ -335,7 +363,9 @@ const EventId = () => {
                   {event.instagram == "" ? (
                     "No Instagram Available"
                   ) : (
-                    <Link href={`${event.instagram}`}>{event.instagram}</Link>
+                    <Link href={`${event.instagram}`} className="break-words">
+                      {event.instagram}
+                    </Link>
                   )}
                 </div>
               </div>
@@ -347,7 +377,9 @@ const EventId = () => {
                   {event.discord == "" ? (
                     "No Discord Available"
                   ) : (
-                    <Link href={`${event.discord}`}>{event.discord}</Link>
+                    <Link href={`${event.discord}`} className="break-words">
+                      {event.discord}
+                    </Link>
                   )}
                 </div>
               </div>
@@ -359,7 +391,9 @@ const EventId = () => {
                   {event.telegram == "" ? (
                     "No Telegram Available"
                   ) : (
-                    <Link href={`${event.telegram}`}>{event.telegram}</Link>
+                    <Link href={`${event.telegram}`} className="break-words">
+                      {event.telegram}
+                    </Link>
                   )}
                 </div>
               </div>
@@ -371,7 +405,9 @@ const EventId = () => {
                   {event.twitter == "" ? (
                     "No Twitter Available"
                   ) : (
-                    <Link href={`${event.twitter}`}>{event.twitter}</Link>
+                    <Link href={`${event.twitter}`} className="break-words">
+                      {event.twitter}
+                    </Link>
                   )}
                 </div>
               </div>
@@ -383,13 +419,126 @@ const EventId = () => {
                   {event.other == "" ? (
                     "No Other Link Available"
                   ) : (
-                    <Link href={`${event.other}`}>{event.other}</Link>
+                    <Link href={`${event.other}`} className="break-words">
+                      {event.other}
+                    </Link>
                   )}
                 </div>
               </div>
             </div>
           </div>
         </div>
+      )}
+      {showTeamModal && (
+        <>
+          <Transition appear show={showTeamModal} as={Fragment}>
+            <Dialog
+              as="div"
+              className="relative z-10"
+              onClose={() => setShowTeamModal(false)}
+            >
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <div className="fixed inset-0 bg-black bg-opacity-25" />
+              </Transition.Child>
+
+              <div className="fixed inset-0 overflow-y-auto">
+                <div className="flex min-h-full items-center justify-center p-4 text-center">
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0 scale-95"
+                    enterTo="opacity-100 scale-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100 scale-100"
+                    leaveTo="opacity-0 scale-95"
+                  >
+                    <Dialog.Panel className="w-[90%] sm:w-[80%] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-gray-900"
+                      >
+                        Select Team!
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          This is a team event, select your team to participat
+                          in event!
+                        </p>
+                      </div>
+
+                      <div className="my-4">
+                        {event.minTeam == 1 && (
+                          <div className="w-full bg-green-400/10 rounded-md px-4 py-3 my-2 flex items-center justify-between">
+                            <p className="">Participate Individually</p>
+                            <button
+                              onClick={() => {
+                                handleApplyEvent(false);
+                                setShowTeamModal(false);
+                              }}
+                              className="px-4 py-1 rounded-md bg-green-400 text-white"
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        )}
+                        <h2 className="text-lg font-medium my-4">Your Teams</h2>
+                        <div>
+                          {!teams && (
+                            <div className="w-full flex items-center justify-center py-8">
+                              <SpinnerIcon noMargin={true} />
+                            </div>
+                          )}
+                          {teams?.map(
+                            (team, index) =>
+                              team.participants.filter(
+                                (e) => e.participant_id == user.email
+                              )[0]?.is_leader &&
+                              team.participants.length >= event.minTeam &&
+                              team.participants.length <= event.maxTeam && (
+                                <div
+                                  key={index}
+                                  className="w-full bg-green-400/10 rounded-md px-4 py-3 my-2 flex items-center justify-between"
+                                >
+                                  <p>{team.team_name}</p>
+                                  <button
+                                    onClick={() => {
+                                      handleApplyEvent(team._id);
+                                      setShowTeamModal(false);
+                                    }}
+                                    className="px-4 py-1 rounded-md bg-green-400 text-white"
+                                  >
+                                    Apply
+                                  </button>
+                                </div>
+                              )
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <button
+                          type="button"
+                          className="rounded-md border border-transparent bg-gray-100 px-6 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 ml-auto block"
+                          onClick={() => setShowTeamModal(false)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </Dialog.Panel>
+                  </Transition.Child>
+                </div>
+              </div>
+            </Dialog>
+          </Transition>
+        </>
       )}
     </>
   );

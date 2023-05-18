@@ -10,20 +10,20 @@ const handler = async (req, res) => {
     if (user && user.is_admin) {
       let users = await Users.find();
       users = users.filter((e) => !e.is_deleted);
-      res.status(200).json(users);
+      return res.status(200).json(users);
     } else {
-      res.status(400).json({ error: "Unauthorised Access!" });
+      return res.status(400).json({ error: "Unauthorised Access!" });
     }
   } else if (req.method == "POST") {
     let tokenData = jwt.verify(token, process.env.SECRETKEY);
     let user = await Users.findOne({ _id: tokenData.user._id });
     if (user && user.is_deleted) {
-      res.status(500).json({ error: "No User Found" });
+      return res.status(500).json({ error: "No User Found" });
     } else {
-      res.status(200).json({ user });
+      return res.status(200).json({ user });
     }
   } else {
-    res.status(500).json({ error: "Invalid OpCode" });
+    return res.status(500).json({ error: "Invalid OpCode" });
   }
 };
 

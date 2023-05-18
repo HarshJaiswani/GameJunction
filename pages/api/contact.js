@@ -10,9 +10,9 @@ const handler = async (req, res) => {
     if (user.is_admin) {
       let contacts = await Contacts.find();
       contacts = contacts.filter((c) => !c.is_resolved);
-      res.status(200).json(contacts);
+      return res.status(200).json(contacts);
     } else {
-      res.status(400).json({ error: "Unauthorised Access!" });
+      return res.status(400).json({ error: "Unauthorised Access!" });
     }
   } else if (req.method == "POST") {
     let newContact = new Contacts({
@@ -20,18 +20,18 @@ const handler = async (req, res) => {
       message,
     });
     await newContact.save();
-    res.status(200).json({ newContact });
+    return res.status(200).json({ newContact });
   } else if (req.method == "PUT") {
     if (user.is_admin) {
       let existingContact = await Contacts.findByIdAndUpdate(_id, {
         is_resolved,
       });
-      res.status(200).json({ existingContact });
+      return res.status(200).json({ existingContact });
     } else {
-      res.status(400).json({ error: "Unauthorised Access!" });
+      return res.status(400).json({ error: "Unauthorised Access!" });
     }
   } else {
-    res.status(500).json({ error: "Invalid OpCode" });
+    return res.status(500).json({ error: "Invalid OpCode" });
   }
 };
 

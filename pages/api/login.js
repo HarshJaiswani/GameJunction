@@ -12,7 +12,7 @@ const handler = async (req, res) => {
     let user = await Users.findOne({ email });
     if (user) {
       if (user.is_deleted) {
-        res.status(500).json({ error: "No User Found" });
+        return res.status(500).json({ error: "No User Found" });
       } else {
         let bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRETKEY);
         let originalText = bytes.toString(CryptoJS.enc.Utf8);
@@ -22,13 +22,13 @@ const handler = async (req, res) => {
             _id: user._id,
           };
           let token = jwt.sign({ user: senduser }, process.env.SECRETKEY);
-          res.status(200).json({ authToken: token });
+          return res.status(200).json({ authToken: token });
         } else {
-          res.status(500).json({ error: "Invalid Credentials!" });
+          return res.status(500).json({ error: "Invalid Credentials!" });
         }
       }
     } else {
-      res.status(500).json({ error: "No User Found" });
+      return res.status(500).json({ error: "No User Found" });
     }
   } else if (req.method == "PUT") {
     if (req.body.sendMail) {
@@ -67,7 +67,7 @@ const handler = async (req, res) => {
           });
         });
         if (!success) {
-          res.status(500).json({ error: "Error sending email" });
+          return res.status(500).json({ error: "Error sending email" });
         }
         let verifyCode = await Verify.findOneAndUpdate(
           { email },
@@ -76,9 +76,9 @@ const handler = async (req, res) => {
             expiry: Date.now() + 6000000,
           }
         );
-        res.status(200).json({ success: "token sent to mail" });
+        return res.status(200).json({ success: "token sent to mail" });
       } else {
-        res.status(400).json({ error: "No user found!" });
+        return res.status(400).json({ error: "No user found!" });
       }
     } else {
       let { email } = jwt.verify(token, process.env.SECRETKEY);
@@ -93,13 +93,13 @@ const handler = async (req, res) => {
             ).toString(),
           }
         );
-        res.status(200).json({ success: "Password Updated!" });
+        return res.status(200).json({ success: "Password Updated!" });
       } else {
-        res.status(500).json({ error: "Server Timed Out!" });
+        return res.status(500).json({ error: "Server Timed Out!" });
       }
     }
   } else {
-    res.status(500).json({ error: "Invalid OpCode" });
+    return res.status(500).json({ error: "Invalid OpCode" });
   }
 };
 

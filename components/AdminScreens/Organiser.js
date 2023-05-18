@@ -60,8 +60,8 @@ const Organiser = () => {
       setAllEvents(json.all_events);
       let curatedData = {};
       await json.all_events.forEach(async (e) => {
-        let part = await getParticipants(e.participants);
-        curatedData[e._id] = part;
+        let result = await getParticipants(e.participants);
+        curatedData[e._id] = result;
       });
       setAllParticipants(curatedData);
     }
@@ -86,7 +86,7 @@ const Organiser = () => {
         theme: "light",
       });
     } else {
-      return json.all_participants;
+      return json;
     }
   };
 
@@ -216,40 +216,69 @@ const Organiser = () => {
                                 {e.participants.length}
                               </span>
                             </div>
-                            {allParticipants[e._id] &&
-                              allParticipants[e._id].map((p, index) => (
-                                <div
-                                  key={index}
-                                  className="relative overflow-x-auto"
-                                >
-                                  <table className="w-full">
-                                    <thead>
-                                      <tr>
-                                        <th className="text-left py-4">Name</th>
-                                        <th className="text-left px-4 py-4">
-                                          Email
-                                        </th>
-                                        <th className="text-left py-4">
-                                          Contact
-                                        </th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      <tr>
-                                        <td className="py-2 whitespace-nowrap">
-                                          {p.name}
-                                        </td>
-                                        <td className="px-4 py-2 whitespace-nowrap">
-                                          {p.email}
-                                        </td>
-                                        <td className="py-2 whitespace-nowrap">
-                                          {p.contact}
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              ))}
+                            {allParticipants[e._id]?.map((p, index) => (
+                              <>
+                                {p.is_team && (
+                                  <div className="w-full p-4 bg-white shadow rounded-2xl">
+                                    <h2 className="mb-2 text-lg font-semibold text-gray-500">
+                                      {p.team_name}
+                                    </h2>
+                                    <div className="divide-y divide-gray-200">
+                                      {p.people.map((mem, index) => (
+                                        <div
+                                          key={index}
+                                          className="text-gray-500 py-2 flex items-center justify-start flex-wrap"
+                                        >
+                                          <div className="m-2 px-4 bg-gray-50 w-fit py-2 rounded-md shadow-sm text-gray-400">
+                                            Name:{" "}
+                                            <span className="text-gray-600 font-semibold tracking-wide">
+                                              {mem.name}
+                                            </span>
+                                          </div>
+                                          <div className="m-2 px-4 bg-gray-50 w-fit py-2 rounded-md shadow-sm text-gray-400">
+                                            Email:{" "}
+                                            <span className="text-gray-600 font-semibold tracking-wide">
+                                              {mem.email}
+                                            </span>
+                                          </div>
+                                          <div className="m-2 px-4 bg-gray-50 w-fit py-2 rounded-md shadow-sm text-gray-400">
+                                            Contact:{" "}
+                                            <span className="text-gray-600 font-semibold tracking-wide">
+                                              {mem.contact}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                {!p.is_team && (
+                                  <div
+                                    key={index}
+                                    className="bg-white shadow rounded-2xl text-gray-500 py-2 flex items-center justify-start flex-wrap"
+                                  >
+                                    <div className="m-2 px-4 bg-gray-50 w-fit py-2 rounded-md shadow-sm text-gray-400">
+                                      Name:{" "}
+                                      <span className="text-gray-600 font-semibold tracking-wide">
+                                        {p.people[0].name}
+                                      </span>
+                                    </div>
+                                    <div className="m-2 px-4 bg-gray-50 w-fit py-2 rounded-md shadow-sm text-gray-400">
+                                      Email:{" "}
+                                      <span className="text-gray-600 font-semibold tracking-wide">
+                                        {p.people[0].email}
+                                      </span>
+                                    </div>
+                                    <div className="m-2 px-4 bg-gray-50 w-fit py-2 rounded-md shadow-sm text-gray-400">
+                                      Contact:{" "}
+                                      <span className="text-gray-600 font-semibold tracking-wide">
+                                        {p.people[0].contact}
+                                      </span>
+                                    </div>
+                                  </div>
+                                )}
+                              </>
+                            ))}
                           </Disclosure.Panel>
                         </>
                       )}
@@ -299,12 +328,69 @@ const Organiser = () => {
                                 {e.participants.length}
                               </span>
                             </div>
-                            {allParticipants[e._id] &&
-                              allParticipants[e._id].map((p, index) => (
-                                <div key={index}>
-                                  {p.name} ({p.email})
-                                </div>
-                              ))}
+                            {allParticipants[e._id]?.map((p, index) => (
+                              <>
+                                {p.is_team && (
+                                  <div className="w-full p-4 bg-white shadow rounded-2xl">
+                                    <h2 className="mb-2 text-lg font-semibold text-gray-500">
+                                      {p.team_name}
+                                    </h2>
+                                    <div className="divide-y divide-gray-200">
+                                      {p.people.map((mem, index) => (
+                                        <div
+                                          key={index}
+                                          className="text-gray-500 py-2 flex items-center justify-start flex-wrap"
+                                        >
+                                          <div className="m-2 px-4 bg-gray-50 w-fit py-2 rounded-md shadow-sm text-gray-400">
+                                            Name:{" "}
+                                            <span className="text-gray-600 font-semibold tracking-wide">
+                                              {mem.name}
+                                            </span>
+                                          </div>
+                                          <div className="m-2 px-4 bg-gray-50 w-fit py-2 rounded-md shadow-sm text-gray-400">
+                                            Email:{" "}
+                                            <span className="text-gray-600 font-semibold tracking-wide">
+                                              {mem.email}
+                                            </span>
+                                          </div>
+                                          <div className="m-2 px-4 bg-gray-50 w-fit py-2 rounded-md shadow-sm text-gray-400">
+                                            Contact:{" "}
+                                            <span className="text-gray-600 font-semibold tracking-wide">
+                                              {mem.contact}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                {!p.is_team && (
+                                  <div
+                                    key={index}
+                                    className="bg-white shadow rounded-2xl text-gray-500 py-2 flex items-center justify-start flex-wrap"
+                                  >
+                                    <div className="m-2 px-4 bg-gray-50 w-fit py-2 rounded-md shadow-sm text-gray-400">
+                                      Name:{" "}
+                                      <span className="text-gray-600 font-semibold tracking-wide">
+                                        {p.people[0].name}
+                                      </span>
+                                    </div>
+                                    <div className="m-2 px-4 bg-gray-50 w-fit py-2 rounded-md shadow-sm text-gray-400">
+                                      Email:{" "}
+                                      <span className="text-gray-600 font-semibold tracking-wide">
+                                        {p.people[0].email}
+                                      </span>
+                                    </div>
+                                    <div className="m-2 px-4 bg-gray-50 w-fit py-2 rounded-md shadow-sm text-gray-400">
+                                      Contact:{" "}
+                                      <span className="text-gray-600 font-semibold tracking-wide">
+                                        {p.people[0].contact}
+                                      </span>
+                                    </div>
+                                  </div>
+                                )}
+                              </>
+                            ))}
                           </Disclosure.Panel>
                         </>
                       )}
@@ -359,44 +445,46 @@ const Organiser = () => {
                           onChange={setSelectedWinner}
                         >
                           <div className="space-y-2">
-                            {allParticipants[closingEvent] &&
-                              allParticipants[closingEvent].map((p, index) => (
-                                <RadioGroup.Option
-                                  key={index}
-                                  value={p._id}
-                                  className={({ active, checked }) =>
-                                    `${active ? "ring-2 ring-blue-200" : ""} ${
-                                      checked ? "bg-gray-500" : "bg-white"
-                                    } relative flex cursor-pointer rounded-lg border p-2 focus:outline-none`
-                                  }
-                                >
-                                  {({ active, checked }) => (
-                                    <>
-                                      <div className="flex w-full items-center justify-between">
-                                        <div className="flex items-center">
-                                          <div className="text-sm">
-                                            <RadioGroup.Label
-                                              as="p"
-                                              className={`font-sans font-semibold tracking-wider ${
-                                                checked
-                                                  ? "text-white"
-                                                  : "text-gray-500"
-                                              }`}
-                                            >
-                                              {p.name} ({p.email})
-                                            </RadioGroup.Label>
-                                          </div>
+                            {allParticipants[closingEvent]?.map((p, index) => (
+                              <RadioGroup.Option
+                                key={index}
+                                value={p.is_team ? p.team_id : p.people[0]._id}
+                                className={({ active, checked }) =>
+                                  `${active ? "ring-2 ring-blue-200" : ""} ${
+                                    checked ? "bg-gray-500" : "bg-white"
+                                  } relative flex cursor-pointer rounded-lg border p-2 focus:outline-none`
+                                }
+                              >
+                                {({ active, checked }) => (
+                                  <>
+                                    <div className="flex w-full items-center justify-between">
+                                      <div className="flex items-center">
+                                        <div className="text-sm">
+                                          <RadioGroup.Label
+                                            as="p"
+                                            className={`font-sans font-semibold tracking-wider ${
+                                              checked
+                                                ? "text-white"
+                                                : "text-gray-500"
+                                            }`}
+                                          >
+                                            {p.is_team && <>{p.team_name}</>}
+                                            {!p.is_team && (
+                                              <>{p.people[0].email}</>
+                                            )}
+                                          </RadioGroup.Label>
                                         </div>
-                                        {checked && (
-                                          <div className="shrink-0 text-white">
-                                            <CheckIcon className="h-6 w-6" />
-                                          </div>
-                                        )}
                                       </div>
-                                    </>
-                                  )}
-                                </RadioGroup.Option>
-                              ))}
+                                      {checked && (
+                                        <div className="shrink-0 text-white">
+                                          <CheckIcon className="h-6 w-6" />
+                                        </div>
+                                      )}
+                                    </div>
+                                  </>
+                                )}
+                              </RadioGroup.Option>
+                            ))}
                           </div>
                         </RadioGroup>
                       </div>

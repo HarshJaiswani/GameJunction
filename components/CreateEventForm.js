@@ -190,6 +190,21 @@ const CreateEventForm = ({ data: event }) => {
       other: formData.other,
     };
 
+    if (!(data.minTeam <= data.maxTeam)) {
+      toast.error(`Incorrect Team Size!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     const json = await createEvent(data);
     if (json.error) {
       toast.error(`${json.error}`, {
@@ -280,6 +295,21 @@ const CreateEventForm = ({ data: event }) => {
       other: formData.other,
     };
 
+    if (!(data.minTeam <= data.maxTeam)) {
+      toast.error(`Incorrect Team Size!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     let json = await updateEvent(data);
     if (json.error) {
       toast.error(`${json.error}`, {
@@ -293,7 +323,7 @@ const CreateEventForm = ({ data: event }) => {
         theme: "light",
       });
     } else {
-      toast.success(`Event Updated!`, {
+      toast.success(`${json.success}`, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -954,6 +984,7 @@ const CreateEventForm = ({ data: event }) => {
 
           <button
             type="submit"
+            disabled={isSubmitting}
             className="my-4 px-4 py-2 w-1/2 lg:w-1/3 block ml-auto hover:bg-yellow-200 rounded-2xl bg-white shadow-md text-gray-500 font-sans font-semibold"
           >
             {isSubmitting && <SpinnerIcon />}

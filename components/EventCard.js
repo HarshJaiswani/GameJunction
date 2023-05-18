@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 // Next Components
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -11,17 +11,27 @@ import { toast } from "react-toastify";
 // hooks
 import useUser from "../hooks/useUser";
 // swr
+import useSWR, { mutate } from "swr";
 // services
 import { addToWishList, applyIntoEvent } from "../Services/Events";
+import { Dialog, Transition } from "@headlessui/react";
+import { fetchAllTeamsOfUser } from "Services/Teams";
 
 const EventCard = ({ post }) => {
   const router = useRouter();
   const { user, mutate: mutateUser } = useUser();
 
+  const {
+    data: teams,
+    error,
+    mutate: mutateTeam,
+  } = useSWR("TEAMS", fetchAllTeamsOfUser);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [wishlisting, setWishlisting] = useState(false);
+  const [showTeamModal, setShowTeamModal] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -38,11 +48,30 @@ const EventCard = ({ post }) => {
     }
   }, [user, post]);
 
-  const handleApplyEvent = async (e) => {
+  const event_applyable = (e) => {
     e.preventDefault();
+    if (isApplied) {
+      let team_id = null;
+      teams.filter((e) => {
+        if (e.participations.includes(post._id)) {
+          team_id = e._id;
+        }
+      });
+      handleApplyEvent(team_id);
+    } else {
+      if (post.maxTeam > 1) {
+        setShowTeamModal(true);
+      } else {
+        handleApplyEvent(false);
+      }
+    }
+  };
+
+  const handleApplyEvent = async (team_id) => {
     setIsSubmitting(true);
+
     if (user) {
-      let json = await applyIntoEvent(post._id, isApplied);
+      let json = await applyIntoEvent(post._id, isApplied, team_id);
       if (json.error) {
         toast.error(`${json.error}`, {
           position: "top-right",
@@ -66,6 +95,7 @@ const EventCard = ({ post }) => {
           theme: "light",
         });
         mutateUser();
+        mutate("GETALLEVENTS");
       }
     } else {
       router.push("/signin");
@@ -187,7 +217,7 @@ const EventCard = ({ post }) => {
             Participants
           </div>
         </div>
-        <div className="sm:mb-4 p-4 flex items-center justify-start flex-wrap">
+        <div className="sm:mb-4 p-4 flex items-center justify-start flex-wrap text-gray-400 text-sm font-semibold">
           <div className="px-4 py-2 rounded-xl bg-gray-100 tracking-wider m-2">
             {post.sport}
           </div>
@@ -195,7 +225,7 @@ const EventCard = ({ post }) => {
             {post.mode}
           </div>
           <div className="px-4 py-2 rounded-xl bg-gray-100 tracking-wider m-2">
-            {post.platform || post.location}
+            Team: {post.minTeam}-{post.maxTeam}
           </div>
         </div>
         <div className="p-4 flex items-center justify-between sm:flex-row flex-col">
@@ -207,7 +237,7 @@ const EventCard = ({ post }) => {
           </div>
           {post.is_active ? (
             <button
-              onClick={handleApplyEvent}
+              onClick={event_applyable}
               disabled={isSubmitting}
               className={`my-4 sm:my-0 ml-auto block w-full sm:w-fit px-4 py-2 sm:py-2.5 rounded-lg ${
                 isApplied
@@ -225,6 +255,117 @@ const EventCard = ({ post }) => {
           )}
         </div>
       </Link>
+      {showTeamModal && (
+        <>
+          <Transition appear show={showTeamModal} as={Fragment}>
+            <Dialog
+              as="div"
+              className="relative z-10"
+              onClose={() => setShowTeamModal(false)}
+            >
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <div className="fixed inset-0 bg-black bg-opacity-25" />
+              </Transition.Child>
+
+              <div className="fixed inset-0 overflow-y-auto">
+                <div className="flex min-h-full items-center justify-center p-4 text-center">
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0 scale-95"
+                    enterTo="opacity-100 scale-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100 scale-100"
+                    leaveTo="opacity-0 scale-95"
+                  >
+                    <Dialog.Panel className="w-[90%] sm:w-[80%] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-gray-900"
+                      >
+                        Select Team!
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          This is a team event, select your team to participat
+                          in event!
+                        </p>
+                      </div>
+
+                      <div className="my-4">
+                        {post.minTeam == 1 && (
+                          <div className="w-full bg-green-400/10 rounded-md px-4 py-3 my-2 flex items-center justify-between">
+                            <p className="">Participate Individually</p>
+                            <button
+                              onClick={() => {
+                                handleApplyEvent(false);
+                                setShowTeamModal(false);
+                              }}
+                              className="px-4 py-1 rounded-md bg-green-400 text-white"
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        )}
+                        <h2 className="text-lg font-medium my-4">Your Teams</h2>
+                        <div>
+                          {!teams && (
+                            <div className="w-full flex items-center justify-center py-8">
+                              <SpinnerIcon noMargin={true} />
+                            </div>
+                          )}
+                          {teams?.map(
+                            (team, index) =>
+                              team.participants.filter(
+                                (e) => e.participant_id == user.email
+                              )[0]?.is_leader &&
+                              team.participants.length >= post.minTeam &&
+                              team.participants.length <= post.maxTeam && (
+                                <div
+                                  key={index}
+                                  className="w-full bg-green-400/10 rounded-md px-4 py-3 my-2 flex items-center justify-between"
+                                >
+                                  <p>{team.team_name}</p>
+                                  <button
+                                    onClick={() => {
+                                      handleApplyEvent(team._id);
+                                      setShowTeamModal(false);
+                                    }}
+                                    className="px-4 py-1 rounded-md bg-green-400 text-white"
+                                  >
+                                    Apply
+                                  </button>
+                                </div>
+                              )
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <button
+                          type="button"
+                          className="rounded-md border border-transparent bg-gray-100 px-6 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 ml-auto block"
+                          onClick={() => setShowTeamModal(false)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </Dialog.Panel>
+                  </Transition.Child>
+                </div>
+              </div>
+            </Dialog>
+          </Transition>
+        </>
+      )}
     </li>
   );
 };

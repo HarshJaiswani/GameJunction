@@ -11,9 +11,9 @@ const handler = async (req, res) => {
     let participants = users
       .filter((e) => e.is_participant)
       .sort((a, b) => b.participant_points - a.participant_points);
-    res.status(200).json({ organisers, participants });
+    return res.status(200).json({ organisers, participants });
   } else {
-    res.status(500).json({ error: "Invalid OpCode" });
+    return res.status(500).json({ error: "Invalid OpCode" });
   }
 };
 

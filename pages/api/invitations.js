@@ -17,19 +17,19 @@ const handler = async (req, res) => {
     let invitations = await Teams.find({ is_deleted: false });
     invitations = invitations.filter((e) => {
       let a = e.participants.filter((p) => p.participant_id == req.user.email);
-      if (!a[0].invite_accepted && !a[0].is_deleted) {
+      if (a[0] && !a[0].invite_accepted && !a[0].is_deleted) {
         return true;
       } else {
         return false;
       }
     });
-    res.status(200).json(invitations);
+    return res.status(200).json(invitations);
   } else if (req.method == "POST") {
     let team = await Teams.findOne({ _id: team_id });
     let user = await Users.findOne({ email: participant_id });
     if (team && user) {
       let is_present = false;
-      team.participants.forEach((e) => {
+      await team.participants.forEach((e) => {
         if (e.participant_id == participant_id) {
           is_present = true;
         }
@@ -46,7 +46,7 @@ const handler = async (req, res) => {
             ],
           }
         );
-        res.status(200).json({ success: "Invite Sent!" });
+        return res.status(200).json({ success: "Invite Sent!" });
       } else {
         let person = team.participants.filter(
           (e) => e.participant_id == participant_id
@@ -65,13 +65,13 @@ const handler = async (req, res) => {
             (e) => e.participant_id == participant_id
           )[0].is_leader = false;
           await team.save();
-          res.status(200).json({ success: "Invite Sent!" });
+          return res.status(200).json({ success: "Invite Sent!" });
         } else {
-          res.status(400).json({ error: "Already a memeber!" });
+          return res.status(400).json({ error: "Already a memeber!" });
         }
       }
     } else {
-      res.status(400).json({ error: "Data Not Found!" });
+      return res.status(400).json({ error: "Invalid Team or Email!" });
     }
   } else if (req.method == "PUT") {
     let team = await Teams.findOne({ _id: team_id });
@@ -81,7 +81,7 @@ const handler = async (req, res) => {
           (e) => e.participant_id == req.user.email
         )[0].invite_accepted = invite_accepted;
         await team.save();
-        res.status(200).json({ success: "Team Updated!" });
+        return res.status(200).json({ success: "Team Updated!" });
       }
       if (invite_rejected) {
         team.participants.filter(
@@ -91,7 +91,7 @@ const handler = async (req, res) => {
           (e) => e.participant_id == req.user.email
         )[0].is_deleted = true;
         await team.save();
-        res.status(200).json({ success: "Team Updated!" });
+        return res.status(200).json({ success: "Team Updated!" });
       }
       if (make_leader) {
         if (
@@ -106,9 +106,9 @@ const handler = async (req, res) => {
             (e) => e.participant_id == req.user.email
           )[0].is_leader = false;
           await team.save();
-          res.status(200).json({ success: "Leader Updated!" });
+          return res.status(200).json({ success: "Leader Updated!" });
         } else {
-          res.status(400).json({ error: "Unauthorised!" });
+          return res.status(400).json({ error: "Unauthorised!" });
         }
       }
       if (remove_member) {
@@ -120,9 +120,9 @@ const handler = async (req, res) => {
             (e) => e.participant_id == remove_member
           )[0].is_deleted = true;
           await team.save();
-          res.status(200).json({ success: "Member Removed!" });
+          return res.status(200).json({ success: "Member Removed!" });
         } else {
-          res.status(400).json({ error: "Unauthorised!" });
+          return res.status(400).json({ error: "Unauthorised!" });
         }
       }
       if (leave_team) {
@@ -134,17 +134,17 @@ const handler = async (req, res) => {
             (e) => e.participant_id == req.user.email
           )[0].is_deleted = true;
           await team.save();
-          res.status(200).json({ success: "Team Left!" });
+          return res.status(200).json({ success: "Team Left!" });
         } else {
-          res.status(400).json({ error: "Unauthorised!" });
+          return res.status(400).json({ error: "Unauthorised!" });
         }
       }
     } else {
-      res.status(400).json({ error: "Team Not Found!" });
+      return res.status(400).json({ error: "Team Not Found!" });
     }
   } else if (req.method == "DELETE") {
   } else {
-    res.status(500).json({ error: "Invalid OpCode" });
+    return res.status(500).json({ error: "Invalid OpCode" });
   }
 };
 

@@ -21,8 +21,14 @@ import TeamCard from "components/TeamCard";
 const Teams = () => {
   const [teamMaker, setTeamMaker] = useState(false);
   const [teamName, setTeamName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRef = useRef();
-  const { data, error, mutate } = useSWR("TEAMS", fetchAllTeamsOfUser);
+
+  const {
+    data: all_teams,
+    error,
+    mutate,
+  } = useSWR("TEAMS", fetchAllTeamsOfUser);
   const {
     data: invitations,
     error: err,
@@ -37,6 +43,7 @@ const Teams = () => {
 
   const handleTeamCreate = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     let json = await createTeam(teamName);
     if (json.error) {
       toast.error(`${json.error}`, {
@@ -64,6 +71,7 @@ const Teams = () => {
     }
     setTeamMaker(false);
     setTeamName("");
+    setIsSubmitting(false);
   };
 
   return (
@@ -93,6 +101,7 @@ const Teams = () => {
               <h2 className="text-gray-600 w-full md:w-1/2 flex items-center">
                 <input
                   type="text"
+                  required={true}
                   ref={inputRef}
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
@@ -105,7 +114,10 @@ const Teams = () => {
                   type="submit"
                   className="outline-none p-1 rounded-full bg-gray-100 mx-2 shadow cursor-pointer"
                 >
-                  <TiTick className="text-green-400 text-2xl" />
+                  {!isSubmitting && (
+                    <TiTick className="text-green-400 text-2xl" />
+                  )}
+                  {isSubmitting && <SpinnerIcon noMargin={true} />}
                 </button>
                 <div
                   onClick={() => setTeamMaker(false)}
@@ -120,39 +132,21 @@ const Teams = () => {
       </div>
 
       <div>
-        {!data && (
+        {!all_teams && (
           <div className="w-full flex items-center justify-center">
             <SpinnerIcon />
           </div>
         )}
-        {data && (
+        {all_teams?.length == 0 && (
+          <div className="text-center text-gray-500 text-sm">
+            No Teams Available. Create one to participant in team events!
+          </div>
+        )}
+        {all_teams && (
           <>
-            <h2 className="text-xl md:text-3xl mx-2 my-8 text-gray-700">
-              Created Teams
-            </h2>
-            <div>
-              {data.createdTeams?.length == 0 && (
-                <div className="text-center text-gray-500 text-sm">
-                  No Teams Available. Create one to participant in team events!
-                </div>
-              )}
-              {data.createdTeams?.map((team, index) => (
-                <TeamCard key={index} team={team} />
-              ))}
-            </div>
-            <h2 className="text-xl md:text-3xl mx-2 my-8 text-gray-700">
-              Teams you are member of
-            </h2>
-            <div>
-              {data.participations?.length == 0 && (
-                <div className="text-center text-gray-500 text-sm">
-                  No Participated Teams Available. Which you did&#39;nt created!
-                </div>
-              )}
-              {data.participations?.map((team, index) => (
-                <TeamCard key={index} team={team} />
-              ))}
-            </div>
+            {all_teams?.map((team, index) => (
+              <TeamCard key={index} team={team} />
+            ))}
           </>
         )}
       </div>
