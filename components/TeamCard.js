@@ -35,7 +35,7 @@ const TeamCard = ({ team }) => {
 
   useEffect(() => {
     if (
-      team.participants.filter((e) => e.participant_id == user.email)[0]
+      team.participants.filter((e) => e.participant_id == user?.email)[0]
         ?.is_leader
     ) {
       setIsTeamLeader(true);
@@ -376,7 +376,7 @@ const TeamCard = ({ team }) => {
                     </span>{" "}
                     Member(s)
                   </p>
-                  {user.email == team.created_by && (
+                  {user?.email == team.created_by && (
                     <>
                       {isTeamLeader && !editTeamName && (
                         <div
@@ -443,20 +443,21 @@ const TeamCard = ({ team }) => {
                   >
                     <p>{mate.participant_id}</p>
                     <div className="flex items-center flex-wrap justify-evenly text-sm sm:text-base my-2">
-                      {mate.participant_id != user.email && !mate.is_leader && (
-                        <div className="mr-2 text-gray-400 bg-gray-100 px-4 py-1 rounded-md">
-                          Invite:{" "}
-                          {mate.invite_rejected && (
-                            <span className="text-red-400">rejected</span>
-                          )}
-                          {mate.invite_accepted && (
-                            <span className="text-green-400">Accepted</span>
-                          )}
-                          {!mate.invite_accepted && (
-                            <span className="text-cyan-400">Pending</span>
-                          )}
-                        </div>
-                      )}
+                      {mate.participant_id != user?.email &&
+                        !mate.is_leader && (
+                          <div className="mr-2 text-gray-400 bg-gray-100 px-4 py-1 rounded-md">
+                            Invite:{" "}
+                            {mate.invite_rejected && (
+                              <span className="text-red-400">rejected</span>
+                            )}
+                            {mate.invite_accepted && (
+                              <span className="text-green-400">Accepted</span>
+                            )}
+                            {!mate.invite_accepted && (
+                              <span className="text-cyan-400">Pending</span>
+                            )}
+                          </div>
+                        )}
                       {mate.is_leader && (
                         <div className="mr-2 text-orange-400 bg-gray-100 px-4 py-1 rounded-md">
                           Leader
@@ -467,7 +468,7 @@ const TeamCard = ({ team }) => {
                           Creator
                         </div>
                       )}
-                      {mate.participant_id == user.email &&
+                      {mate.participant_id == user?.email &&
                         !mate.invite_accepted &&
                         !mate.invite_rejected && (
                           <button
@@ -477,7 +478,7 @@ const TeamCard = ({ team }) => {
                             Accept Invite
                           </button>
                         )}
-                      {mate.participant_id == user.email &&
+                      {mate.participant_id == user?.email &&
                         !mate.invite_accepted &&
                         !mate.invite_rejected && (
                           <button
@@ -489,7 +490,7 @@ const TeamCard = ({ team }) => {
                         )}
                       {!mate.is_leader &&
                         mate.invite_accepted &&
-                        mate.participant_id == user.email && (
+                        mate.participant_id == user?.email && (
                           <div
                             onClick={leaveTeam}
                             className="mx-2 text-pink-500 underline cursor-pointer bg-gray-100 px-4 py-1 rounded-md"
@@ -500,7 +501,7 @@ const TeamCard = ({ team }) => {
 
                       {mate.invite_accepted &&
                         isTeamLeader &&
-                        mate.participant_id != user.email && (
+                        mate.participant_id != user?.email && (
                           <div
                             onClick={() => makeLeader(mate.participant_id)}
                             className="mx-2 text-teal-400 underline my-1 whitespace-nowrap cursor-pointer bg-gray-100 px-4 py-1 rounded-md"
@@ -510,7 +511,7 @@ const TeamCard = ({ team }) => {
                         )}
                       {mate.invite_accepted &&
                         isTeamLeader &&
-                        mate.participant_id != user.email && (
+                        mate.participant_id != user?.email && (
                           <div
                             onClick={() => removeMember(mate.participant_id)}
                             className="mx-2 text-pink-400 underline my-1 whitespace-nowrap cursor-pointer bg-gray-100 px-4 py-1 rounded-md"
