@@ -8,8 +8,10 @@ const handler = async (req, res) => {
   if (req.method == "GET") {
     let user = await Users.findOne({ email: req.user.email });
     if (user && user.is_admin) {
-      let users = await Users.find();
-      users = users.filter((e) => !e.is_deleted);
+      let users = await Users.find({
+        is_email_verified: true,
+        is_deleted: false,
+      });
       return res.status(200).json(users);
     } else {
       return res.status(400).json({ error: "Unauthorised Access!" });

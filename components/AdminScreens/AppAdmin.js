@@ -8,10 +8,6 @@ import DataTable from "./DataTable";
 // import PieChart from "../Chart/PieChart";
 // Icons
 import { TiTick } from "react-icons/ti";
-// App Context
-import { AppContext } from "../../context/AppContext";
-// Toast
-import { toast } from "react-toastify";
 // services
 import { getAllAdminGames } from "../../Services/Games";
 import { getAllEnquires, resolveEnquiry } from "../../Services/Contact";
@@ -20,6 +16,8 @@ import { getAllUsers } from "../../Services/User";
 import useSWR from "swr";
 // hooks
 import useUser from "../../hooks/useUser";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const AppAdmin = () => {
   const { user } = useUser();
@@ -59,23 +57,11 @@ const AppAdmin = () => {
   }, [users]);
 
   const handleResolve = async (id) => {
-    const data = {
-      _id: id,
-      is_resolved: true,
-    };
-    let json = await resolveEnquiry(data);
+    let json = await resolveEnquiry(id);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
+      ShowToast(true, json.success);
       mutateEnq();
     }
   };

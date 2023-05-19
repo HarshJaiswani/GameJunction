@@ -16,7 +16,7 @@ const Header = () => {
       >
         <div className="mb-4 sm:my-8">
           <div className="my-4 text-2xl sm:text-3xl font-sans font-semibold text-gray-500">
-            Having a hard time to find opportunities to play ?
+            Having a hard time to find opportunities to play?
           </div>
           <div className="font-sans font-semibold text-3xl sm:text-4xl text-green-400">
             We got your back !

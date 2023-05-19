@@ -1,6 +1,8 @@
+import DeletedUser from "models/DeletedUser";
 import connectDb from "../../middleware/connectDB";
 import fetchUser from "../../middleware/fetchUser";
 import Users from "../../models/User";
+import Verify from "models/Verify";
 
 const handler = async (req, res) => {
   let {
@@ -30,12 +32,35 @@ const handler = async (req, res) => {
       events_organised,
       prices_won,
     });
-    return res.status(200).json({ existingUser });
+    return res.status(200).json({ success: "Profile Updated!" });
   } else if (req.method == "DELETE") {
-    let existingUser = await Users.findByIdAndUpdate(req.user._id, {
+    await Users.findByIdAndUpdate(req.user._id, {
       is_deleted: true,
     });
-    return res.status(200).json({ existingUser });
+    let existingUserObject = await Users.findById(req.user._id);
+    let existDeletedUser = await DeletedUser.findOne({
+      user_email: existingUserObject.email,
+    });
+    if (existDeletedUser) {
+      await DeletedUser.findOneAndUpdate(
+        { user_email: existDeletedUser.email },
+        {
+          deleted_objects: [
+            ...existDeletedUser.deleted_objects,
+            existingUserObject,
+          ],
+        }
+      );
+    } else {
+      let newDeletedUser = new DeletedUser({
+        user_email: existingUserObject.email,
+        deleted_objects: [existingUserObject],
+      });
+      await newDeletedUser.save();
+    }
+    await Users.findByIdAndDelete(req.user._id);
+    await Verify.findOneAndDelete({ email: req.user.email });
+    return res.status(200).json({ success: "User Deleted!" });
   } else {
     return res.status(500).json({ error: "Invalid OpCode" });
   }

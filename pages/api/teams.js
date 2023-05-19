@@ -5,12 +5,29 @@ import Events from "models/Event";
 
 const handler = async (req, res) => {
   let { team_name, team_id } = req.body;
-  if (req.method == "GET") {
-    let all_teams = await Teams.find({ is_deleted: false });
-    all_teams.forEach((e) => {
-      let a = e.participants.filter((p) => !p.is_deleted);
-      e.participants = a;
+
+  let team = null;
+  let has_active_participations = false;
+  let is_user_team_leader = false;
+  if (team_id) {
+    team = await Teams.findOne({ _id: team_id, is_deleted: false });
+    if (!team) {
+      return res.status(400).json({ error: "Team Not Found!" });
+    }
+    await team.participations.forEach(async (e) => {
+      let event = await Events.findOne({ _id: e });
+      if (event && event.is_active && !event.is_deleted) {
+        has_active_participations = true;
+      }
     });
+    is_user_team_leader = team.participants.filter(
+      (e) => e.participant_id == req.user.email
+    )[0].is_leader;
+  }
+
+  if (req.method == "GET") {
+    // fetching all teams
+    let all_teams = await Teams.find({ is_deleted: false });
     all_teams = all_teams.filter((e) => {
       let p = e.participants.filter(
         (p) => p.participant_id == req.user.email && p.invite_accepted
@@ -25,6 +42,7 @@ const handler = async (req, res) => {
 
     return res.status(200).json(all_teams);
   } else if (req.method == "POST") {
+    // creating a team
     let existTeam = await Teams.findOne({ team_name });
     if (existTeam) {
       return res.status(400).json({ error: "Team Name Taken!" });
@@ -50,12 +68,12 @@ const handler = async (req, res) => {
       }
     }
   } else if (req.method == "PUT") {
-    let team = await Teams.findOne({ _id: team_id });
+    // updating team
     let sameName = await Teams.findOne({ team_name });
     if (sameName) {
       return res.status(400).json({ error: "Team Name Already Exist!" });
     }
-    if (team.created_by == req.user.email) {
+    if (team && is_user_team_leader && !has_active_participations) {
       await Teams.findOneAndUpdate(
         { _id: team_id },
         {
@@ -68,31 +86,16 @@ const handler = async (req, res) => {
       return res.status(400).json({ error: "Unauthorised!" });
     }
   } else if (req.method == "DELETE") {
-    let team = await Teams.findOne({ _id: team_id });
-    let deleteTeam = true;
-    await team.participations.forEach(async (e) => {
-      let event = await Events.findOne({ _id: e });
-      if (event.is_active) {
-        deleteTeam = false;
-      }
-    });
-    if (deleteTeam) {
-      if (
-        team.participants.filter((e) => e.participant_id == req.user.email)
-          .is_leader
-      ) {
-        await Teams.findOneAndUpdate(
-          { _id: team_id },
-          {
-            is_deleted: true,
-          }
-        );
-        return res.status(200).json({ success: "Team Deleted!" });
-      } else {
-        return res.status(400).json({ error: "Unauthorised!" });
-      }
+    if (team && is_user_team_leader && !has_active_participations) {
+      await Teams.findOneAndUpdate(
+        { _id: team_id },
+        {
+          is_deleted: true,
+        }
+      );
+      return res.status(200).json({ success: "Team Deleted!" });
     } else {
-      return res.status(400).json({ error: "You have active participations" });
+      return res.status(400).json({ error: "Unauthorised!" });
     }
   } else {
     return res.status(500).json({ error: "Invalid OpCode" });

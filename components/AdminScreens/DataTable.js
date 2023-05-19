@@ -1,45 +1,17 @@
 import React from "react";
-// Toast
-import { toast } from "react-toastify";
 // services
 import { verifyGames } from "../../Services/Games";
+// helper
+import ShowToast from "helper/ShowToast";
+import GetAge from "helper/GetAge";
 
 const DataTable = ({ dataset, data, fetchData = () => {} }) => {
-  const getAge = (d) => {
-    let dob = new Date(d);
-    let time = Math.abs(Date.now() - dob);
-    let sec = time / 1000;
-    let min = sec / 60;
-    let hour = min / 60;
-    let day = hour / 24;
-    let year = day / 365;
-    return Math.floor(year);
-  };
-
   const verifyGame = async (id) => {
     let json = await verifyGames(id);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`Game Verified!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       fetchData();
     }
   };
@@ -67,7 +39,7 @@ const DataTable = ({ dataset, data, fetchData = () => {} }) => {
                   {dataset.map((s, idx) =>
                     s == "dob" || s == "is_verified" ? (
                       <td key={idx} className="px-6 py-4">
-                        {s == "dob" && getAge(e[s])}
+                        {s == "dob" && GetAge(e[s])}
                         {s == "is_verified" && (
                           <>
                             {e[s] ? (

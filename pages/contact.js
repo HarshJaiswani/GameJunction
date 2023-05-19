@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 // Next Components
 import { useRouter } from "next/router";
 // Headless Ui
@@ -6,43 +6,45 @@ import { Disclosure } from "@headlessui/react";
 // Icons
 import { BsFillArrowRightCircleFill, BsChevronDown } from "react-icons/bs";
 import SpinnerIcon from "../components/SpinnerIcon";
-// React Toastify
-import { toast } from "react-toastify";
-// App Context
-import { AppContext } from "../context/AppContext";
 // services
 import { raiseEnquiry } from "../Services/Contact";
 // hooks
 import useUser from "../hooks/useUser";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const FAQs = [
   {
     title: "How do I register for an event on your website?",
-    data: `To register for an event on our website, go to the event's page and click on the "Apply" button. You will be prompted to provide some basic information and complete the registration process.`,
+    data: `To register for an event on our website, go to the event's page and click on the "Apply" button. You will be asked to login if not logged In then on a click you can apply for a event.`,
   },
   {
     title: "How do I know if I have been selected to participate in an event?",
-    data: `Once the registration period has ended, the event organizer will review all applications and select participants based on their criteria. If you have been selected, you will receive a notification via email or through our website's messaging system.`,
+    data: `Once the registration period has ended, the event organizer will review all applications and select participants based on their criteria. If you have been selected, you will receive message from the communication platforms!`,
   },
   {
     title: "Can I participate in multiple events?",
     data: `Yes, you can participate in as many events as you want, provided that you meet the eligibility criteria for each event.`,
   },
   {
-    title: "How are participant ratings calculated?",
-    data: `Participant ratings are based on various factors such as performance in events, frequency of participation, and behavior. The exact formula for calculating ratings is not disclosed to prevent any attempts at gaming the system.`,
+    title: "How do I create an event on your website?",
+    data: `To create an event on our website, simply click on the "Create Event" button in the menu and follow the prompts to provide event details, such as date, location, rules, and prizes.`,
   },
   {
-    title: "How do I create an event on your website?",
-    data: `To create an event on our website, simply click on the "Create Event" button on the homepage and follow the prompts to provide event details, such as date, location, rules, and prizes.`,
+    title: "How do I receive payments for event registration fees?",
+    data: `You can add a QR code in your poster of the event or you can specify the method of payment for the participants \n Disclaimer: We do not take any responsibilities of the payment done by the participant or the receiving of that payment to the organiser that is totally between organiser and participant!`,
   },
-  // {
-  //   title: "How do I receive payments for event registration fees?",
-  //   data: `We handle payment processing for event registration fees, and the funds are typically transferred to the organizer's account within a few business days after the event has ended.`,
-  // },
   {
     title: "How can I communicate with participants?",
-    data: `You can communicate with participants through our website's messaging system. Once participants have registered for your event, you will be able to see their contact information and send them messages through our platform.`,
+    data: `You can communicate with participants by providing communication platforms in the event creation.`,
+  },
+  {
+    title: "How can I communicate with event organiser?",
+    data: `You can communicate with event organiser by communication platforms given by them in the event details page.`,
+  },
+  {
+    title: "How are participant ratings calculated?",
+    data: `Participant ratings are based on various factors such as performance in events, frequency of participation, and behavior. The exact formula for calculating ratings is not disclosed to prevent any attempts at gaming the system.`,
   },
   {
     title: "How are organizer ratings calculated?",
@@ -63,27 +65,9 @@ const Contact = () => {
       setIsSubmitting(true);
       let json = await raiseEnquiry(message);
       if (json.error) {
-        toast.error(`${json.error}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(false, json.error);
       } else {
-        toast.success("Query Registered!", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(true, json.success);
       }
       setIsSubmitting(false);
       setMessage("");

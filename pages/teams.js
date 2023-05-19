@@ -13,10 +13,10 @@ import {
   createTeam,
   fetchAllInvitations,
 } from "Services/Teams";
-// toast
-import { toast } from "react-toastify";
 // Custom Components
 import TeamCard from "components/TeamCard";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const Teams = () => {
   const [teamMaker, setTeamMaker] = useState(false);
@@ -46,27 +46,9 @@ const Teams = () => {
     setIsSubmitting(true);
     let json = await createTeam(teamName);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`${json.success}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       mutate();
     }
     setTeamMaker(false);

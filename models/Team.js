@@ -15,16 +15,6 @@ const TeamParticipantSchema = mongoose.Schema({
     required: true,
     default: false,
   },
-  invite_rejected: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
-  is_deleted: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
 });
 
 const TeamSchema = mongoose.Schema(

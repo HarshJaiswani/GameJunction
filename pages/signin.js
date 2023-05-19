@@ -8,11 +8,10 @@ import Logo from "../components/Logo";
 import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { AiOutlineEye } from "react-icons/ai";
 import SpinnerIcon from "../components/SpinnerIcon";
-// App Context
-import { AppContext } from "../context/AppContext";
-// Toast
-import { toast } from "react-toastify";
+// services
 import { loginUser } from "../Services/User";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const Signin = () => {
   const router = useRouter();
@@ -36,28 +35,10 @@ const Signin = () => {
     let json = await loginUser(data);
 
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
       localStorage.setItem("auth-token", JSON.stringify(json.authToken));
-      toast.success(`LoggedIn Successfully!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, "LoggedIn Successfully!");
       router.push("/");
     }
     setIsSubmitting(false);

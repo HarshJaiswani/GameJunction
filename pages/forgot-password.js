@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 // Icons
 import SpinnerIcon from "../components/SpinnerIcon";
-// Toast
-import { toast } from "react-toastify";
 // services
 import { forgotPassword } from "../Services/User";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const ForgotPassword = () => {
   const router = useRouter();
@@ -34,27 +34,9 @@ const ForgotPassword = () => {
     };
     let json = await forgotPassword(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`Retrieval Email Sent!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, "Retrieval Email Sent!");
       setEmail("");
     }
     setIsSubmitting(false);
@@ -74,40 +56,13 @@ const ForgotPassword = () => {
       };
       let json = await forgotPassword(data);
       if (json.error) {
-        toast.error(`${json.error}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(false, json.error);
       } else {
-        toast.success(`Password Changed Successfully!`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(true, "Password Changed Successfully!");
         router.push("/signin");
       }
     } else {
-      toast.error(`Passwords Don't Match!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, "Passwords Don't Match!");
     }
     setIsSubmitting(false);
   };

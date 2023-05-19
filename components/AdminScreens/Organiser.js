@@ -13,10 +13,7 @@ import { AiFillDelete } from "react-icons/ai";
 import { TiTick } from "react-icons/ti";
 import CheckIcon from "../Icons/CheckIcon";
 import { BsSendFill } from "react-icons/bs";
-// App Context
-import { AppContext } from "../../context/AppContext";
-// Toast
-import { toast } from "react-toastify";
+import SpinnerIcon from "components/SpinnerIcon";
 // hooks
 import useUser from "../../hooks/useUser";
 // services
@@ -26,6 +23,8 @@ import {
   getUserEvents,
   setWinner,
 } from "../../Services/Events";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const Organiser = () => {
   const router = useRouter();
@@ -36,26 +35,18 @@ const Organiser = () => {
   const [allParticipants, setAllParticipants] = useState({});
   const [closingEvent, setClosingEvent] = useState(0);
   const [selectedWinner, setSelectedWinner] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (user) {
       fetchUserEvents();
     }
-  }, []);
+  }, [user]);
 
   const fetchUserEvents = async () => {
     let json = await getUserEvents(user.events_organised);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
       setAllEvents(json.all_events);
       let curatedData = {};
@@ -75,65 +66,37 @@ const Organiser = () => {
   const getParticipants = async (ids) => {
     let json = await getEventParticipants(ids);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
       return json;
     }
   };
 
   const handleSetWinner = async () => {
+    if (selectedWinner.length == 0) {
+      return ShowToast(false, "No Participant Selected!");
+    }
+    setIsSubmitting(true);
     let json = await setWinner(closingEvent, selectedWinner);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
       setShowWinnerModal(false);
       router.push("/list");
     }
+    setIsSubmitting(false);
   };
 
   const handleEventDelete = async (id) => {
+    setIsSubmitting(true);
     let json = await deleteEvent(id);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`Event Deleted!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
+      fetchUserEvents();
     }
+    setIsSubmitting(false);
   };
 
   return (
@@ -164,6 +127,11 @@ const Organiser = () => {
             <div>
               {allEvents.filter((e) => e.is_active).length == 0 &&
                 "Create new events to list them here!"}
+              {!allEvents && (
+                <div className="py-4 flex items-center justify-center w-full">
+                  <SpinnerIcon noMargin={true} />
+                </div>
+              )}
               {allEvents.map(
                 (e) =>
                   e.is_active && (
@@ -184,7 +152,7 @@ const Organiser = () => {
                               <div
                                 onClick={(ev) => {
                                   ev.preventDefault();
-                                  handleEventDelete(e._id);
+                                  !isSubmitting && handleEventDelete(e._id);
                                 }}
                                 className="p-2 bg-cyan-800 rounded-full mr-2 cursor-pointer"
                               >
@@ -216,8 +184,13 @@ const Organiser = () => {
                                 {e.participants.length}
                               </span>
                             </div>
+                            {!allParticipants && (
+                              <div className="py-4 flex items-center justify-center w-full">
+                                <SpinnerIcon noMargin={true} />
+                              </div>
+                            )}
                             {allParticipants[e._id]?.map((p, index) => (
-                              <>
+                              <div key={index} className="space-y-4">
                                 {p.is_team && (
                                   <div className="w-full p-4 bg-white shadow rounded-2xl">
                                     <h2 className="mb-2 text-lg font-semibold text-gray-500">
@@ -277,7 +250,7 @@ const Organiser = () => {
                                     </div>
                                   </div>
                                 )}
-                              </>
+                              </div>
                             ))}
                           </Disclosure.Panel>
                         </>
@@ -294,6 +267,11 @@ const Organiser = () => {
             <div>
               {allEvents.filter((e) => !e.is_active).length == 0 &&
                 "No past events available!"}
+              {!allEvents && (
+                <div className="py-4 flex items-center justify-center w-full">
+                  <SpinnerIcon noMargin={true} />
+                </div>
+              )}
               {allEvents.map(
                 (e) =>
                   !e.is_active && (
@@ -311,7 +289,7 @@ const Organiser = () => {
                               <div
                                 onClick={(ev) => {
                                   ev.preventDefault();
-                                  handleEventDelete(e._id);
+                                  !isSubmitting && handleEventDelete(e._id);
                                 }}
                                 className="p-2 bg-cyan-800 rounded-full mr-2 cursor-pointer"
                               >
@@ -328,6 +306,11 @@ const Organiser = () => {
                                 {e.participants.length}
                               </span>
                             </div>
+                            {!allParticipants && (
+                              <div className="py-4 flex items-center justify-center w-full">
+                                <SpinnerIcon noMargin={true} />
+                              </div>
+                            )}
                             {allParticipants[e._id]?.map((p, index) => (
                               <>
                                 {p.is_team && (
@@ -445,6 +428,13 @@ const Organiser = () => {
                           onChange={setSelectedWinner}
                         >
                           <div className="space-y-2">
+                            {allParticipants[closingEvent].length == 0 &&
+                              "No Participants Available!"}
+                            {!allParticipants && (
+                              <div className="py-4 flex items-center justify-center w-full">
+                                <SpinnerIcon noMargin={true} />
+                              </div>
+                            )}
                             {allParticipants[closingEvent]?.map((p, index) => (
                               <RadioGroup.Option
                                 key={index}
@@ -491,9 +481,11 @@ const Organiser = () => {
 
                       <div className="mt-4">
                         <button
+                          disabled={isSubmitting}
                           className="cursor-pointer inline-flex justify-center rounded bg-gray-100 px-6 py-2 text-sm font-medium text-green-500"
                           onClick={handleSetWinner}
                         >
+                          {isSubmitting && <SpinnerIcon />}
                           Save
                         </button>
                       </div>

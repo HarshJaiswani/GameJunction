@@ -14,7 +14,7 @@ const handler = async (req, res) => {
       let bytes = CryptoJS.AES.decrypt(user.password, process.env.SECRETKEY);
       let originalText = bytes.toString(CryptoJS.enc.Utf8);
       if (originalText == password) {
-        let newPass = await Users.findByIdAndUpdate(req.user._id, {
+        await Users.findByIdAndUpdate(req.user._id, {
           password: CryptoJS.AES.encrypt(
             cpassword,
             process.env.SECRETKEY

@@ -4,16 +4,15 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // Custom Components
 import EventCard from "../components/EventCard";
-import RankCard from "../components/RankCard";
 // Icons
 import { AiFillHeart } from "react-icons/ai";
 import ImageIcon from "../components/Icons/ImageIcon";
 import { IoPencil } from "react-icons/io5";
 import { AiFillDelete } from "react-icons/ai";
+import { TbHomeInfinity } from "react-icons/tb";
+import SpinnerIcon from "components/SpinnerIcon";
 // App Context
 import { AppContext } from "../context/AppContext";
-// Toast
-import { toast } from "react-toastify";
 // hooks
 import useUser from "../hooks/useUser";
 // services
@@ -23,7 +22,8 @@ import { deactivateUser } from "../Services/User";
 import useSWR from "swr";
 // HeadlessUi
 import { Dialog, Transition } from "@headlessui/react";
-import { TbHomeInfinity } from "react-icons/tb";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const Profile = () => {
   const { user } = useUser();
@@ -32,6 +32,7 @@ const Profile = () => {
   const [currEvents, setCurrEvents] = useState([]);
   const [passEvents, setPassEvents] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: allEvents, error } = useSWR("GETALLEVENTS", getAllEvents);
 
   const openFullscreen = (elem) => {
@@ -55,16 +56,7 @@ const Profile = () => {
   const fetchEvents = async (curuser) => {
     let json = await getUserEvents(curuser.events_participated);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
       let currEvents = [];
       let passEvents = [];
@@ -81,32 +73,16 @@ const Profile = () => {
   };
 
   const handleDeleteUser = async () => {
+    setIsSubmitting(true);
     let json = await deactivateUser();
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`Profile Deactivated!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, "Profile Deactivated!");
       handleLogout();
       router.push("/");
     }
+    setIsSubmitting(false);
   };
 
   return (
@@ -308,9 +284,11 @@ const Profile = () => {
                       <div className="mt-4">
                         <button
                           type="button"
+                          disabled={isSubmitting}
                           className="px-6 py-2 mr-4 rounded bg-gray-100 text-green-400"
                           onClick={handleDeleteUser}
                         >
+                          {isSubmitting && <SpinnerIcon />}
                           Yea!
                         </button>
                         <button

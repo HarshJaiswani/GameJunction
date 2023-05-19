@@ -3,14 +3,14 @@ import React, { useContext, useState } from "react";
 import { useRouter } from "next/router";
 // Icons
 import SpinnerIcon from "../components/SpinnerIcon";
-// App Context
-import { AppContext } from "../context/AppContext";
-// Toast
-import { toast } from "react-toastify";
-// services
-import { changePassword } from "../Services/User";
 import { TiTick } from "react-icons/ti";
 import { TbDots } from "react-icons/tb";
+// App Context
+import { AppContext } from "../context/AppContext";
+// services
+import { changePassword } from "../Services/User";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const ChangePassword = () => {
   const router = useRouter();
@@ -25,16 +25,7 @@ const ChangePassword = () => {
   const handleChangePass = async (e) => {
     e.preventDefault();
     if (isPassValid == false || null) {
-      toast.error(`Password Incorrect!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, "Password Incorrect!");
       return;
     }
     setIsSubmitting(true);
@@ -45,31 +36,13 @@ const ChangePassword = () => {
       };
       let json = await changePassword(data);
       if (json.error) {
-        toast.error(`${json.error}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(false, json.error);
       } else {
         handleLogout();
         router.push("/signin");
       }
     } else {
-      toast.error(`Passwords Don't Match`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, "Passwords Don't Match");
     }
     setIsSubmitting(false);
   };

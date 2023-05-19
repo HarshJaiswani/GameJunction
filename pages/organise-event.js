@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 // Custom Components
 import CreateEventForm from "../components/CreateEventForm";
-// Toast
-import { toast } from "react-toastify";
+// service
 import { getSingleEvent } from "../Services/Events";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const OrganiseEvent = () => {
   const router = useRouter();
@@ -23,16 +24,7 @@ const OrganiseEvent = () => {
   const fetchEvent = async () => {
     let json = await getSingleEvent(router.query.slug);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
       setEvent(json.event);
     }

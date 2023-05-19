@@ -11,7 +11,7 @@ const getAllEnquires = async () => {
   return json;
 };
 
-const resolveEnquiry = async (data) => {
+const resolveEnquiry = async (id) => {
   const token = JSON.parse(localStorage.getItem("auth-token"));
   const response = await fetch("/api/contact", {
     method: "PUT",
@@ -19,7 +19,7 @@ const resolveEnquiry = async (data) => {
       "Content-Type": "application/json",
       "auth-token": token,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({ _id: id }),
   });
   const json = await response.json();
   return json;

@@ -14,13 +14,13 @@ import { TiTick } from "react-icons/ti";
 import { TbDots } from "react-icons/tb";
 // App Context
 import { AppContext } from "../context/AppContext";
-// Toast
-import { toast } from "react-toastify";
 // services
 import { getAllGames } from "../Services/Games";
 import { createUser, updateUser } from "../Services/User";
 // swr
 import useSWR from "swr";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const stakeholder = [
   {
@@ -107,16 +107,7 @@ const SignupForm = ({ data }) => {
       if (imageFile.size < 500001) {
         fileReader.readAsDataURL(imageFile);
       } else {
-        toast.error(`File Size Exceded!`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(false, "File Size Exceded!");
       }
     }
   };
@@ -124,16 +115,7 @@ const SignupForm = ({ data }) => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (isPassValid == false || null) {
-      toast.error(`Password Incorrect!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, "Password Incorrect!");
       return;
     }
     setIsSubmitting(true);
@@ -156,27 +138,9 @@ const SignupForm = ({ data }) => {
 
     let json = await createUser(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`Email Sent!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       setIsVerification(true);
     }
     setIsSubmitting(false);
@@ -202,29 +166,11 @@ const SignupForm = ({ data }) => {
 
     let json = await createUser(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
       router.reload();
     } else {
       localStorage.setItem("auth-token", JSON.stringify(json.authToken));
-      toast.success(`Account Created!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       router.push("/profile");
       setLoggedIn(true);
     }
@@ -250,27 +196,9 @@ const SignupForm = ({ data }) => {
 
     let json = await updateUser(apidata);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`Profile Updated`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       router.push("/profile");
     }
     setIsSubmitting(false);
@@ -616,7 +544,7 @@ const SignupForm = ({ data }) => {
               </p>
               <button
                 onClick={(e) => handleOtpSubmit(e, true)}
-                type="submit"
+                type="button"
                 className="m-2 text-sm text-cyan-500 font-semibold underline"
               >
                 Wrong Email ?

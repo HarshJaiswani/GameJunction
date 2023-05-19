@@ -7,8 +7,7 @@ const handler = async (req, res) => {
   let user = await Users.findOne({ email: req.user.email });
   if (user.is_admin) {
     if (req.method == "GET") {
-      let sports = await Sports.find();
-      sports = sports.filter((s) => !s.is_deleted);
+      let sports = await Sports.find({ is_deleted: false });
       return res.status(200).json(sports);
     } else {
       return res.status(500).json({ error: "Invalid OpCode" });

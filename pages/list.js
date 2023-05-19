@@ -8,12 +8,11 @@ import ImageIcon from "../components/Icons/ImageIcon";
 import EventCard from "../components/EventCard";
 // Icons
 import SpinnerIcon from "../components/SpinnerIcon";
-// Toast
-import { toast } from "react-toastify";
 // services
 import { getAllEvents } from "../Services/Events";
 // swr
 import useSWR from "swr";
+// hooks
 import useUser from "../hooks/useUser";
 
 function classNames(...classes) {

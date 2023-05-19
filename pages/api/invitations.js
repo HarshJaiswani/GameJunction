@@ -14,11 +14,36 @@ const handler = async (req, res) => {
     remove_member,
     leave_team,
   } = req.body;
+
+  let team = null;
+  let is_user_team_leader = false;
+  let has_active_participations = false;
+  let person = null;
+  if (team_id) {
+    team = await Teams.findOne({ _id: team_id, is_deleted: false });
+    if (!team) {
+      return res.status(400).json({ error: "Team Not Found!" });
+    }
+    await team.participations.forEach(async (e) => {
+      let event = await Events.findOne({ _id: e });
+      if (event && event.is_active && !event.is_deleted) {
+        has_active_participations = true;
+      }
+    });
+    is_user_team_leader = team.participants.filter(
+      (e) => e.participant_id == req.user.email
+    )[0].is_leader;
+    person = team.participants.filter(
+      (e) => e.participant_id == participant_id
+    )[0];
+  }
+
   if (req.method == "GET") {
+    // returning all the current user team invitations
     let invitations = await Teams.find({ is_deleted: false });
     invitations = invitations.filter((e) => {
       let a = e.participants.filter((p) => p.participant_id == req.user.email);
-      if (a[0] && !a[0].invite_accepted && !a[0].is_deleted) {
+      if (a[0] && !a[0].invite_accepted) {
         return true;
       } else {
         return false;
@@ -26,16 +51,10 @@ const handler = async (req, res) => {
     });
     return res.status(200).json(invitations);
   } else if (req.method == "POST") {
-    let team = await Teams.findOne({ _id: team_id });
+    // sending invite to participant
     let user = await Users.findOne({ email: participant_id });
     if (team && user) {
-      let is_present = false;
-      await team.participants.forEach((e) => {
-        if (e.participant_id == participant_id) {
-          is_present = true;
-        }
-      });
-      if (!is_present) {
+      if (!person) {
         await Teams.findOneAndUpdate(
           { _id: team_id },
           {
@@ -49,41 +68,13 @@ const handler = async (req, res) => {
         );
         return res.status(200).json({ success: "Invite Sent!" });
       } else {
-        let person = team.participants.filter(
-          (e) => e.participant_id == participant_id
-        )[0];
-        if (person.is_deleted) {
-          team.participants.filter(
-            (e) => e.participant_id == participant_id
-          )[0].is_deleted = false;
-          team.participants.filter(
-            (e) => e.participant_id == participant_id
-          )[0].invite_accepted = false;
-          team.participants.filter(
-            (e) => e.participant_id == participant_id
-          )[0].invite_rejected = false;
-          team.participants.filter(
-            (e) => e.participant_id == participant_id
-          )[0].is_leader = false;
-          await team.save();
-          return res.status(200).json({ success: "Invite Sent!" });
-        } else {
-          return res.status(400).json({ error: "Already a memeber!" });
-        }
+        return res.status(400).json({ error: "Already a memeber!" });
       }
     } else {
       return res.status(400).json({ error: "Invalid Team or Email!" });
     }
   } else if (req.method == "PUT") {
-    let team = await Teams.findOne({ _id: team_id });
-    let is_editable = true;
-    team.participations.forEach(async (e) => {
-      let event = await Events.findById(e);
-      if (event && event.is_active && !event.is_deleted) {
-        is_editable = false;
-      }
-    });
-    if (team && is_editable) {
+    if (team && !has_active_participations) {
       if (invite_accepted) {
         team.participants.filter(
           (e) => e.participant_id == req.user.email
@@ -92,20 +83,15 @@ const handler = async (req, res) => {
         return res.status(200).json({ success: "Team Updated!" });
       }
       if (invite_rejected) {
-        team.participants.filter(
-          (e) => e.participant_id == req.user.email
-        )[0].invite_rejected = invite_rejected;
-        team.participants.filter(
-          (e) => e.participant_id == req.user.email
-        )[0].is_deleted = true;
-        await team.save();
+        await Teams.findByIdAndUpdate(team_id, {
+          participants: team.participants.filter(
+            (e) => e.participant_id != req.user.email
+          ),
+        });
         return res.status(200).json({ success: "Team Updated!" });
       }
       if (make_leader) {
-        if (
-          team.participants.filter((e) => e.is_leader)[0].participant_id ==
-          req.user.email
-        ) {
+        if (is_user_team_leader) {
           team.participants.filter(
             (e) => e.participant_id == make_leader
           )[0].is_leader = true;
@@ -120,28 +106,24 @@ const handler = async (req, res) => {
         }
       }
       if (remove_member) {
-        if (
-          team.participants.filter((e) => e.is_leader)[0].participant_id ==
-          req.user.email
-        ) {
-          team.participants.filter(
-            (e) => e.participant_id == remove_member
-          )[0].is_deleted = true;
-          await team.save();
+        if (is_user_team_leader) {
+          await Teams.findByIdAndUpdate(team_id, {
+            participants: team.participants.filter(
+              (e) => e.participant_id != remove_member
+            ),
+          });
           return res.status(200).json({ success: "Member Removed!" });
         } else {
           return res.status(400).json({ error: "Unauthorised!" });
         }
       }
       if (leave_team) {
-        if (
-          team.participants.filter((e) => e.is_leader)[0].participant_id !=
-          req.user.email
-        ) {
-          team.participants.filter(
-            (e) => e.participant_id == req.user.email
-          )[0].is_deleted = true;
-          await team.save();
+        if (!is_user_team_leader) {
+          await Teams.findByIdAndUpdate(team_id, {
+            participants: team.participants.filter(
+              (e) => e.participant_id != req.user.email
+            ),
+          });
           return res.status(200).json({ success: "Team Left!" });
         } else {
           return res.status(400).json({ error: "Unauthorised!" });
@@ -150,7 +132,6 @@ const handler = async (req, res) => {
     } else {
       return res.status(400).json({ error: "Unauthorised!" });
     }
-  } else if (req.method == "DELETE") {
   } else {
     return res.status(500).json({ error: "Invalid OpCode" });
   }

@@ -4,9 +4,10 @@ import { RadioGroup } from "@headlessui/react";
 // Icons
 import CheckIcon from "../components/Icons/CheckIcon";
 import SpinnerIcon from "../components/SpinnerIcon";
-// Toast
-import { toast } from "react-toastify";
+// services
 import { addGame } from "../Services/Games";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const select = [
   {
@@ -39,27 +40,9 @@ const SuggestGame = () => {
     };
     let json = await addGame(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`Game Suggested!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
     }
     setGameName("");
     setResource("");

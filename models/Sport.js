@@ -13,6 +13,7 @@ const SportSchema = mongoose.Schema(
     },
     playable: {
       type: String,
+      enum: ["online", "offline"],
       required: true,
     }, // it can either be online or offline
     is_verified: {

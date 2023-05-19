@@ -4,6 +4,7 @@ import CryptoJS from "crypto-js";
 import jwt from "jsonwebtoken";
 import Verify from "../../models/Verify";
 import nodemailer from "nodemailer";
+import GetAge from "helper/GetAge";
 
 const handler = async (req, res) => {
   let {
@@ -26,7 +27,9 @@ const handler = async (req, res) => {
     prices_won,
     wishlist_events,
   } = req.body;
+
   if (req.method == "POST") {
+    // creating the user object
     if (req.body.sendMail) {
       let existUser = await Users.findOne({ email });
       if (existUser) {
@@ -65,7 +68,7 @@ const handler = async (req, res) => {
           <p>GameJunction</p>
         </div>`,
         };
-        const success = await new Promise((resolve, reject) => {
+        const successMail = await new Promise((resolve, reject) => {
           transporter.sendMail(mailOptions, (err, info) => {
             if (info.response.includes("250")) {
               resolve(true);
@@ -73,7 +76,7 @@ const handler = async (req, res) => {
             reject(err);
           });
         });
-        if (!success) {
+        if (!successMail) {
           return res.status(500).json({ error: "Error sending email" });
         }
         let newVerifyCode = new Verify({
@@ -82,31 +85,38 @@ const handler = async (req, res) => {
           expiry: Date.now() + 6000000,
         });
         await newVerifyCode.save();
-        let newUser = new Users({
-          name,
-          email,
-          password: CryptoJS.AES.encrypt(
-            password,
-            process.env.SECRETKEY
-          ).toString(),
-          contact,
-          profile_pic,
-          dob,
-          gender,
-          sports,
-          is_organiser,
-          is_participant,
-          organiser_points,
-          participant_points,
-          events_organised,
-          events_participated,
-          prices_won,
-          wishlist_events,
-        });
-        await newUser.save();
-        return res.status(200).json({ message: "Email Sent Successfully!" });
+        let age = GetAge(dob);
+        if (age >= 5 && age < 120) {
+          let newUser = new Users({
+            name,
+            email,
+            password: CryptoJS.AES.encrypt(
+              password,
+              process.env.SECRETKEY
+            ).toString(),
+            contact,
+            profile_pic,
+            dob,
+            gender,
+            sports,
+            is_organiser,
+            is_participant,
+            organiser_points,
+            participant_points,
+            events_organised,
+            events_participated,
+            prices_won,
+            wishlist_events,
+          });
+          await newUser.save();
+          return res.status(200).json({ success: "Email Sent Successfully!" });
+        } else {
+          return res.status(400).json({ error: "Age is Invalid!" });
+        }
       }
-    } else {
+    }
+    // checking the email and otp
+    else {
       let existingUser = await Users.findOne({ email });
       let verifyCode = await Verify.findOne({ email });
       if (Date.now() <= verifyCode.expiry) {

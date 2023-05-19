@@ -6,16 +6,17 @@ import { useRouter } from "next/router";
 import { TiArrowForwardOutline } from "react-icons/ti";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import SpinnerIcon from "./SpinnerIcon";
-// Toast
-import { toast } from "react-toastify";
 // hooks
 import useUser from "../hooks/useUser";
 // swr
 import useSWR, { mutate } from "swr";
 // services
 import { addToWishList, applyIntoEvent } from "../Services/Events";
-import { Dialog, Transition } from "@headlessui/react";
 import { fetchAllTeamsOfUser } from "Services/Teams";
+// headless ui
+import { Dialog, Transition } from "@headlessui/react";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const EventCard = ({ post }) => {
   const router = useRouter();
@@ -50,6 +51,9 @@ const EventCard = ({ post }) => {
 
   const event_applyable = (e) => {
     e.preventDefault();
+    if (post.organiserId == user?._id) {
+      return ShowToast(false, "You are the organiser!");
+    }
     if (isApplied) {
       let team_id = null;
       teams.filter((e) => {
@@ -73,27 +77,9 @@ const EventCard = ({ post }) => {
     if (user) {
       let json = await applyIntoEvent(post._id, isApplied, team_id);
       if (json.error) {
-        toast.error(`${json.error}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(false, json.error);
       } else {
-        toast.success(`${json.success}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(true, json.success);
         mutateUser();
         mutate("GETALLEVENTS");
       }
@@ -109,41 +95,14 @@ const EventCard = ({ post }) => {
       let json = await addToWishList(post._id, isWishlisted);
       if (json.error) {
         setWishlisting(false);
-        toast.error(`${json.error}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(false, json.error);
       } else {
         setWishlisting(false);
-        toast.success(`${json.success}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(true, json.success);
         mutateUser();
       }
     } else {
-      toast.error(`Kindly SignIn!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, "Kindly SignIn!");
     }
   };
 
@@ -152,16 +111,7 @@ const EventCard = ({ post }) => {
       navigator.clipboard.writeText(
         `${window.location.origin}/events/${post.slug}`
       );
-      toast.info("Event Link Copied!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, "Event Link Copied!");
     }
   };
 
@@ -325,7 +275,7 @@ const EventCard = ({ post }) => {
                           {teams?.map(
                             (team, index) =>
                               team.participants.filter(
-                                (e) => e.participant_id == user.email
+                                (e) => e.participant_id == user?.email
                               )[0]?.is_leader &&
                               team.participants.length >= post.minTeam &&
                               team.participants.length <= post.maxTeam && (
@@ -346,6 +296,7 @@ const EventCard = ({ post }) => {
                                 </div>
                               )
                           )}
+                          <p>No More Teams!</p>
                         </div>
                       </div>
 

@@ -17,8 +17,6 @@ import { RxDiscordLogo } from "react-icons/rx";
 import { FaTelegramPlane } from "react-icons/fa";
 import ImageIcon from "./Icons/ImageIcon";
 import SpinnerIcon from "./SpinnerIcon";
-// toast
-import { toast } from "react-toastify";
 // services
 import { getAllGames } from "../Services/Games";
 import { createEvent, updateEvent } from "../Services/Events";
@@ -26,6 +24,8 @@ import { createEvent, updateEvent } from "../Services/Events";
 import useSWR from "swr";
 // hooks
 import useUser from "../hooks/useUser";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const modes = [
   {
@@ -191,43 +191,16 @@ const CreateEventForm = ({ data: event }) => {
     };
 
     if (!(data.minTeam <= data.maxTeam)) {
-      toast.error(`Incorrect Team Size!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, "Incorrect Team Size");
       setIsSubmitting(false);
       return;
     }
 
     const json = await createEvent(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`Event Created!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       router.push("/list");
     }
     setIsSubmitting(false);
@@ -246,16 +219,7 @@ const CreateEventForm = ({ data: event }) => {
       if (imageFile.size < 500001) {
         fileReader.readAsDataURL(imageFile);
       } else {
-        toast.error(`File Size Exceded!`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(false, "File Size Exceded!");
       }
     }
   };
@@ -296,43 +260,16 @@ const CreateEventForm = ({ data: event }) => {
     };
 
     if (!(data.minTeam <= data.maxTeam)) {
-      toast.error(`Incorrect Team Size!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, "Incorrect Team Size!");
       setIsSubmitting(false);
       return;
     }
 
     let json = await updateEvent(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`${json.success}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       router.push("/list");
     }
     setIsSubmitting(false);

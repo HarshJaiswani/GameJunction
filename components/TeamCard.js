@@ -10,13 +10,12 @@ import {
   addTeamMember,
   updateInvite,
 } from "Services/Teams";
-// Toast
-import { toast } from "react-toastify";
 // swr
 import { mutate } from "swr";
 // hooks
 import useUser from "hooks/useUser";
-import SpinnerIcon from "./SpinnerIcon";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const TeamCard = ({ team }) => {
   const [editedName, setEditedName] = useState("");
@@ -47,16 +46,7 @@ const TeamCard = ({ team }) => {
   const handleTeamNameChange = async (team_id) => {
     setIsSubmitting(true);
     if (editedName == "") {
-      toast.error(`Team name cannot be empty!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, "Team name cannot be empty!");
       setIsSubmitting(false);
       return;
     }
@@ -66,27 +56,9 @@ const TeamCard = ({ team }) => {
     };
     let json = await updateTeam(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`${json.success}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       mutate("TEAMS");
     }
     setEditTeamName(false);
@@ -98,27 +70,9 @@ const TeamCard = ({ team }) => {
     setIsSubmitting(true);
     let json = await deleteTeam(team_id);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`${json.success}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       mutate("TEAMS");
     }
     setIsSubmitting(false);
@@ -133,27 +87,9 @@ const TeamCard = ({ team }) => {
     };
     let json = await addTeamMember(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`${json.success}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       mutate("TEAMS");
     }
     setInviteeInput("");
@@ -168,27 +104,9 @@ const TeamCard = ({ team }) => {
     };
     let json = await updateInvite(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`${json.success}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       mutate("TEAMS");
       mutate("INVITATIONS");
     }
@@ -203,27 +121,9 @@ const TeamCard = ({ team }) => {
     };
     let json = await updateInvite(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`${json.success}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       mutate("TEAMS");
       mutate("INVITATIONS");
     }
@@ -238,27 +138,9 @@ const TeamCard = ({ team }) => {
     };
     let json = await updateInvite(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`${json.success}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       mutate("TEAMS");
       mutate("INVITATIONS");
     }
@@ -273,27 +155,9 @@ const TeamCard = ({ team }) => {
     };
     let json = await updateInvite(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`${json.success}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       mutate("TEAMS");
       mutate("INVITATIONS");
     }
@@ -308,27 +172,9 @@ const TeamCard = ({ team }) => {
     };
     let json = await updateInvite(data);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
-      toast.success(`${json.success}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(true, json.success);
       mutate("TEAMS");
       mutate("INVITATIONS");
     }
@@ -372,13 +218,13 @@ const TeamCard = ({ team }) => {
                 <div className="my-4 md:my-0 flex items-center">
                   <p className="font-semibold drop-shadow-sm text-sm tracking-wider text-gray-400 rounded-md">
                     <span className="text-yellow-400 text-xl">
-                      {team.participants.filter((e) => !e.is_deleted).length}
+                      {team.participants.length}
                     </span>{" "}
                     Member(s)
                   </p>
-                  {user?.email == team.created_by && (
+                  {isTeamLeader && (
                     <>
-                      {isTeamLeader && !editTeamName && (
+                      {!editTeamName && (
                         <div
                           onClick={() => {
                             setEditTeamName(true);
@@ -397,14 +243,12 @@ const TeamCard = ({ team }) => {
                           <TiTick className="text-green-400 text-2xl" />
                         </div>
                       )}
-                      {isTeamLeader && (
-                        <div
-                          onClick={() => handleDeleteTeam(team._id)}
-                          className="p-1.5 rounded-full bg-gray-100 mx-2 shadow cursor-pointer"
-                        >
-                          <AiFillDelete className="text-red-400 text-xl" />
-                        </div>
-                      )}
+                      <div
+                        onClick={() => handleDeleteTeam(team._id)}
+                        className="p-1.5 rounded-full bg-gray-100 mx-2 shadow cursor-pointer"
+                      >
+                        <AiFillDelete className="text-red-400 text-xl" />
+                      </div>
                     </>
                   )}
                 </div>

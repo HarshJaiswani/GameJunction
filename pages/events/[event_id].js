@@ -15,8 +15,6 @@ import { FaTelegramPlane } from "react-icons/fa";
 import ImageIcon from "../../components/Icons/ImageIcon";
 import { HiOutlineCurrencyRupee } from "react-icons/hi";
 import SpinnerIcon from "../../components/SpinnerIcon";
-// Toast
-import { toast } from "react-toastify";
 // hooks
 import useUser from "../../hooks/useUser";
 // services
@@ -26,6 +24,8 @@ import { fetchAllTeamsOfUser } from "Services/Teams";
 import { Dialog, Transition } from "@headlessui/react";
 // swr
 import useSWR from "swr";
+// helper
+import ShowToast from "helper/ShowToast";
 
 const EventId = () => {
   const router = useRouter();
@@ -60,6 +60,9 @@ const EventId = () => {
 
   const event_applyable = (e) => {
     e.preventDefault();
+    if (event.organiserId == user?._id) {
+      return ShowToast(false, "You are the organiser!");
+    }
     if (isApplied) {
       let team_id = null;
       teams.filter((e) => {
@@ -82,27 +85,9 @@ const EventId = () => {
     if (user) {
       let json = await applyIntoEvent(event._id, isApplied, team_id);
       if (json.error) {
-        toast.error(`${json.error}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(false, json.error);
       } else {
-        toast.success(`${json.success}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
+        ShowToast(true, json.success);
         router.reload();
       }
     } else {
@@ -126,16 +111,7 @@ const EventId = () => {
   const fetchEvent = async () => {
     let json = await getSingleEvent(router.query.event_id);
     if (json.error) {
-      toast.error(`${json.error}`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, json.error);
     } else {
       setEvent(json.event);
     }
@@ -145,16 +121,7 @@ const EventId = () => {
     if ((isApplied || event.organiserId == user?._id) && window) {
       window.open(event.link, "_blank");
     } else {
-      toast.error(`Event not applied!`, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      ShowToast(false, "Event not applied!");
     }
   };
 
@@ -317,7 +284,7 @@ const EventId = () => {
                   {event.contact == 0 ? (
                     "No Contact Available"
                   ) : (
-                    <Link href={`tel:${event.contact}`}>{event.contact}</Link>
+                    <a href={`tel:${event.contact}`}>{event.contact}</a>
                   )}
                 </div>
               </div>
@@ -329,9 +296,9 @@ const EventId = () => {
                   {event.email == "" ? (
                     "No Email Available"
                   ) : (
-                    <Link href={`malto:${event.email}`} className="break-words">
+                    <a href={`malto:${event.email}`} className="break-words">
                       {event.email}
-                    </Link>
+                    </a>
                   )}
                 </div>
               </div>
@@ -343,9 +310,9 @@ const EventId = () => {
                   {event.website == "" ? (
                     "No Website Available"
                   ) : (
-                    <Link href={`${event.website}`} className="break-words">
+                    <a href={`${event.website}`} className="break-words">
                       {event.website}
-                    </Link>
+                    </a>
                   )}
                 </div>
               </div>
@@ -357,9 +324,9 @@ const EventId = () => {
                   {event.youtube == "" ? (
                     "No Youtube Available"
                   ) : (
-                    <Link href={`${event.youtube}`} className="break-words">
+                    <a href={`${event.youtube}`} className="break-words">
                       {event.youtube}
-                    </Link>
+                    </a>
                   )}
                 </div>
               </div>
@@ -371,9 +338,9 @@ const EventId = () => {
                   {event.linkedin == "" ? (
                     "No LinkedIn Available"
                   ) : (
-                    <Link href={`${event.linkedin}`} className="break-words">
+                    <a href={`${event.linkedin}`} className="break-words">
                       {event.linkedin}
-                    </Link>
+                    </a>
                   )}
                 </div>
               </div>
@@ -385,9 +352,9 @@ const EventId = () => {
                   {event.instagram == "" ? (
                     "No Instagram Available"
                   ) : (
-                    <Link href={`${event.instagram}`} className="break-words">
+                    <a href={`${event.instagram}`} className="break-words">
                       {event.instagram}
-                    </Link>
+                    </a>
                   )}
                 </div>
               </div>
@@ -399,9 +366,9 @@ const EventId = () => {
                   {event.discord == "" ? (
                     "No Discord Available"
                   ) : (
-                    <Link href={`${event.discord}`} className="break-words">
+                    <a href={`${event.discord}`} className="break-words">
                       {event.discord}
-                    </Link>
+                    </a>
                   )}
                 </div>
               </div>
@@ -413,9 +380,9 @@ const EventId = () => {
                   {event.telegram == "" ? (
                     "No Telegram Available"
                   ) : (
-                    <Link href={`${event.telegram}`} className="break-words">
+                    <a href={`${event.telegram}`} className="break-words">
                       {event.telegram}
-                    </Link>
+                    </a>
                   )}
                 </div>
               </div>
@@ -427,9 +394,9 @@ const EventId = () => {
                   {event.twitter == "" ? (
                     "No Twitter Available"
                   ) : (
-                    <Link href={`${event.twitter}`} className="break-words">
+                    <a href={`${event.twitter}`} className="break-words">
                       {event.twitter}
-                    </Link>
+                    </a>
                   )}
                 </div>
               </div>
@@ -441,9 +408,9 @@ const EventId = () => {
                   {event.other == "" ? (
                     "No Other Link Available"
                   ) : (
-                    <Link href={`${event.other}`} className="break-words">
+                    <a href={`${event.other}`} className="break-words">
                       {event.other}
-                    </Link>
+                    </a>
                   )}
                 </div>
               </div>

@@ -3,8 +3,10 @@ import Users from "../../models/User";
 
 const handler = async (req, res) => {
   if (req.method == "GET") {
-    let users = await Users.find();
-    users = users.filter((e) => !e.is_deleted);
+    let users = await Users.find({
+      is_email_verified: true,
+      is_deleted: false,
+    });
     let organisers = users
       .filter((e) => e.is_organiser)
       .sort((a, b) => b.organiser_points - a.organiser_points);
