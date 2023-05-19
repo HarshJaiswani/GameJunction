@@ -15,7 +15,7 @@ const handler = async (req, res) => {
   if (eventId) {
     event = await Events.findOne({ _id: eventId });
     if (!event || !event.is_active || event.is_deleted) {
-      return res.status(400).josn({ error: "Event Not Found!" });
+      return res.status(400).json({ error: "Event Not Found!" });
     }
     event_organiser = await Users.findOne({ _id: event.organiserId });
   }

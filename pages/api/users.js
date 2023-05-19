@@ -82,7 +82,7 @@ const handler = async (req, res) => {
         let newVerifyCode = new Verify({
           email,
           otp,
-          expiry: Date.now() + 6000000,
+          expiry: Date.now() + 600000,
         });
         await newVerifyCode.save();
         let age = GetAge(dob);

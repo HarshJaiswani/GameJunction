@@ -9,8 +9,7 @@ const handler = async (req, res) => {
     return res.status(200).json(events);
   } else if (req.method == "POST") {
     try {
-      let all_events = await Events.find();
-      all_events = all_events.filter((e) => !e.is_deleted);
+      let all_events = await Events.find({ is_deleted: false });
       all_events = all_events.filter((e) =>
         req.body.eventids.includes(e._id.toString())
       );

@@ -29,7 +29,7 @@ const handler = async (req, res) => {
             };
             for (let mem of team.participants) {
               let part = await Users.findOne({ email: mem.participant_id });
-              if (part.invite_accepted) {
+              if (part && mem.invite_accepted) {
                 teamData.people.push(part);
               }
             }

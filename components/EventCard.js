@@ -51,40 +51,39 @@ const EventCard = ({ post }) => {
 
   const event_applyable = (e) => {
     e.preventDefault();
-    if (post.organiserId == user?._id) {
-      return ShowToast(false, "You are the organiser!");
-    }
-    if (isApplied) {
-      let team_id = null;
-      teams.filter((e) => {
-        if (e.participations.includes(post._id)) {
-          team_id = e._id;
-        }
-      });
-      handleApplyEvent(team_id);
-    } else {
-      if (post.maxTeam > 1) {
-        setShowTeamModal(true);
-      } else {
-        handleApplyEvent(false);
+    if (user) {
+      if (post.organiserId == user?._id) {
+        return ShowToast(false, "You are the organiser!");
       }
+      if (isApplied) {
+        let team_id = null;
+        teams.filter((e) => {
+          if (e.participations.includes(post._id)) {
+            team_id = e._id;
+          }
+        });
+        handleApplyEvent(team_id);
+      } else {
+        if (post.maxTeam > 1) {
+          setShowTeamModal(true);
+        } else {
+          handleApplyEvent(false);
+        }
+      }
+    } else {
+      router.push("/signin");
     }
   };
 
   const handleApplyEvent = async (team_id) => {
     setIsSubmitting(true);
-
-    if (user) {
-      let json = await applyIntoEvent(post._id, isApplied, team_id);
-      if (json.error) {
-        ShowToast(false, json.error);
-      } else {
-        ShowToast(true, json.success);
-        mutateUser();
-        mutate("GETALLEVENTS");
-      }
+    let json = await applyIntoEvent(post._id, isApplied, team_id);
+    if (json.error) {
+      ShowToast(false, json.error);
     } else {
-      router.push("/signin");
+      ShowToast(true, json.success);
+      mutateUser();
+      mutate("GETALLEVENTS");
     }
     setIsSubmitting(false);
   };

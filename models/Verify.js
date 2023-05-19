@@ -5,6 +5,7 @@ const VerifySchema = mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     otp: Number,
     token: String,

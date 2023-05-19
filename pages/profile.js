@@ -275,10 +275,9 @@ const Profile = () => {
                         </span>
                         <span>Seeing You Go!</span>
                       </Dialog.Title>
-                      <div className="mt-2">
-                        <p className="text-gray-500">
-                          Are you sure want to deactivate your profile ?
-                        </p>
+                      <div className="mt-2 space-y-1 text-sm text-gray-500">
+                        <p>Are you sure want to deactivate your profile ?</p>
+                        <p>All your teams and events will be deleted!</p>
                       </div>
 
                       <div className="mt-4">
