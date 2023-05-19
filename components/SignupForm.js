@@ -182,15 +182,23 @@ const SignupForm = ({ data }) => {
     setIsSubmitting(false);
   };
 
-  const handleOtpSubmit = async (e) => {
+  const handleOtpSubmit = async (e, is_wrong = false) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const data = {
+    let data = {
       email: formData.email,
       otp: Number(otp),
       sendMail: false,
     };
+
+    if (is_wrong) {
+      data = {
+        email: formData.email,
+        otp: Number(-1),
+        sendMail: false,
+      };
+    }
 
     let json = await createUser(data);
     if (json.error) {
@@ -587,29 +595,44 @@ const SignupForm = ({ data }) => {
         </form>
       )}
       {isVerification && (
-        <form onSubmit={handleOtpSubmit} className="w-full lg:w-1/2">
-          <input
-            type="number"
-            min={1000}
-            max={9999}
-            className={inputStyle}
-            placeholder="Enter Otp"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-          />
-          <p className="mt-4 mx-2 text-gray-400 font-semibold">
-            Enter the otp sent to your mail!
-          </p>
+        <>
+          <form onSubmit={handleOtpSubmit} className="w-full lg:w-1/2">
+            <input
+              type="number"
+              min={1000}
+              max={9999}
+              className={inputStyle}
+              placeholder="Enter Otp"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+            />
+            <div className="mt-4 flex items-center">
+              <p className="mx-2 text-gray-400">
+                Enter the otp sent to{" "}
+                <span className="font-semibold tracking-wide">
+                  {formData.email}
+                </span>
+                !
+              </p>
+              <button
+                onClick={(e) => handleOtpSubmit(e, true)}
+                type="submit"
+                className="m-2 text-sm text-cyan-500 font-semibold underline"
+              >
+                Wrong Email ?
+              </button>
+            </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="my-4 px-4 py-2 w-1/2 md:w-1/3 block ml-auto hover:bg-yellow-200 rounded-2xl bg-white shadow-md text-gray-500 font-sans font-semibold"
-          >
-            {isSubmitting && <SpinnerIcon />}
-            Verify
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="my-4 px-4 py-2 w-1/2 md:w-1/3 block ml-auto hover:bg-yellow-200 rounded-2xl bg-white shadow-md text-gray-500 font-sans font-semibold"
+            >
+              {isSubmitting && <SpinnerIcon />}
+              Verify
+            </button>
+          </form>
+        </>
       )}
     </>
   );

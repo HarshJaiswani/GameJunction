@@ -30,7 +30,16 @@ const handler = async (req, res) => {
     if (req.body.sendMail) {
       let existUser = await Users.findOne({ email });
       if (existUser) {
-        return res.status(500).json({ error: "User already exist!" });
+        if (existUser.is_email_verified) {
+          return res.status(500).json({ error: "User already exist!" });
+        } else {
+          await Users.findOneAndDelete({ email });
+          await Verify.findOneAndDelete({ email });
+        }
+      }
+      let existContact = await Users.findOne({ contact });
+      if (existContact) {
+        return res.status(500).json({ error: "Contact already exist!" });
       } else {
         const transporter = nodemailer.createTransport({
           service: "gmail",

@@ -10,7 +10,7 @@ const handler = async (req, res) => {
 
   if (req.method == "POST") {
     let user = await Users.findOne({ email });
-    if (user) {
+    if (user && user.is_email_verified) {
       if (user.is_deleted) {
         return res.status(500).json({ error: "No User Found" });
       } else {
@@ -33,7 +33,7 @@ const handler = async (req, res) => {
   } else if (req.method == "PUT") {
     if (req.body.sendMail) {
       let user = await Users.findOne({ email });
-      if (user) {
+      if (user && user.is_email_verified) {
         const transporter = nodemailer.createTransport({
           service: "gmail",
           auth: {

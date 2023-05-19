@@ -141,6 +141,23 @@ const EventId = () => {
     }
   };
 
+  const redirectToEvent = () => {
+    if ((isApplied || event.organiserId == user?._id) && window) {
+      window.open(event.link, "_blank");
+    } else {
+      toast.error(`Event not applied!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
   return (
     <>
       {!event && (
@@ -210,7 +227,9 @@ const EventId = () => {
                 {event.theme || "No Theme"}
               </span>
             </div>
-            <div className="my-8 text-gray-400 text-lg">{event.details}</div>
+            <div className="my-8 whitespace-pre-wrap text-gray-400 text-lg">
+              {event.details}
+            </div>
             <div className="p-5 md:p-12 flex flex-wrap items-center border rounded-2xl bg-white shadow mx-auto mb-8">
               <p className="text-gray-400">We will be playing :</p>
               <div className="px-8 py-2 rounded-2xl mx-4 w-fit my-2 bg-gray-100 text-green-400 font-semibold">
@@ -222,8 +241,11 @@ const EventId = () => {
                   <div className="px-8 py-2 rounded-2xl w-fit mx-4 my-2 bg-gray-100 text-green-400 font-semibold">
                     {event.platform}
                   </div>
-                  <div className="px-8 py-2 rounded-2xl w-fit mx-4 my-2 bg-gray-100 text-green-400 font-semibold">
-                    <a href={event.link}>Link to event</a>
+                  <div
+                    onClick={redirectToEvent}
+                    className="cursor-pointer px-8 py-2 rounded-2xl w-fit mx-4 my-2 bg-gray-100 text-green-400 font-semibold"
+                  >
+                    Link to event
                   </div>
                 </>
               ) : (
@@ -267,7 +289,7 @@ const EventId = () => {
               <h2 className="text-gray-500 font-semibold text-xl mb-2">
                 Rewards:
               </h2>
-              <div className="rounded-2xl bg-white shadow p-4 mb-12">
+              <div className="rounded-2xl whitespace-pre-wrap bg-white shadow p-4 mb-12">
                 {event.rewards == ""
                   ? "Opportunity to showcase talent!"
                   : event.rewards}
@@ -275,7 +297,7 @@ const EventId = () => {
               <h2 className="text-gray-500 font-semibold text-xl mb-2">
                 Eligibility:
               </h2>
-              <div className="rounded-2xl bg-white shadow p-4">
+              <div className="rounded-2xl whitespace-pre-wrap bg-white shadow p-4">
                 {event.eligibility == ""
                   ? "You are always for us!"
                   : event.eligibility}

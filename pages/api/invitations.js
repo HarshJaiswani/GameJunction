@@ -2,6 +2,7 @@ import Users from "models/User";
 import connectDb from "../../middleware/connectDB";
 import fetchUser from "../../middleware/fetchUser";
 import Teams from "models/Team";
+import Events from "models/Event";
 
 const handler = async (req, res) => {
   let {
@@ -75,7 +76,14 @@ const handler = async (req, res) => {
     }
   } else if (req.method == "PUT") {
     let team = await Teams.findOne({ _id: team_id });
-    if (team) {
+    let is_editable = true;
+    team.participations.forEach(async (e) => {
+      let event = await Events.findById(e);
+      if (event && event.is_active && !event.is_deleted) {
+        is_editable = false;
+      }
+    });
+    if (team && is_editable) {
       if (invite_accepted) {
         team.participants.filter(
           (e) => e.participant_id == req.user.email
@@ -140,7 +148,7 @@ const handler = async (req, res) => {
         }
       }
     } else {
-      return res.status(400).json({ error: "Team Not Found!" });
+      return res.status(400).json({ error: "Unauthorised!" });
     }
   } else if (req.method == "DELETE") {
   } else {
