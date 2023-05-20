@@ -55,6 +55,9 @@ const handler = async (req, res) => {
     });
     return res.status(200).json(invitations);
   } else if (req.method == "POST") {
+    if (has_active_participations) {
+      return res.status(400).json({ error: "Team has active participations!" });
+    }
     // sending invite to participant
     let user = await Users.findOne({ email: participant_id });
     if (team && user) {
@@ -78,6 +81,9 @@ const handler = async (req, res) => {
       return res.status(400).json({ error: "Invalid Team or Email!" });
     }
   } else if (req.method == "PUT") {
+    if (has_active_participations) {
+      return res.status(400).json({ error: "Team has active participations!" });
+    }
     if (team && !has_active_participations) {
       if (invite_accepted) {
         team.participants.filter(
