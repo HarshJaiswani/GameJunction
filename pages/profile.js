@@ -60,13 +60,13 @@ const Profile = () => {
     } else {
       let currEvents = [];
       let passEvents = [];
-      await json.all_events.forEach((e) => {
+      for await (let e of json.all_events) {
         if (e.is_active) {
           currEvents.push(e);
         } else {
           passEvents.push(e);
         }
-      });
+      }
       setCurrEvents(currEvents);
       setPassEvents(passEvents);
     }

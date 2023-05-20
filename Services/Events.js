@@ -37,14 +37,27 @@ const updateEvent = async (data) => {
   return json;
 };
 
-const applyIntoEvent = async (id, isApplied, team_id) => {
+const applyIntoEvent = async (id, team_id) => {
   const response = await fetch("/api/applyintoevent", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "auth-token": JSON.parse(localStorage.getItem("auth-token")),
     },
-    body: JSON.stringify({ eventId: id, isApplied, team_id }),
+    body: JSON.stringify({ eventId: id, team_id }),
+  });
+  const json = await response.json();
+  return json;
+};
+
+const withdrawFromEvent = async (id, team_id) => {
+  const response = await fetch("/api/applyintoevent", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "auth-token": JSON.parse(localStorage.getItem("auth-token")),
+    },
+    body: JSON.stringify({ eventId: id, team_id }),
   });
   const json = await response.json();
   return json;
@@ -141,4 +154,5 @@ export {
   deleteEvent,
   setWinner,
   getSingleEvent,
+  withdrawFromEvent,
 };

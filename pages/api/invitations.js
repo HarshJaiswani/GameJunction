@@ -21,18 +21,22 @@ const handler = async (req, res) => {
   let person = null;
   if (team_id) {
     team = await Teams.findOne({ _id: team_id, is_deleted: false });
+
     if (!team) {
       return res.status(400).json({ error: "Team Not Found!" });
     }
-    await team.participations.forEach(async (e) => {
+
+    for await (let e of team.participants) {
       let event = await Events.findOne({ _id: e });
       if (event && event.is_active && !event.is_deleted) {
         has_active_participations = true;
       }
-    });
+    }
+
     is_user_team_leader = team.participants.filter(
       (e) => e.participant_id == req.user.email
     )[0].is_leader;
+
     person = team.participants.filter(
       (e) => e.participant_id == participant_id
     )[0];

@@ -11,7 +11,11 @@ import useUser from "../hooks/useUser";
 // swr
 import useSWR, { mutate } from "swr";
 // services
-import { addToWishList, applyIntoEvent } from "../Services/Events";
+import {
+  addToWishList,
+  applyIntoEvent,
+  withdrawFromEvent,
+} from "../Services/Events";
 import { fetchAllTeamsOfUser } from "Services/Teams";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
@@ -49,35 +53,49 @@ const EventCard = ({ post }) => {
     }
   }, [user, post]);
 
-  const event_applyable = (e) => {
+  const event_applyable = async (e) => {
     e.preventDefault();
-    if (user) {
-      if (post.organiserId == user?._id) {
-        return ShowToast(false, "You are the organiser!");
-      }
-      if (isApplied) {
-        let team_id = null;
-        teams.filter((e) => {
-          if (e.participations.includes(post._id)) {
-            team_id = e._id;
-          }
-        });
-        handleApplyEvent(team_id);
+    if (!user) {
+      return router.push("/signin");
+    }
+    if (post.organiserId == user?._id) {
+      return ShowToast(false, "You are the organiser!");
+    }
+    if (isApplied) {
+      if (post.participants.includes(user._id)) {
+        handleWithdrawEvent(false);
       } else {
-        if (post.maxTeam > 1) {
-          setShowTeamModal(true);
-        } else {
-          handleApplyEvent(false);
+        for await (let e of teams) {
+          if (post.participants.includes(e._id)) {
+            handleWithdrawEvent(e._id);
+          }
         }
       }
     } else {
-      router.push("/signin");
+      if (post.maxTeam > 1) {
+        setShowTeamModal(true);
+      } else {
+        handleApplyEvent(false);
+      }
     }
   };
 
   const handleApplyEvent = async (team_id) => {
     setIsSubmitting(true);
-    let json = await applyIntoEvent(post._id, isApplied, team_id);
+    let json = await applyIntoEvent(post._id, team_id);
+    if (json.error) {
+      ShowToast(false, json.error);
+    } else {
+      ShowToast(true, json.success);
+      mutateUser();
+      mutate("GETALLEVENTS");
+    }
+    setIsSubmitting(false);
+  };
+
+  const handleWithdrawEvent = async (team_id) => {
+    setIsSubmitting(true);
+    let json = await withdrawFromEvent(post._id, team_id);
     if (json.error) {
       ShowToast(false, json.error);
     } else {
@@ -295,7 +313,6 @@ const EventCard = ({ post }) => {
                                 </div>
                               )
                           )}
-                          <p>No More Teams!</p>
                         </div>
                       </div>
 

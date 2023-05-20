@@ -50,10 +50,10 @@ const Organiser = () => {
     } else {
       setAllEvents(json.all_events);
       let curatedData = {};
-      await json.all_events.forEach(async (e) => {
+      for await (let e of json.all_events) {
         let result = await getParticipants(e.participants);
         curatedData[e._id] = result;
-      });
+      }
       setAllParticipants(curatedData);
     }
   };

@@ -51,6 +51,15 @@ const handler = async (req, res) => {
     if (existEvent) {
       return res.status(500).json({ error: "Event Title Taken!" });
     }
+    if (
+      !(
+        Date.now() < new Date(eventDate) &&
+        Date.now() < new Date(lastDateOfRegistration) &&
+        new Date(eventDate) > new Date(lastDateOfRegistration)
+      )
+    ) {
+      return res.status(400).json({ error: "Invalid Dates" });
+    }
     let organiserUser = await Users.findOne({ _id: req.user._id });
     let newEvent = new Events({
       organiserId: organiserUser._id,
@@ -86,10 +95,12 @@ const handler = async (req, res) => {
       other,
     });
     await newEvent.save();
+
     await Users.findByIdAndUpdate(req.user._id, {
       events_organised: [...organiserUser.events_organised, newEvent._id],
       organiser_points: organiserUser.organiser_points + 1,
     });
+
     return res.status(200).json({ success: "Event Created!" });
   } else if (req.method == "PUT") {
     let existingEvent = await Events.findById(_id);
@@ -119,10 +130,12 @@ const handler = async (req, res) => {
           winner: `${winnerTeam.team_name},${winner}`,
           is_active: false,
         });
+
         await Teams.findByIdAndUpdate(winner, {
           prices_won: [...winnerTeam.prices_won, _id],
         });
-        await winnerTeam.participants.forEach(async (e) => {
+
+        for await (let e of winnerTeam.participants) {
           let part = await Users.findOne({ email: e.participant_id });
           if (part.invite_accepted) {
             await Users.findOneAndUpdate(
@@ -133,11 +146,13 @@ const handler = async (req, res) => {
               }
             );
           }
-        });
+        }
+
         let org = await Users.findById(existingEvent.organiserId);
         await Users.findByIdAndUpdate(existingEvent.organiserId, {
           organiser_points: org.organiser_points + 5,
         });
+
         return res.status(200).json({ success: "Event Updated!" });
       }
       await Events.findByIdAndUpdate(_id, {

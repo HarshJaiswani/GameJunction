@@ -34,16 +34,18 @@ const handler = async (req, res) => {
       events_organised,
       prices_won,
     });
+
     return res.status(200).json({ success: "Profile Updated!" });
   } else if (req.method == "DELETE") {
     let existingUserObject = await Users.findById(req.user._id);
     let is_deleteable = true;
-    await existingUserObject.events_participated.forEach(async (e) => {
+
+    for await (let e of existingUserObject.events_participated) {
       let eve = await Events.findById(e);
       if (eve.is_active && !eve.is_deleted) {
         is_deleteable = false;
       }
-    });
+    }
 
     if (!is_deleteable) {
       return res
@@ -52,12 +54,12 @@ const handler = async (req, res) => {
     }
 
     // deleting all events of the user
-    await existingUserObject.events_organised.forEach(async (e) => {
+    for await (let e of existingUserObject.events_organised) {
       await Events.findByIdAndUpdate(e, {
         is_deleted: true,
         is_active: false,
       });
-    });
+    }
 
     // deleting user from the teams
     let all_user_teams = await Teams.find({ is_deleted: false });
