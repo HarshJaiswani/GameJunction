@@ -26,7 +26,7 @@ const handler = async (req, res) => {
       return res.status(400).json({ error: "Team Not Found!" });
     }
 
-    for await (let e of team.participants) {
+    for await (let e of team.participations) {
       let event = await Events.findOne({ _id: e });
       if (event && event.is_active && !event.is_deleted) {
         has_active_participations = true;

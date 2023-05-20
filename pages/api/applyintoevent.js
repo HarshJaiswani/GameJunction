@@ -50,9 +50,6 @@ const handler = async (req, res) => {
     // adding points for organiser
     let points =
       (event.participants + 1) % 10 == 0 ? (event.participants + 1) / 10 : 0;
-    await Users.findByIdAndUpdate(event.organiserId, {
-      organiser_points: event_organiser.organiser_points + points,
-    });
 
     // team application
     if (team) {
@@ -95,6 +92,10 @@ const handler = async (req, res) => {
         participations: [...team.participations, eventId],
       });
 
+      await Users.findByIdAndUpdate(event.organiserId, {
+        organiser_points: event_organiser.organiser_points + points,
+      });
+
       return res.status(200).json({ success: "Applied!" });
     }
 
@@ -118,6 +119,10 @@ const handler = async (req, res) => {
 
       await Events.findByIdAndUpdate(eventId, {
         participants: [...event.participants, req.user._id],
+      });
+
+      await Users.findByIdAndUpdate(event.organiserId, {
+        organiser_points: event_organiser.organiser_points + points,
       });
 
       return res.status(200).json({ success: "Applied!" });
