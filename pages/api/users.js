@@ -44,6 +44,10 @@ const handler = async (req, res) => {
       if (existContact) {
         return res.status(500).json({ error: "Contact already exist!" });
       } else {
+        let age = GetAge(dob);
+        if (!(age >= 5 && age < 120)) {
+          return res.status(400).json({ error: "Age is Invalid!" });
+        }
         const transporter = nodemailer.createTransport({
           service: "gmail",
           auth: {
@@ -85,34 +89,29 @@ const handler = async (req, res) => {
           expiry: Date.now() + 600000,
         });
         await newVerifyCode.save();
-        let age = GetAge(dob);
-        if (age >= 5 && age < 120) {
-          let newUser = new Users({
-            name,
-            email,
-            password: CryptoJS.AES.encrypt(
-              password,
-              process.env.SECRETKEY
-            ).toString(),
-            contact,
-            profile_pic,
-            dob,
-            gender,
-            sports,
-            is_organiser,
-            is_participant,
-            organiser_points,
-            participant_points,
-            events_organised,
-            events_participated,
-            prices_won,
-            wishlist_events,
-          });
-          await newUser.save();
-          return res.status(200).json({ success: "Email Sent Successfully!" });
-        } else {
-          return res.status(400).json({ error: "Age is Invalid!" });
-        }
+        let newUser = new Users({
+          name,
+          email,
+          password: CryptoJS.AES.encrypt(
+            password,
+            process.env.SECRETKEY
+          ).toString(),
+          contact,
+          profile_pic,
+          dob,
+          gender,
+          sports,
+          is_organiser,
+          is_participant,
+          organiser_points,
+          participant_points,
+          events_organised,
+          events_participated,
+          prices_won,
+          wishlist_events,
+        });
+        await newUser.save();
+        return res.status(200).json({ success: "Email Sent Successfully!" });
       }
     }
     // checking the email and otp
